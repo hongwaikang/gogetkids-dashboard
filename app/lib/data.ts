@@ -7,12 +7,15 @@ import {
   LatestInvoiceRaw,
   User,
   Revenue,
+  StudentsTable,
 } from './definitions';
 import { formatCurrency } from './utils';
+import { unstable_noStore as noStore } from 'next/cache';
 
 export async function fetchRevenue() {
   // Add noStore() here to prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
+  noStore();
 
   try {
     // Artificially delay a response for demo purposes.
@@ -33,6 +36,8 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+  noStore();
+
   try {
     const data = await sql<LatestInvoiceRaw>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
@@ -53,6 +58,8 @@ export async function fetchLatestInvoices() {
 }
 
 export async function fetchCardData() {
+  noStore();
+
   try {
     // You can probably combine these into a single SQL query
     // However, we are intentionally splitting them to demonstrate
@@ -92,6 +99,8 @@ export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
 ) {
+  noStore();
+
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -124,6 +133,8 @@ export async function fetchFilteredInvoices(
 }
 
 export async function fetchInvoicesPages(query: string) {
+  noStore();
+
   try {
     const count = await sql`SELECT COUNT(*)
     FROM invoices
@@ -145,6 +156,8 @@ export async function fetchInvoicesPages(query: string) {
 }
 
 export async function fetchInvoiceById(id: string) {
+  noStore();
+
   try {
     const data = await sql<InvoiceForm>`
       SELECT
@@ -188,6 +201,8 @@ export async function fetchCustomers() {
 }
 
 export async function fetchFilteredCustomers(query: string) {
+  noStore();
+
   try {
     const data = await sql<CustomersTableType>`
 		SELECT
@@ -227,5 +242,64 @@ export async function getUser(email: string) {
   } catch (error) {
     console.error('Failed to fetch user:', error);
     throw new Error('Failed to fetch user.');
+  }
+}
+
+
+export async function fetchFilteredStudents(
+  query: string,
+  currentPage: number,
+) {
+  noStore();
+
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE; // Assuming ITEMS_PER_PAGE is defined somewhere
+
+  try {
+    const students = await sql<StudentsTable>`
+      SELECT
+        students.id,
+        students.first_name,
+        students.last_name,
+        students.address,
+        students.class_id,
+        students.parent_id,
+        students.parent_name
+      FROM students
+      WHERE
+        students.first_name ILIKE ${`%${query}%`} OR
+        students.last_name ILIKE ${`%${query}%`} OR
+        students.address ILIKE ${`%${query}%`} OR
+        students.class_id ILIKE ${`%${query}%`} OR
+        students.parent_name ILIKE ${`%${query}%`}
+      ORDER BY students.first_name ASC, students.last_name ASC
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return students.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch students.');
+  }
+}
+
+export async function fetchStudentsPages(query: string) {
+  noStore();
+
+  try {
+    const count = await sql`SELECT COUNT(*)
+    FROM students
+    WHERE
+      first_name ILIKE ${`%${query}%`} OR
+      last_name ILIKE ${`%${query}%`} OR
+      address ILIKE ${`%${query}%`} OR
+      class_id ILIKE ${`%${query}%`} OR
+      parent_name ILIKE ${`%${query}%`}
+  `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of students.');
   }
 }
