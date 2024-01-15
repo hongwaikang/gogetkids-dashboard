@@ -9,6 +9,7 @@ import {
   Revenue,
   StudentsTable,
   ParentsTable,
+  TeachersTable,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
@@ -350,6 +351,56 @@ export async function fetchParentsPages(query: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of parents.');
+  }
+}
+
+export async function fetchFilteredTeachers(
+  query: string,
+  currentPage: number,
+) {
+  noStore();
+
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  try {
+    const teachers = await sql<TeachersTable>`
+      SELECT
+        teachers.id,
+        teachers.name,
+        teachers.class
+      FROM teachers
+      WHERE
+        teachers.id ILIKE ${`%${query}%`} OR
+        teachers.name ILIKE ${`%${query}%`} OR
+        teachers.class ILIKE ${`%${query}%`}
+      ORDER BY teachers.name ASC
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return teachers.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch teachers.');
+  }
+}
+
+export async function fetchTeachersPages(query: string) {
+  noStore();
+
+  try {
+    const count = await sql`
+      SELECT COUNT(*)
+      FROM teachers
+      WHERE
+        name ILIKE ${`%${query}%`} OR
+        class ILIKE ${`%${query}%`}
+    `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of teachers.');
   }
 }
 

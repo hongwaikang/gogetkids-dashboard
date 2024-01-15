@@ -103,3 +103,10 @@ export type ParentsTable = {
   phone_number: string;
 }
 
+export type TeachersTable = {
+  id: string;
+  name: string;
+  class: string;
+}
+
+
