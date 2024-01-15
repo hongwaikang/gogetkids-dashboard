@@ -97,3 +97,9 @@ export type StudentsTable = {
   parent_name: string;
 };
 
+export type ParentsTable = {
+  id: string;
+  name: string;
+  phone_number: string;
+}
+

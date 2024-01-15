@@ -29,7 +29,6 @@ export default async function StudentsTable({
                       </div>
                       <p className="text-sm text-gray-500">{student.parent_name}</p>
                     </div>
-                    {/* Actions for students, e.g., UpdateStudent and DeleteStudent components */}
                   </div>
                   <div className="flex items-center justify-between border-b pb-4">
                     <div className="mb-2 flex items-center">
