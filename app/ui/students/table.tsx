@@ -23,11 +23,20 @@ export default async function StudentsTable({
                   <div className="flex items-center justify-between border-b pb-4">
                     <div>
                       <div className="mb-2 flex items-center">
-                        <p>{`${student.first_name} ${student.last_name}`}</p>
+                        <p>
+                          {student.first_name}
+                        </p>
                       </div>
                       <p className="text-sm text-gray-500">{student.parent_name}</p>
                     </div>
                     {/* Actions for students, e.g., UpdateStudent and DeleteStudent components */}
+                  </div>
+                  <div className="flex items-center justify-between border-b pb-4">
+                    <div className="mb-2 flex items-center">
+                      <p>
+                        {student.last_name}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex w-full items-center justify-between pt-4">
                     <div>
@@ -49,7 +58,10 @@ export default async function StudentsTable({
               <thead className="rounded-lg text-left text-sm font-normal">
                 <tr>
                   <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                    Student
+                    First Name
+                  </th>
+                  <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                    Last Name
                   </th>
                   <th scope="col" className="px-3 py-5 font-medium">
                     Parent
@@ -75,7 +87,16 @@ export default async function StudentsTable({
                   >
                     <td className="whitespace-nowrap py-3 pl-6 pr-3">
                       <div className="flex items-center gap-3">
-                        <p>{`${student.first_name} ${student.last_name}`}</p>
+                        <p>
+                          {student.first_name}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                      <div className="flex items-center gap-3">
+                        <p>
+                          {student.last_name}
+                        </p>
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-3 py-3">
