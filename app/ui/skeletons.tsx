@@ -264,7 +264,7 @@ export function StudentsTableSkeleton() {
                   Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Class ID
+                  Class
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Parent ID
@@ -342,7 +342,7 @@ export function ParentsTableSkeleton() {
                   Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Phone Number
+                  Phone
                 </th>
                 <th
                   scope="col"
@@ -367,6 +367,7 @@ export function ParentsTableSkeleton() {
   );
 }
 
+// TeachersMobileSkeleton
 export function TeachersMobileSkeleton() {
   return (
     <div className="mb-2 w-full rounded-md bg-white p-4">
@@ -391,6 +392,7 @@ export function TeachersMobileSkeleton() {
   );
 }
 
+// TeachersTableSkeleton
 export function TeachersTableSkeleton() {
   return (
     <div className="mt-6 flow-root">
@@ -423,7 +425,6 @@ export function TeachersTableSkeleton() {
               </tr>
             </thead>
             <tbody className="bg-white">
-              {/* Assuming a TableRowSkeleton component is used here */}
               <TableRowSkeleton />
               <TableRowSkeleton />
               <TableRowSkeleton />

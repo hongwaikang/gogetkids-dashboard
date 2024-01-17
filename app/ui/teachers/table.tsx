@@ -25,12 +25,12 @@ export default async function TeachersTable({
                     <div className="mb-2 flex items-center">
                       <p>{teacher.id}</p>
                     </div>
-                    <p className="text-sm text-gray-500">{teacher.name}</p>
+                    <p className="text-sm text-gray-500">{`${teacher.firstname} ${teacher.lastname}`}</p>
                   </div>
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
-                    <p className="text-md font-medium">{teacher.class}</p>
+                    <p className="text-md font-medium">{teacher.class_id}</p>
                   </div>
                   <div className="flex justify-end gap-2">
                     <UpdateTeacher id={teacher.id} />
@@ -70,10 +70,10 @@ export default async function TeachersTable({
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {teacher.name}
+                    {`${teacher.firstname} ${teacher.lastname}`}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {teacher.class}
+                    {teacher.class_id}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
