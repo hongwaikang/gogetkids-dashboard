@@ -97,6 +97,7 @@ export async function fetchCardData() {
 }
 
 const ITEMS_PER_PAGE = 6;
+
 export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
@@ -247,10 +248,14 @@ export async function getUser(email: string) {
   }
 }
 
-export async function fetchFilteredStudents(query: string, currentPage: number) {
+// Students
+export async function fetchFilteredStudents(
+  query: string,
+  currentPage: number,
+) {
   noStore();
 
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE; // Assuming ITEMS_PER_PAGE is defined somewhere
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
     const students = await sql<StudentsTable>`
@@ -263,7 +268,7 @@ export async function fetchFilteredStudents(query: string, currentPage: number) 
         students.parent_id,
         CONCAT(parents.firstname, ' ', parents.lastname) AS parent_name
       FROM students
-      JOIN parents ON students.parent_id = parents.id
+      LEFT JOIN parents ON students.parent_id = parents.id
       WHERE
         students.firstname ILIKE ${`%${query}%`} OR
         students.lastname ILIKE ${`%${query}%`} OR
