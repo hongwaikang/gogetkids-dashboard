@@ -253,7 +253,7 @@ export async function fetchFilteredStudents(query: string, currentPage: number) 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE; // Assuming ITEMS_PER_PAGE is defined somewhere
 
   try {
-    const students = await sql<Student>`
+    const students = await sql<StudentsTable>`
       SELECT
         students.id,
         students.firstname,
@@ -303,27 +303,26 @@ export async function fetchStudentsPages(query: string) {
   }
 }
 
-
-export async function fetchFilteredParents(
-  query: string,
-  currentPage: number,
-) {
+export async function fetchFilteredParents(query: string, currentPage: number) {
   noStore();
 
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE; // Assuming ITEMS_PER_PAGE is defined somewhere
 
   try {
     const parents = await sql<ParentsTable>`
       SELECT
         parents.id,
-        parents.name,
-        parents.phone_number
+        parents.firstname,
+        parents.lastname,
+        parents.phone,
+        CONCAT(parents.firstname, ' ', parents.lastname) AS name
       FROM parents
       WHERE
-        parents.id ILIKE ${`%${query}%`} OR
-        parents.name ILIKE ${`%${query}%`} OR
-        parents.phone_number ILIKE ${`%${query}%`}
-      ORDER BY parents.name ASC
+        parents.firstname ILIKE ${`%${query}%`} OR
+        parents.lastname ILIKE ${`%${query}%`} OR
+        parents.phone ILIKE ${`%${query}%`} OR
+        CONCAT(parents.firstname, ' ', parents.lastname) ILIKE ${`%${query}%`}
+      ORDER BY name
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
@@ -334,6 +333,7 @@ export async function fetchFilteredParents(
   }
 }
 
+
 export async function fetchParentsPages(query: string) {
   noStore();
 
@@ -341,8 +341,8 @@ export async function fetchParentsPages(query: string) {
     const count = await sql`SELECT COUNT(*)
       FROM parents
       WHERE
-        name ILIKE ${`%${query}%`} OR
-        phone_number ILIKE ${`%${query}%`}
+        CONCAT(firstname, ' ', lastname) ILIKE ${`%${query}%`} OR
+        phone ILIKE ${`%${query}%`}
     `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);

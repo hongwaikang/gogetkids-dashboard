@@ -127,7 +127,7 @@ export type ParentsTable = {
   id: string;
   firstname: string;
   lastname: string;
-  phone_number: string;
+  phone: string;
 };
 
 // Teachers

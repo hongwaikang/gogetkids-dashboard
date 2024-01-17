@@ -25,12 +25,12 @@ export default async function ParentsTable({
                     <div className="mb-2 flex items-center">
                       <p>{parent.id}</p>
                     </div>
-                    <p className="text-sm text-gray-500">{parent.name}</p>
+                    <p className="text-sm text-gray-500">{`${parent.firstname} ${parent.lastname}`}</p>
                   </div>
                 </div>
                 <div className="flex w-full items-center justify-between pt-4">
                   <div>
-                    <p className="text-md font-medium">{parent.phone_number}</p>
+                    <p className="text-md font-medium">{parent.phone}</p>
                   </div>
                   <div className="flex justify-end gap-2">
                     <UpdateParent id={parent.id} />
@@ -50,7 +50,7 @@ export default async function ParentsTable({
                   Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Phone Number
+                  Phone
                 </th>
                 {/* Actions column */}
                 <th scope="col" className="relative py-3 pl-6 pr-3">
@@ -70,10 +70,10 @@ export default async function ParentsTable({
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {parent.name}
+                    {`${parent.firstname} ${parent.lastname}`}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {parent.phone_number}
+                    {parent.phone}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
