@@ -247,32 +247,30 @@ export async function getUser(email: string) {
   }
 }
 
-export async function fetchFilteredStudents(
-  query: string,
-  currentPage: number,
-) {
+export async function fetchFilteredStudents(query: string, currentPage: number) {
   noStore();
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE; // Assuming ITEMS_PER_PAGE is defined somewhere
 
   try {
-    const students = await sql<StudentsTable>`
+    const students = await sql<Student>`
       SELECT
         students.id,
-        students.first_name,
-        students.last_name,
+        students.firstname,
+        students.lastname,
         students.address,
         students.class_id,
         students.parent_id,
-        students.parent_name
+        CONCAT(parents.firstname, ' ', parents.lastname) AS parent_name
       FROM students
+      JOIN parents ON students.parent_id = parents.id
       WHERE
-        students.first_name ILIKE ${`%${query}%`} OR
-        students.last_name ILIKE ${`%${query}%`} OR
+        students.firstname ILIKE ${`%${query}%`} OR
+        students.lastname ILIKE ${`%${query}%`} OR
         students.address ILIKE ${`%${query}%`} OR
         students.class_id ILIKE ${`%${query}%`} OR
-        students.parent_name ILIKE ${`%${query}%`}
-      ORDER BY students.first_name ASC, students.last_name ASC
+        CONCAT(parents.firstname, ' ', parents.lastname) ILIKE ${`%${query}%`}
+      ORDER BY students.firstname ASC, students.lastname ASC
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
@@ -288,14 +286,14 @@ export async function fetchStudentsPages(query: string) {
 
   try {
     const count = await sql`SELECT COUNT(*)
-    FROM students
-    WHERE
-      first_name ILIKE ${`%${query}%`} OR
-      last_name ILIKE ${`%${query}%`} OR
-      address ILIKE ${`%${query}%`} OR
-      class_id ILIKE ${`%${query}%`} OR
-      parent_name ILIKE ${`%${query}%`}
-  `;
+      FROM students
+      JOIN parents ON students.parent_id = parents.id
+      WHERE
+        students.firstname ILIKE ${`%${query}%`} OR
+        students.lastname ILIKE ${`%${query}%`} OR
+        students.address ILIKE ${`%${query}%`} OR
+        students.class_id ILIKE ${`%${query}%`} OR
+        CONCAT(parents.firstname, ' ', parents.lastname) ILIKE ${`%${query}%`}`;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
     return totalPages;
@@ -304,6 +302,7 @@ export async function fetchStudentsPages(query: string) {
     throw new Error('Failed to fetch total number of students.');
   }
 }
+
 
 export async function fetchFilteredParents(
   query: string,

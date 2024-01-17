@@ -223,14 +223,14 @@ export function StudentsMobileSkeleton() {
       <div className="flex items-center justify-between border-b border-gray-100 pb-8">
         <div className="flex items-center">
           <div className="mr-2 h-8 w-8 rounded-full bg-gray-100"></div>
-          <div className="h-6 w-16 rounded bg-gray-100"></div>
+          <div className="h-6 w-24 rounded bg-gray-100"></div>
         </div>
         <div className="h-6 w-16 rounded bg-gray-100"></div>
       </div>
       <div className="flex w-full items-center justify-between pt-4">
         <div>
           <div className="h-6 w-16 rounded bg-gray-100"></div>
-          <div className="mt-2 h-6 w-24 rounded bg-gray-100"></div>
+          <div className="mt-2 h-6 w-32 rounded bg-gray-100"></div>
         </div>
         <div className="flex justify-end gap-2">
           <div className="h-10 w-10 rounded bg-gray-100"></div>
@@ -258,19 +258,19 @@ export function StudentsTableSkeleton() {
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  First Name
+                  ID
                 </th>
-                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Last Name
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Parent
+                <th scope="col" className="px-4 py-5 font-medium">
+                  Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Class ID
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Address
+                  Parent ID
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Parent Name
                 </th>
                 <th
                   scope="col"

@@ -87,26 +87,68 @@ export type InvoiceForm = {
   status: 'pending' | 'paid';
 };
 
+// Students
+export type Student = {
+  id: string;
+  firstname: string;
+  lastname: string;
+  gender: string;
+  DOB: Date;
+  // status: 'In School' | 'In Bus' | 'Dismissed' | 'Picked Up';
+  postalcode: string;
+  zone: string;
+  address: string;
+  class_id: string;
+  parent_id: string;
+  // schedule: schedule[];
+};
+
 export type StudentsTable = {
   id: string;
-  first_name: string;
-  last_name: string;
-  address: string;
+  firstname: string;
+  lastname: string;
   class_id: string;
   parent_id: string;
   parent_name: string;
 };
 
+// Parents
+export type Parent = {
+  id: string;
+  username: string;
+  password: string;
+  firstname: string;
+  lastname: string;
+  phone: string;
+  // students: Student[];
+};
+
 export type ParentsTable = {
   id: string;
-  name: string;
+  firstname: string;
+  lastname: string;
   phone_number: string;
-}
+};
+
+// Teachers
+export type Teacher = {
+  id: string;
+  username: string;
+  password: string;
+  firstname: string;
+  lastname: string;
+  // gender: string;
+  DOB: Date;
+  phone: string;
+  class_id: string;
+};
 
 export type TeachersTable = {
   id: string;
-  name: string;
-  class: string;
-}
+  firstname: string;
+  lastname: string;
+  class_id: string;
+};
+
 
 
