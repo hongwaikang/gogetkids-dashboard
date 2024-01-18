@@ -80,4 +80,37 @@ export async function createStudent(formData: FormData) {
     redirect('/dashboard/students');
 }
 
+// For Form validation
+const ParentFormSchema = z.object({
+  id: z.string(),
+  username: z.string(),
+  password: z.string(),
+  firstname: z.string(),
+  lastname: z.string(),
+  phone: z.string(),
+});
+
+// Create Parent
+const CreateParent = ParentFormSchema;
+
+export async function createParent(formData: FormData) {
+    const { id, username, password, firstname, lastname, phone} = CreateParent.parse({
+      id: formData.get('id'),
+      username: formData.get('username'),
+      password: formData.get('password'),
+      firstname: formData.get('firstname'),
+      lastname: formData.get('lastname'),
+      phone: formData.get('phone'),
+    });
+
+    // Store data into database
+    await sql`
+        INSERT INTO parents (id, username, password, firstname, lastname, phone)
+        VALUES (${id}, ${username}, ${password}, ${firstname}, ${lastname}, ${phone})
+    `;
+
+    // Refresh data and redirect back to invoices page
+    revalidatePath('/dashboard/parents');
+    redirect('/dashboard/parents');
+}
 

@@ -10,7 +10,7 @@ export default async function Page() {
           { label: 'Students', href: '/dashboard/students' },
           {
             label: 'Create Student',
-            href: '/dashboard/student/create',
+            href: '/dashboard/students/create',
             active: true,
           },
         ]}
