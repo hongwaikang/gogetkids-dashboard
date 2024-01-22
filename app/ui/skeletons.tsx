@@ -264,7 +264,7 @@ export function StudentsTableSkeleton() {
                   Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Class
+                  Class ID
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Parent ID

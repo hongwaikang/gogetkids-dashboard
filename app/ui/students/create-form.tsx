@@ -61,7 +61,7 @@ export default function Form() {
           </div>
         </div>
 
-        {/* Gender */}
+        {/*Gender
         <div className="mb-4">
           <label htmlFor="gender" className="mb-2 block text-sm font-medium">
             Gender
@@ -74,60 +74,23 @@ export default function Form() {
             >
               <option value="Male">Male</option>
               <option value="Female">Female</option>
-              {/* Add other gender options as needed */}
             </select>
           </div>
         </div>
+        */}
 
         {/* Date of Birth */}
         <div className="mb-4">
-          <label htmlFor="DOB" className="mb-2 block text-sm font-medium">
+          <label htmlFor="dateOfBirth" className="mb-2 block text-sm font-medium">
             Date of Birth
           </label>
           <div className="relative mt-2 rounded-md">
             <input
-              id="DOB"
-              name="DOB"
+              id="dateOfBirth"
+              name="dateOfBirth"
               type="date"
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
             />
-          </div>
-        </div>
-
-        {/* Postalcode */}
-        <div className="mb-4">
-          <label htmlFor="postalcode" className="mb-2 block text-sm font-medium">
-            Postal Code
-          </label>
-          <div className="relative mt-2 rounded-md">
-            <input
-              id="postalcode"
-              name="postalcode"
-              type="text"
-              maxLength={10}
-              placeholder="Enter Postal Code"
-              className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
-            />
-          </div>
-        </div>
-
-        {/* Zone */}
-        <div className="mb-4">
-          <label htmlFor="zone" className="mb-2 block text-sm font-medium">
-            Select a Zone
-          </label>
-          <div className="relative mt-2 rounded-md">
-            <select
-              id="zone"
-              name="zone"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
-            >
-              <option value="North">North</option>
-              <option value="South">South</option>
-              <option value="East">East</option>
-              <option value="West">West</option>
-              <option value="City">City</option>
-            </select>
           </div>
         </div>
 
@@ -148,6 +111,44 @@ export default function Form() {
             </div>
           </div>
         </div>
+
+        {/* Postalcode */}
+        <div className="mb-4">
+          <label htmlFor="postalcode" className="mb-2 block text-sm font-medium">
+            Postal Code
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <input
+              id="postalcode"
+              name="postalcode"
+              type="text"
+              maxLength={10}
+              placeholder="Enter Postal Code"
+              className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
+            />
+          </div>
+        </div>
+
+        {/* Zone
+        <div className="mb-4">
+          <label htmlFor="zone" className="mb-2 block text-sm font-medium">
+            Select a Zone
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <select
+              id="zone"
+              name="zone"
+              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
+            >
+              <option value="North">North</option>
+              <option value="South">South</option>
+              <option value="East">East</option>
+              <option value="West">West</option>
+              <option value="City">City</option>
+            </select>
+          </div>
+        </div>
+        */}
 
         {/* Class ID */}
         <div className="mb-4">

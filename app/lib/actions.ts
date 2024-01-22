@@ -43,41 +43,41 @@ const StudentFormSchema = z.object({
   id: z.string(),
   firstname: z.string(),
   lastname: z.string(),
-  gender: z.enum(['Male', 'Female']),
-  DOB: z.string(),
-  postalcode: z.string(),
-  zone: z.enum(['North', 'South', 'East', 'West', 'City']),
+  dateOfBirth: z.string(),
   address: z.string(),
+  postalcode: z.string(),
   class_id: z.string(),
   parent_id: z.string(),
+  // gender: z.string(),
+  // zone: z.string(),
 });
 
 // Create Student
 const CreateStudent = StudentFormSchema;
 
 export async function createStudent(formData: FormData) {
-    const { id, firstname, lastname, gender, DOB, postalcode, zone, address, class_id, parent_id } = CreateStudent.parse({
-      id: formData.get('id'),
-      firstname: formData.get('firstname'),
-      lastname: formData.get('lastname'),
-      gender: formData.get('gender'),
-      DOB: formData.get('DOB'),
-      postalcode: formData.get('postalcode'),
-      zone: formData.get('zone'),
-      address: formData.get('address'),
-      class_id: formData.get('class_id'),
-      parent_id: formData.get('parent_id'),
-    });
+  const { id, firstname, lastname, dateOfBirth, postalcode, address, class_id, parent_id } = CreateStudent.parse({
+    id: formData.get('id'),
+    firstname: formData.get('firstname'),
+    lastname: formData.get('lastname'),
+    // gender: formData.get('gender'),
+    dateOfBirth: formData.get('dateOfBirth'),
+    address: formData.get('address'),
+    postalcode: formData.get('postalcode'),
+    // zone: formData.get('zone'),
+    class_id: formData.get('class_id'),
+    parent_id: formData.get('parent_id'),
+  });
 
-    // Store data into database
-    await sql`
-        INSERT INTO students (id, firstname, lastname, gender, DOB, postalcode, zone, address, class_id, parent_id)
-        VALUES (${id}, ${firstname}, ${lastname}, ${gender}, ${DOB}, ${postalcode}, ${zone}, ${address}, ${class_id}, ${parent_id})
-    `;
+  // Store data into the database
+  await sql`
+    INSERT INTO students (id, firstname, lastname, dateOfBirth, address, postalcode, class_id, parent_id)
+    VALUES (${id}, ${firstname}, ${lastname}, ${dateOfBirth}, ${address}, ${postalcode}, ${class_id}, ${parent_id})
+  `;
 
-    // Refresh data and redirect back to invoices page
-    revalidatePath('/dashboard/students');
-    redirect('/dashboard/students');
+  // Refresh data and redirect back to the students page
+  revalidatePath('/dashboard/students');
+  redirect('/dashboard/students');
 }
 
 // For Form validation
@@ -94,23 +94,22 @@ const ParentFormSchema = z.object({
 const CreateParent = ParentFormSchema;
 
 export async function createParent(formData: FormData) {
-    const { id, username, password, firstname, lastname, phone} = CreateParent.parse({
-      id: formData.get('id'),
-      username: formData.get('username'),
-      password: formData.get('password'),
-      firstname: formData.get('firstname'),
-      lastname: formData.get('lastname'),
-      phone: formData.get('phone'),
-    });
+  const { id, username, password, firstname, lastname, phone } = CreateParent.parse({
+    id: formData.get('id'),
+    username: formData.get('username'),
+    password: formData.get('password'),
+    firstname: formData.get('firstname'),
+    lastname: formData.get('lastname'),
+    phone: formData.get('phone'),
+  });
 
-    // Store data into database
-    await sql`
-        INSERT INTO parents (id, username, password, firstname, lastname, phone)
-        VALUES (${id}, ${username}, ${password}, ${firstname}, ${lastname}, ${phone})
-    `;
+  // Store data into the database
+  await sql`
+    INSERT INTO parents (id, username, password, firstname, lastname, phone)
+    VALUES (${id}, ${username}, ${password}, ${firstname}, ${lastname}, ${phone})
+  `;
 
-    // Refresh data and redirect back to invoices page
-    revalidatePath('/dashboard/parents');
-    redirect('/dashboard/parents');
+  // Refresh data and redirect back to the parents page
+  revalidatePath('/dashboard/parents');
+  redirect('/dashboard/parents');
 }
-
