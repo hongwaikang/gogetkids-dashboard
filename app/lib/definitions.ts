@@ -92,12 +92,11 @@ export type Student = {
   id: string;
   firstname: string;
   lastname: string;
-  gender: string;
-  DOB: Date;
+  dateofbirth: Date;
+  address: string;
   // status: 'In School' | 'In Bus' | 'Dismissed' | 'Picked Up';
   postalcode: string;
-  zone: string;
-  address: string;
+  //zone: string;
   class_id: string;
   parent_id: string;
   // schedule: schedule[];
@@ -110,6 +109,17 @@ export type StudentsTable = {
   class_id: string;
   parent_id: string;
   parent_name: string;
+};
+
+export type StudentForm = {
+  id: string;
+  firstname: string;
+  lastname: string;
+  dateofbirth: Date;
+  address: string;
+  postalcode: string;
+  class_id: string;
+  parent_id: string;
 };
 
 // Parents

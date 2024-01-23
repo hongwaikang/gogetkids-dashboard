@@ -43,25 +43,23 @@ const StudentFormSchema = z.object({
   id: z.string(),
   firstname: z.string(),
   lastname: z.string(),
-  dateOfBirth: z.string(),
+  dateofbirth: z.string(),
   address: z.string(),
   postalcode: z.string(),
   class_id: z.string(),
   parent_id: z.string(),
-  // gender: z.string(),
-  // zone: z.string(),
 });
 
 // Create Student
 const CreateStudent = StudentFormSchema;
 
 export async function createStudent(formData: FormData) {
-  const { id, firstname, lastname, dateOfBirth, postalcode, address, class_id, parent_id } = CreateStudent.parse({
+  const { id, firstname, lastname, dateofbirth, postalcode, address, class_id, parent_id } = CreateStudent.parse({
     id: formData.get('id'),
     firstname: formData.get('firstname'),
     lastname: formData.get('lastname'),
     // gender: formData.get('gender'),
-    dateOfBirth: formData.get('dateOfBirth'),
+    dateofbirth: formData.get('dateofbirth'),
     address: formData.get('address'),
     postalcode: formData.get('postalcode'),
     // zone: formData.get('zone'),
@@ -71,8 +69,8 @@ export async function createStudent(formData: FormData) {
 
   // Store data into the database
   await sql`
-    INSERT INTO students (id, firstname, lastname, dateOfBirth, address, postalcode, class_id, parent_id)
-    VALUES (${id}, ${firstname}, ${lastname}, ${dateOfBirth}, ${address}, ${postalcode}, ${class_id}, ${parent_id})
+    INSERT INTO students (id, firstname, lastname, dateofbirth, address, postalcode, class_id, parent_id)
+    VALUES (${id}, ${firstname}, ${lastname}, ${dateofbirth}, ${address}, ${postalcode}, ${class_id}, ${parent_id})
   `;
 
   // Refresh data and redirect back to the students page
@@ -112,4 +110,62 @@ export async function createParent(formData: FormData) {
   // Refresh data and redirect back to the parents page
   revalidatePath('/dashboard/parents');
   redirect('/dashboard/parents');
+}
+
+// Update Invoice
+// Use Zod to update the expected types
+const UpdateInvoice = InvoiceFormSchema.omit({ id: true, date: true });
+
+// ...
+
+export async function updateInvoice(id: string, formData: FormData) {
+  const { customerId, amount, status } = UpdateInvoice.parse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  });
+
+  const amountInCents = amount * 100;
+
+  await sql`
+    UPDATE invoices
+    SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+    WHERE id = ${id}
+  `;
+
+  revalidatePath('/dashboard/invoices');
+  redirect('/dashboard/invoices');
+}
+
+// Use Zod to update the expected types
+const UpdateStudent = StudentFormSchema
+
+// Update Student
+export async function updateStudent(student_id: string, formData: FormData) {
+  const { id, firstname, lastname, dateofbirth, address, postalcode, class_id, parent_id } = UpdateStudent.parse({
+    id: formData.get('id'),
+    firstname: formData.get('firstname'),
+    lastname: formData.get('lastname'),
+    dateofbirth: formData.get('dateofbirth'),
+    address: formData.get('address'),
+    postalcode: formData.get('postalcode'),
+    class_id: formData.get('class_id'),
+    parent_id: formData.get('parent_id'),
+  });
+
+  await sql`
+    UPDATE students
+    SET
+      firstname = ${firstname},
+      lastname = ${lastname},
+      dateofbirth = ${dateofbirth},
+      address = ${address},
+      postalcode = ${postalcode},
+      class_id = ${class_id},
+      parent_id = ${parent_id}
+    WHERE id = ${id}
+  `;
+
+  revalidatePath('/dashboard/students');
+  redirect('/dashboard/students');
 }

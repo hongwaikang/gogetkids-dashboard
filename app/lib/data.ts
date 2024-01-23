@@ -10,6 +10,7 @@ import {
   StudentsTable,
   ParentsTable,
   TeachersTable,
+  StudentForm,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
@@ -308,6 +309,42 @@ export async function fetchStudentsPages(query: string) {
   }
 }
 
+// Students
+// lib/data.ts
+
+export async function fetchStudentById(id: string) {
+  noStore();
+
+  try {
+    const data = await sql<StudentForm>`
+      SELECT
+        students.id,
+        students.firstname,
+        students.lastname,
+        students.dateofbirth,
+        students.address,
+        students.postalcode,
+        students.class_id,
+        students.parent_id
+      FROM students
+      WHERE students.id = ${id};
+    `;
+
+    // Extract the first row from the result
+    const student = data.rows[0];
+
+    if (!student) {
+      throw new Error('Student not found');
+    }
+
+    return student;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch student.');
+  }
+}
+
+// Parents
 export async function fetchFilteredParents(query: string, currentPage: number) {
   noStore();
 
@@ -357,6 +394,7 @@ export async function fetchParentsPages(query: string) {
   }
 }
 
+// Teachers
 export async function fetchFilteredTeachers(query: string, currentPage: number) {
   noStore();
 

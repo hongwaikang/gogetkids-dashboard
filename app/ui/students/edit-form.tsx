@@ -1,14 +1,25 @@
+'use client';
+
+import { StudentForm } from '@/app/lib/definitions';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
-import { createStudent } from '@/app/lib/actions';
+import { updateStudent } from '@/app/lib/actions';
 
-export default function Form() {
+export default function EditStudentForm({
+  student,
+}: {
+  student: StudentForm;
+}) {
+	// For dateofbirth
+	const formatteddateofbirth = new Date(student.dateofbirth).toLocaleDateString('en-CA');
+
+  const updateStudentWithId = updateStudent.bind(null, student.id);
 
   return (
-    <form action={createStudent}>
+    <form action={updateStudentWithId}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        {/* Student ID */}
-        <div className="mb-4">
+          {/* Student ID */}
+					<div className="mb-4">
           <label htmlFor="id" className="mb-2 block text-sm font-medium">
             Student ID
           </label>
@@ -18,8 +29,10 @@ export default function Form() {
                 id="id"
                 name="id"
                 type="text"
+								defaultValue={student.id}
+                readOnly
                 placeholder="Enter Student ID"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500 bg-gray-200"
               />
             </div>
           </div>
@@ -36,6 +49,7 @@ export default function Form() {
                 id="firstname"
                 name="firstname"
                 type="text"
+								defaultValue={student.firstname}
                 placeholder="Enter First Name"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
               />
@@ -54,30 +68,13 @@ export default function Form() {
                 id="lastname"
                 name="lastname"
                 type="text"
+								defaultValue={student.lastname}
                 placeholder="Enter Last Name"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
               />
             </div>
           </div>
         </div>
-
-        {/*Gender
-        <div className="mb-4">
-          <label htmlFor="gender" className="mb-2 block text-sm font-medium">
-            Gender
-          </label>
-          <div className="relative mt-2 rounded-md">
-            <select
-              id="gender"
-              name="gender"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
-            >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-          </div>
-        </div>
-        */}
 
         {/* Date of Birth */}
         <div className="mb-4">
@@ -89,6 +86,7 @@ export default function Form() {
               id="dateofbirth"
               name="dateofbirth"
               type="date"
+							defaultValue={formatteddateofbirth}
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
             />
           </div>
@@ -105,6 +103,7 @@ export default function Form() {
                 id="address"
                 name="address"
                 type="text"
+								defaultValue={student.address}
                 placeholder="Enter Block No. and Street"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
               />
@@ -123,32 +122,12 @@ export default function Form() {
               name="postalcode"
               type="text"
               maxLength={10}
+							defaultValue={student.postalcode}
               placeholder="Enter Postal Code"
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
             />
           </div>
         </div>
-
-        {/* Zone
-        <div className="mb-4">
-          <label htmlFor="zone" className="mb-2 block text-sm font-medium">
-            Select a Zone
-          </label>
-          <div className="relative mt-2 rounded-md">
-            <select
-              id="zone"
-              name="zone"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
-            >
-              <option value="North">North</option>
-              <option value="South">South</option>
-              <option value="East">East</option>
-              <option value="West">West</option>
-              <option value="City">City</option>
-            </select>
-          </div>
-        </div>
-        */}
 
         {/* Class ID */}
         <div className="mb-4">
@@ -161,6 +140,7 @@ export default function Form() {
                 id="class_id"
                 name="class_id"
                 type="text"
+								defaultValue={student.class_id}
                 placeholder="Enter Class ID"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
               />
@@ -179,6 +159,7 @@ export default function Form() {
                 id="parent_id"
                 name="parent_id"
                 type="text"
+								defaultValue={student.parent_id}
                 placeholder="Enter Parent's ID"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
               />
@@ -189,12 +170,12 @@ export default function Form() {
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
-          href="/dashboard/students"
+          href="/dashboard/invoices"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Cancel
         </Link>
-        <Button type="submit">Create Student</Button>
+        <Button type="submit">Edit Student</Button>
       </div>
     </form>
   );
