@@ -357,12 +357,14 @@ export async function fetchFilteredParents(query: string, currentPage: number) {
         parents.firstname,
         parents.lastname,
         parents.phone,
+        parents.username,
         CONCAT(parents.firstname, ' ', parents.lastname) AS name
       FROM parents
       WHERE
         parents.firstname ILIKE ${`%${query}%`} OR
         parents.lastname ILIKE ${`%${query}%`} OR
         parents.phone ILIKE ${`%${query}%`} OR
+        parents.username ILIKE ${`%${query}%`} OR
         CONCAT(parents.firstname, ' ', parents.lastname) ILIKE ${`%${query}%`}
       ORDER BY name
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
