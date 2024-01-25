@@ -2,9 +2,15 @@
 
 import {
   UserGroupIcon,
-  HomeIcon,
   DocumentDuplicateIcon,
 } from '@heroicons/react/24/outline';
+import { Groups as GroupsIcon,
+          Groups2 as Groups2Icon,
+          Groups3 as Groups3Icon,
+          Home as HomeIcon
+} from '@mui/icons-material';
+
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
@@ -13,7 +19,7 @@ import clsx from 'clsx';
 // Depending on the size of the application, this would be stored in a database.
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
-  /*
+
   {
     name: 'Invoices',
     href: '/dashboard/invoices',
@@ -23,21 +29,21 @@ const links = [
     name: 'Customers',
     href: '/dashboard/customers',
     icon: UserGroupIcon,
-  }, */
+  },
   {
     name: 'Students',
     href: '/dashboard/students',
-    icon: UserGroupIcon,
+    icon: GroupsIcon,
   },
   {
     name: 'Parents',
     href: '/dashboard/parents',
-    icon: UserGroupIcon,
+    icon: Groups2Icon,
   },
   {
     name: 'Teachers',
     href: '/dashboard/teachers',
-    icon: UserGroupIcon,
+    icon: Groups3Icon,
   },
 ];
 
