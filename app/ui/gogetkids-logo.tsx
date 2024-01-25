@@ -1,4 +1,4 @@
-import { GlobeAltIcon } from '@heroicons/react/24/outline';
+import EscalatorWarningIcon from '@mui/icons-material/EscalatorWarning';
 import { lusitana } from '@/app/ui/fonts';
 
 export default function GoGetKidsLogo() {
@@ -6,8 +6,8 @@ export default function GoGetKidsLogo() {
     <div
       className={`${lusitana.className} flex flex-row items-center leading-none text-white`}
     >
-      <GlobeAltIcon className="h-12 w-12 rotate-[15deg]" />
-      <p className="text-[36px]">GoGetKids</p>
+      <EscalatorWarningIcon className="h-12 w-12" />
+      <p className="text-[44px]">GoGetKids</p>
     </div>
   );
 }
