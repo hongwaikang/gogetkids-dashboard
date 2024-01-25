@@ -12,6 +12,7 @@ import {
   TeachersTable,
   StudentForm,
   ParentForm,
+  TeacherForm,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
@@ -477,6 +478,37 @@ export async function fetchTeachersPages(query: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of teachers.');
+  }
+}
+
+export async function fetchTeacherById(id: string) {
+  noStore();
+
+  try {
+    const data = await sql<TeacherForm>`
+      SELECT
+        teachers.id,
+        teachers.username,
+        teachers.password,
+        teachers.firstname,
+        teachers.lastname,
+        teachers.phone,
+        teachers.class_id
+      FROM teachers
+      WHERE teachers.id = ${id};
+    `;
+
+    // Extract the first row from the result
+    const teacher = data.rows[0];
+
+    if (!teacher) {
+      throw new Error('Teacher not found');
+    }
+
+    return teacher;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch teacher.');
   }
 }
 

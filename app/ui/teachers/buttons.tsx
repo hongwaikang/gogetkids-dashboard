@@ -16,7 +16,7 @@ export function CreateTeacher() {
 export function UpdateTeacher({ id }: { id: string }) {
   return (
     <Link
-      href="/dashboard/teachers"
+      href={`/dashboard/teachers/${id}/edit`}
       className="rounded-md border p-2 hover:bg-gray-100"
     >
       <PencilIcon className="w-5" />

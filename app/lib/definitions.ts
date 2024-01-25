@@ -168,5 +168,15 @@ export type TeachersTable = {
   class_id: string;
 };
 
+export type TeacherForm = {
+  id: string;
+  username: string;
+  password: string;
+  firstname: string;
+  lastname: string;
+  phone: string;
+  class_id: string;
+}
+
 
 

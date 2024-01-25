@@ -205,28 +205,61 @@ const TeacherFormSchema = z.object({
   firstname: z.string(),
   lastname: z.string(),
   phone: z.string(),
+  class_id: z.string(),
 });
 
 // Create Teacher
 const CreateTeacher = TeacherFormSchema;
 
 export async function createTeacher(formData: FormData) {
-  const { id, username, password, firstname, lastname, phone } = CreateTeacher.parse({
+  const { id, username, password, firstname, lastname, phone, class_id} = CreateTeacher.parse({
     id: formData.get('id'),
     username: formData.get('username'),
     password: formData.get('password'),
     firstname: formData.get('firstname'),
     lastname: formData.get('lastname'),
     phone: formData.get('phone'),
+    class_id: formData.get('class_id'),
   });
 
   // Store data into the database
   await sql`
-    INSERT INTO teachers (id, username, password, firstname, lastname, phone)
-    VALUES (${id}, ${username}, ${password}, ${firstname}, ${lastname}, ${phone})
+    INSERT INTO teachers (id, username, password, firstname, lastname, phone, class_id)
+    VALUES (${id}, ${username}, ${password}, ${firstname}, ${lastname}, ${phone}, ${class_id})
   `;
 
   // Refresh data and redirect back to the parents page
+  revalidatePath('/dashboard/teachers');
+  redirect('/dashboard/teachers');
+}
+
+// Use Zod to update the expected types
+const UpdateTeacher = TeacherFormSchema
+
+// Update Teacher
+export async function updateTeacher(teacher_id: string, formData: FormData) {
+  const { id, username, password, firstname, lastname, phone, class_id } = UpdateTeacher.parse({
+    id: formData.get('id'),
+    username: formData.get('username'),
+    password: formData.get('password'),
+    firstname: formData.get('firstname'),
+    lastname: formData.get('lastname'),
+    phone: formData.get('phone'),
+    class_id: formData.get('class_id'),
+  });
+
+  await sql`
+    UPDATE teachers
+    SET
+      username = ${username},
+      password = ${password},
+      firstname = ${firstname},
+      lastname = ${lastname},
+      phone = ${phone},
+      class_id = ${class_id}
+    WHERE id = ${id}
+  `;
+
   revalidatePath('/dashboard/teachers');
   redirect('/dashboard/teachers');
 }
