@@ -130,7 +130,6 @@ export type Parent = {
   firstname: string;
   lastname: string;
   phone: string;
-  // students: Student[];
 };
 
 export type ParentsTable = {
@@ -140,6 +139,15 @@ export type ParentsTable = {
   phone: string;
   username: string;
 };
+
+export type ParentForm = {
+  id: string;
+  username: string;
+  password: string;
+  firstname: string;
+  lastname: string;
+  phone: string;
+}
 
 // Teachers
 export type Teacher = {

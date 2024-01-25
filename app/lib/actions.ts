@@ -58,11 +58,9 @@ export async function createStudent(formData: FormData) {
     id: formData.get('id'),
     firstname: formData.get('firstname'),
     lastname: formData.get('lastname'),
-    // gender: formData.get('gender'),
     dateofbirth: formData.get('dateofbirth'),
     address: formData.get('address'),
     postalcode: formData.get('postalcode'),
-    // zone: formData.get('zone'),
     class_id: formData.get('class_id'),
     parent_id: formData.get('parent_id'),
   });
@@ -168,4 +166,33 @@ export async function updateStudent(student_id: string, formData: FormData) {
 
   revalidatePath('/dashboard/students');
   redirect('/dashboard/students');
+}
+
+// Use Zod to update the expected types
+const UpdateParent = ParentFormSchema
+
+// Update Parent
+export async function updateParent(parent_id: string, formData: FormData) {
+  const { id, username, password, firstname, lastname, phone } = UpdateParent.parse({
+    id: formData.get('id'),
+    username: formData.get('username'),
+    password: formData.get('password'),
+    firstname: formData.get('firstname'),
+    lastname: formData.get('lastname'),
+    phone: formData.get('phone'),
+  });
+
+  await sql`
+    UPDATE parents
+    SET
+      username = ${username},
+      password = ${password},
+      firstname = ${firstname},
+      lastname = ${lastname},
+      phone = ${phone}
+    WHERE id = ${id}
+  `;
+
+  revalidatePath('/dashboard/parents');
+  redirect('/dashboard/parents');
 }

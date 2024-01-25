@@ -11,6 +11,7 @@ import {
   ParentsTable,
   TeachersTable,
   StudentForm,
+  ParentForm,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
@@ -310,8 +311,6 @@ export async function fetchStudentsPages(query: string) {
 }
 
 // Students
-// lib/data.ts
-
 export async function fetchStudentById(id: string) {
   noStore();
 
@@ -428,6 +427,37 @@ export async function fetchFilteredTeachers(query: string, currentPage: number) 
   }
 }
 
+export async function fetchParentById(id: string) {
+  noStore();
+
+  try {
+    const data = await sql<ParentForm>`
+      SELECT
+        parents.id,
+        parents.username,
+        parents.password,
+        parents.firstname,
+        parents.lastname,
+        parents.phone
+      FROM parents
+      WHERE parents.id = ${id};
+    `;
+
+    // Extract the first row from the result
+    const parent = data.rows[0];
+
+    if (!parent) {
+      throw new Error('Parent not found');
+    }
+
+    return parent;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch parent.');
+  }
+}
+
+// Teachers
 export async function fetchTeachersPages(query: string) {
   noStore();
 
