@@ -407,6 +407,7 @@ export async function fetchFilteredTeachers(query: string, currentPage: number) 
         teachers.id,
         teachers.firstname,
         teachers.lastname,
+        teachers.username,
         teachers.class_id,
         CONCAT(teachers.firstname, ' ', teachers.lastname) AS name
       FROM teachers
@@ -414,6 +415,7 @@ export async function fetchFilteredTeachers(query: string, currentPage: number) 
         teachers.firstname ILIKE ${`%${query}%`} OR
         teachers.lastname ILIKE ${`%${query}%`} OR
         teachers.phone ILIKE ${`%${query}%`} OR
+        teachers.username ILIKE ${`%${query}%`} OR
         teachers.class_id ILIKE ${`%${query}%`} OR
         CONCAT(teachers.firstname, ' ', teachers.lastname) ILIKE ${`%${query}%`}
       ORDER BY name

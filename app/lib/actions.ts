@@ -196,3 +196,37 @@ export async function updateParent(parent_id: string, formData: FormData) {
   revalidatePath('/dashboard/parents');
   redirect('/dashboard/parents');
 }
+
+// For Form validation
+const TeacherFormSchema = z.object({
+  id: z.string(),
+  username: z.string(),
+  password: z.string(),
+  firstname: z.string(),
+  lastname: z.string(),
+  phone: z.string(),
+});
+
+// Create Teacher
+const CreateTeacher = TeacherFormSchema;
+
+export async function createTeacher(formData: FormData) {
+  const { id, username, password, firstname, lastname, phone } = CreateTeacher.parse({
+    id: formData.get('id'),
+    username: formData.get('username'),
+    password: formData.get('password'),
+    firstname: formData.get('firstname'),
+    lastname: formData.get('lastname'),
+    phone: formData.get('phone'),
+  });
+
+  // Store data into the database
+  await sql`
+    INSERT INTO teachers (id, username, password, firstname, lastname, phone)
+    VALUES (${id}, ${username}, ${password}, ${firstname}, ${lastname}, ${phone})
+  `;
+
+  // Refresh data and redirect back to the parents page
+  revalidatePath('/dashboard/teachers');
+  redirect('/dashboard/teachers');
+}

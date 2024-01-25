@@ -156,8 +156,6 @@ export type Teacher = {
   password: string;
   firstname: string;
   lastname: string;
-  // gender: string;
-  DOB: Date;
   phone: string;
   class_id: string;
 };
@@ -166,6 +164,7 @@ export type TeachersTable = {
   id: string;
   firstname: string;
   lastname: string;
+  username: string;
   class_id: string;
 };
 
