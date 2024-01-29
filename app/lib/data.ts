@@ -253,10 +253,8 @@ export async function getUser(email: string) {
 }
 
 // Students
-export async function fetchFilteredStudents(
-  query: string,
-  currentPage: number,
-) {
+
+export async function fetchFilteredStudents(query: string, currentPage: number) {
   noStore();
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -267,19 +265,20 @@ export async function fetchFilteredStudents(
         students.id,
         students.firstname,
         students.lastname,
-        students.address,
         students.class_id,
         students.parent_id,
+        CONCAT(students.firstname, ' ', students.lastname) AS name,
         CONCAT(parents.firstname, ' ', parents.lastname) AS parent_name
       FROM students
-      LEFT JOIN parents ON students.parent_id = parents.id
+      LEFT JOIN parents ON students.parent_id::VARCHAR = parents.id::VARCHAR
       WHERE
         students.firstname ILIKE ${`%${query}%`} OR
         students.lastname ILIKE ${`%${query}%`} OR
-        students.address ILIKE ${`%${query}%`} OR
         students.class_id ILIKE ${`%${query}%`} OR
+        students.parent_id::VARCHAR ILIKE ${`%${query}%`} OR
+        CONCAT(students.firstname, ' ', students.lastname) ILIKE ${`%${query}%`} OR
         CONCAT(parents.firstname, ' ', parents.lastname) ILIKE ${`%${query}%`}
-      ORDER BY students.firstname ASC, students.lastname ASC
+      ORDER BY name
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 
@@ -296,13 +295,10 @@ export async function fetchStudentsPages(query: string) {
   try {
     const count = await sql`SELECT COUNT(*)
       FROM students
-      JOIN parents ON students.parent_id = parents.id
       WHERE
-        students.firstname ILIKE ${`%${query}%`} OR
-        students.lastname ILIKE ${`%${query}%`} OR
-        students.address ILIKE ${`%${query}%`} OR
-        students.class_id ILIKE ${`%${query}%`} OR
-        CONCAT(parents.firstname, ' ', parents.lastname) ILIKE ${`%${query}%`}`;
+        CONCAT(firstname, ' ', lastname) ILIKE ${`%${query}%`} OR
+        address ILIKE ${`%${query}%`}
+    `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
     return totalPages;
@@ -312,7 +308,6 @@ export async function fetchStudentsPages(query: string) {
   }
 }
 
-// Students
 export async function fetchStudentById(id: string) {
   noStore();
 
@@ -357,6 +352,7 @@ export async function fetchFilteredParents(query: string, currentPage: number) {
         parents.id,
         parents.firstname,
         parents.lastname,
+        parents.country_code,
         parents.phone,
         parents.username,
         CONCAT(parents.firstname, ' ', parents.lastname) AS name
@@ -364,6 +360,7 @@ export async function fetchFilteredParents(query: string, currentPage: number) {
       WHERE
         parents.firstname ILIKE ${`%${query}%`} OR
         parents.lastname ILIKE ${`%${query}%`} OR
+        parents.country_code ILIKE ${`%${query}%`} OR
         parents.phone ILIKE ${`%${query}%`} OR
         parents.username ILIKE ${`%${query}%`} OR
         CONCAT(parents.firstname, ' ', parents.lastname) ILIKE ${`%${query}%`}
@@ -397,40 +394,6 @@ export async function fetchParentsPages(query: string) {
   }
 }
 
-// Teachers
-export async function fetchFilteredTeachers(query: string, currentPage: number) {
-  noStore();
-
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE; // Assuming ITEMS_PER_PAGE is defined somewhere
-
-  try {
-    const teachers = await sql<TeachersTable>`
-      SELECT
-        teachers.id,
-        teachers.firstname,
-        teachers.lastname,
-        teachers.username,
-        teachers.class_id,
-        CONCAT(teachers.firstname, ' ', teachers.lastname) AS name
-      FROM teachers
-      WHERE
-        teachers.firstname ILIKE ${`%${query}%`} OR
-        teachers.lastname ILIKE ${`%${query}%`} OR
-        teachers.phone ILIKE ${`%${query}%`} OR
-        teachers.username ILIKE ${`%${query}%`} OR
-        teachers.class_id ILIKE ${`%${query}%`} OR
-        CONCAT(teachers.firstname, ' ', teachers.lastname) ILIKE ${`%${query}%`}
-      ORDER BY name
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
-    `;
-
-    return teachers.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch teachers.');
-  }
-}
-
 export async function fetchParentById(id: string) {
   noStore();
 
@@ -442,6 +405,7 @@ export async function fetchParentById(id: string) {
         parents.password,
         parents.firstname,
         parents.lastname,
+        parents.country_code,
         parents.phone
       FROM parents
       WHERE parents.id = ${id};
@@ -462,6 +426,38 @@ export async function fetchParentById(id: string) {
 }
 
 // Teachers
+export async function fetchFilteredTeachers(query: string, currentPage: number) {
+  noStore();
+
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE; // Assuming ITEMS_PER_PAGE is defined somewhere
+
+  try {
+    const teachers = await sql<TeachersTable>`
+      SELECT
+        teachers.id,
+        teachers.firstname,
+        teachers.lastname,
+        teachers.username,
+        teachers.class_id,
+        CONCAT(teachers.firstname, ' ', teachers.lastname) AS name
+      FROM teachers
+      WHERE
+        teachers.firstname ILIKE ${`%${query}%`} OR
+        teachers.lastname ILIKE ${`%${query}%`} OR
+        teachers.username ILIKE ${`%${query}%`} OR
+        teachers.class_id ILIKE ${`%${query}%`} OR
+        CONCAT(teachers.firstname, ' ', teachers.lastname) ILIKE ${`%${query}%`}
+      ORDER BY name
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return teachers.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch teachers.');
+  }
+}
+
 export async function fetchTeachersPages(query: string) {
   noStore();
 
@@ -493,6 +489,7 @@ export async function fetchTeacherById(id: string) {
         teachers.password,
         teachers.firstname,
         teachers.lastname,
+        teachers.country_code,
         teachers.phone,
         teachers.class_id
       FROM teachers

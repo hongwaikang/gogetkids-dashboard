@@ -94,18 +94,16 @@ export type Student = {
   lastname: string;
   dateofbirth: Date;
   address: string;
-  // status: 'In School' | 'In Bus' | 'Dismissed' | 'Picked Up';
   postalcode: string;
-  //zone: string;
   class_id: string;
   parent_id: string;
-  // schedule: schedule[];
 };
 
 export type StudentsTable = {
-  id: string;
+  id: number;
   firstname: string;
   lastname: string;
+  address: string;
   class_id: string;
   parent_id: string;
   parent_name: string;
@@ -129,6 +127,7 @@ export type Parent = {
   password: string;
   firstname: string;
   lastname: string;
+  country_code: string;
   phone: string;
 };
 
@@ -137,6 +136,7 @@ export type ParentsTable = {
   firstname: string;
   lastname: string;
   phone: string;
+  country_code: string;
   username: string;
 };
 
@@ -146,6 +146,7 @@ export type ParentForm = {
   password: string;
   firstname: string;
   lastname: string;
+  country_code: string;
   phone: string;
 }
 
@@ -165,6 +166,7 @@ export type TeachersTable = {
   firstname: string;
   lastname: string;
   username: string;
+  phone: string;
   class_id: string;
 };
 
@@ -174,6 +176,7 @@ export type TeacherForm = {
   password: string;
   firstname: string;
   lastname: string;
+  country_code: string;
   phone: string;
   class_id: string;
 }

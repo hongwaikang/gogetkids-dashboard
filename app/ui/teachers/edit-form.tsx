@@ -117,6 +117,26 @@ export default function EditTeacherForm({
           </div>
         </div>
 
+        {/* Country Code */}
+        <div className="mb-4">
+          <label htmlFor="country_code" className="mb-2 block text-sm font-medium">
+            Country Code
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="country_code"
+                name="country_code"
+                type="text"
+                defaultValue={teacher.country_code}
+                placeholder="Enter Country Code"
+                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Phone */}
         <div className="mb-4">
           <label htmlFor="amount" className="mb-2 block text-sm font-medium">

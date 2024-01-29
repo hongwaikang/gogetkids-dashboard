@@ -7,7 +7,7 @@ export default function Form() {
   return (
     <form action={createStudent}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        {/* Student ID */}
+        {/* Student ID
         <div className="mb-4">
           <label htmlFor="id" className="mb-2 block text-sm font-medium">
             Student ID
@@ -25,6 +25,7 @@ export default function Form() {
             </div>
           </div>
         </div>
+        */}
 
         {/* First Name */}
         <div className="mb-4">
@@ -109,7 +110,7 @@ export default function Form() {
               id="postalcode"
               name="postalcode"
               type="text"
-              maxLength={10}
+              maxLength={6}
               placeholder="Enter Postal Code"
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
               required

@@ -53,7 +53,7 @@ export default async function ParentsTable({
                     {parent.username} {/* Display Email */}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {parent.phone}
+                    {`${parent.country_code} ${parent.phone}`}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">

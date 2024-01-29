@@ -16,8 +16,8 @@ export default function EditParentForm({
   return (
     <form action={updateParentWithId}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
-          {/* Parent ID */}
-		<div className="mb-4">
+        {/* Parent ID */}
+        <div className="mb-4">
           <label htmlFor="id" className="mb-2 block text-sm font-medium">
             Parent ID
           </label>
@@ -27,7 +27,7 @@ export default function EditParentForm({
                 id="id"
                 name="id"
                 type="text"
-				defaultValue={parent.id}
+                defaultValue={parent.id}
                 readOnly
                 placeholder="Enter Parent ID"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500 bg-gray-200"
@@ -110,6 +110,26 @@ export default function EditParentForm({
                 type="text"
 								defaultValue={parent.lastname}
                 placeholder="Enter Last Name"
+                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Country Code */}
+        <div className="mb-4">
+          <label htmlFor="country_code" className="mb-2 block text-sm font-medium">
+            Country Code
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <div className="relative">
+              <input
+                id="country_code"
+                name="country_code"
+                type="text"
+								defaultValue={parent.country_code}
+                placeholder="Enter Country Code"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                 required
               />

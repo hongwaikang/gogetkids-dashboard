@@ -141,26 +141,11 @@ const StudentFormSchema = z.object({
 });
 
 // Create Student
-const CreateStudent = StudentFormSchema;
-
-// This is temporary until @types/react-dom is updated
-export type StudentState = {
-  errors?: {
-    id?: string[];
-    firstname?: string[];
-    lastname?: string[];
-    dateofbirth?: string[];
-    address?: string[];
-    postalcode?: string[];
-    class_id?: string[];
-    parent_id?: string[];
-  };
-  message?: string | null;
-};
+const CreateStudent = StudentFormSchema.omit({ id: true});
 
 export async function createStudent(formData: FormData) {
-  const { id, firstname, lastname, dateofbirth, postalcode, address, class_id, parent_id } = CreateStudent.parse({
-    id: formData.get('id'),
+  const {firstname, lastname, dateofbirth, postalcode, address, class_id, parent_id } = CreateStudent.parse({
+    //id: formData.get('id'),
     firstname: formData.get('firstname'),
     lastname: formData.get('lastname'),
     dateofbirth: formData.get('dateofbirth'),
@@ -172,8 +157,8 @@ export async function createStudent(formData: FormData) {
 
   // Store data into the database
   await sql`
-    INSERT INTO students (id, firstname, lastname, dateofbirth, address, postalcode, class_id, parent_id)
-    VALUES (${id}, ${firstname}, ${lastname}, ${dateofbirth}, ${address}, ${postalcode}, ${class_id}, ${parent_id})
+    INSERT INTO students (firstname, lastname, dateofbirth, address, postalcode, class_id, parent_id)
+    VALUES (${firstname}, ${lastname}, ${dateofbirth}, ${address}, ${postalcode}, ${class_id}, ${parent_id})
   `;
 
   // Refresh data and redirect back to the students page
@@ -182,11 +167,10 @@ export async function createStudent(formData: FormData) {
 }
 
 // Update Student
-const UpdateStudent = StudentFormSchema;
+const UpdateStudent = StudentFormSchema.omit({ id: true});;
 
 export async function updateStudent(student_id: string, formData: FormData) {
-  const { id, firstname, lastname, dateofbirth, address, postalcode, class_id, parent_id } = UpdateStudent.parse({
-    id: formData.get('id'),
+  const {firstname, lastname, dateofbirth, address, postalcode, class_id, parent_id } = UpdateStudent.parse({
     firstname: formData.get('firstname'),
     lastname: formData.get('lastname'),
     dateofbirth: formData.get('dateofbirth'),
@@ -207,7 +191,7 @@ export async function updateStudent(student_id: string, formData: FormData) {
       postalcode = ${postalcode},
       class_id = ${class_id},
       parent_id = ${parent_id}
-    WHERE id = ${id}
+    WHERE id = ${student_id}
   `;
   } catch (error) {
     return { message: 'Database Error: Failed to Update Student.' };
@@ -226,26 +210,28 @@ const ParentFormSchema = z.object({
   password: z.string(),
   firstname: z.string(),
   lastname: z.string(),
+  country_code: z.string(),
   phone: z.string(),
 });
 
 // Create Parent
-const CreateParent = ParentFormSchema;
+const CreateParent = ParentFormSchema.omit({ id: true});
 
 export async function createParent(formData: FormData) {
-  const { id, username, password, firstname, lastname, phone } = CreateParent.parse({
-    id: formData.get('id'),
+  const {username, password, firstname, lastname, country_code, phone } = CreateParent.parse({
+    //id: formData.get('id'),
     username: formData.get('username'),
     password: formData.get('password'),
     firstname: formData.get('firstname'),
     lastname: formData.get('lastname'),
+    country_code: formData.get('country_code'),
     phone: formData.get('phone'),
   });
 
   // Store data into the database
   await sql`
-    INSERT INTO parents (id, username, password, firstname, lastname, phone)
-    VALUES (${id}, ${username}, ${password}, ${firstname}, ${lastname}, ${phone})
+    INSERT INTO parents (username, password, firstname, lastname, country_code, phone)
+    VALUES (${username}, ${password}, ${firstname}, ${lastname}, ${country_code} ,${phone})
   `;
 
   // Refresh data and redirect back to the parents page
@@ -255,16 +241,16 @@ export async function createParent(formData: FormData) {
 // -----------------------------------------------------------------------------------
 
 // Update Parent
-const UpdateParent = ParentFormSchema
-
+const UpdateParent = ParentFormSchema.omit({ id: true});
 
 export async function updateParent(parent_id: string, formData: FormData) {
-  const { id, username, password, firstname, lastname, phone } = UpdateParent.parse({
-    id: formData.get('id'),
+  const {username, password, firstname, lastname, country_code, phone } = UpdateParent.parse({
+    //id: formData.get('id'),
     username: formData.get('username'),
     password: formData.get('password'),
     firstname: formData.get('firstname'),
     lastname: formData.get('lastname'),
+    country_code: formData.get('country_code'),
     phone: formData.get('phone'),
   });
 
@@ -275,8 +261,9 @@ export async function updateParent(parent_id: string, formData: FormData) {
       password = ${password},
       firstname = ${firstname},
       lastname = ${lastname},
+      country_code = ${country_code},
       phone = ${phone}
-    WHERE id = ${id}
+    WHERE id = ${parent_id}
   `;
 
   revalidatePath('/dashboard/parents');
@@ -292,28 +279,30 @@ const TeacherFormSchema = z.object({
   password: z.string(),
   firstname: z.string(),
   lastname: z.string(),
+  country_code: z.string(),
   phone: z.string(),
   class_id: z.string(),
 });
 
 // Create Teacher
-const CreateTeacher = TeacherFormSchema;
+const CreateTeacher = TeacherFormSchema.omit({ id: true});;
 
 export async function createTeacher(formData: FormData) {
-  const { id, username, password, firstname, lastname, phone, class_id} = CreateTeacher.parse({
-    id: formData.get('id'),
+  const {username, password, firstname, lastname, country_code, phone, class_id} = CreateTeacher.parse({
+    //id: formData.get('id'),
     username: formData.get('username'),
     password: formData.get('password'),
     firstname: formData.get('firstname'),
     lastname: formData.get('lastname'),
+    country_code: formData.get('country_code'),
     phone: formData.get('phone'),
     class_id: formData.get('class_id'),
   });
 
   // Store data into the database
   await sql`
-    INSERT INTO teachers (id, username, password, firstname, lastname, phone, class_id)
-    VALUES (${id}, ${username}, ${password}, ${firstname}, ${lastname}, ${phone}, ${class_id})
+    INSERT INTO teachers (username, password, firstname, lastname, country_code, phone, class_id)
+    VALUES (${username}, ${password}, ${firstname}, ${lastname}, ${country_code}, ${phone}, ${class_id})
   `;
 
   // Refresh data and redirect back to the parents page
@@ -322,15 +311,16 @@ export async function createTeacher(formData: FormData) {
 }
 
 // Update Teacher
-const UpdateTeacher = TeacherFormSchema
+const UpdateTeacher = TeacherFormSchema.omit({ id: true});
 
 export async function updateTeacher(teacher_id: string, formData: FormData) {
-  const { id, username, password, firstname, lastname, phone, class_id } = UpdateTeacher.parse({
-    id: formData.get('id'),
+  const {username, password, firstname, lastname, country_code, phone, class_id} = UpdateTeacher.parse({
+    //id: formData.get('id'),
     username: formData.get('username'),
     password: formData.get('password'),
     firstname: formData.get('firstname'),
     lastname: formData.get('lastname'),
+    country_code: formData.get('country_code'),
     phone: formData.get('phone'),
     class_id: formData.get('class_id'),
   });
@@ -342,9 +332,10 @@ export async function updateTeacher(teacher_id: string, formData: FormData) {
       password = ${password},
       firstname = ${firstname},
       lastname = ${lastname},
+      country_code = ${country_code},
       phone = ${phone},
       class_id = ${class_id}
-    WHERE id = ${id}
+    WHERE id = ${teacher_id}
   `;
 
   revalidatePath('/dashboard/teachers');

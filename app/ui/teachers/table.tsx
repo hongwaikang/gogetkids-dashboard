@@ -27,7 +27,7 @@ export default async function TeachersTable({
                   Email
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Class
+                  Form Class
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Actions</span>

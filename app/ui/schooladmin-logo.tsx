@@ -7,7 +7,7 @@ export default function SchoolAdminLogo() {
       className={`${lusitana.className} flex flex-row items-center leading-none text-white`}
     >
       <AdminPanelSettingsIcon className="h-12 w-12" />
-      <p className="text-[36px]">School Admin</p>
+      <p className="text-[50px]">School Admin</p>
     </div>
   );
 }
