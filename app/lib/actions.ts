@@ -5,6 +5,10 @@ import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
+// For password hashing
+const bcrypt = require('bcrypt');
+const saltRounds = 10; // Adjust the number of salt rounds as needed
+
 // ---------------------------INVOICE--------------------------------------------
 // For Form validation
 const InvoiceFormSchema = z.object({
@@ -228,10 +232,13 @@ export async function createParent(formData: FormData) {
     phone: formData.get('phone'),
   });
 
+  // Hash the password using bcrypt
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
   // Store data into the database
   await sql`
     INSERT INTO parents (username, password, firstname, lastname, country_code, phone)
-    VALUES (${username}, ${password}, ${firstname}, ${lastname}, ${country_code} ,${phone})
+    VALUES (${username}, ${hashedPassword}, ${firstname}, ${lastname}, ${country_code} ,${phone})
   `;
 
   // Refresh data and redirect back to the parents page
@@ -254,11 +261,14 @@ export async function updateParent(parent_id: string, formData: FormData) {
     phone: formData.get('phone'),
   });
 
+  // Hash the password using bcrypt
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
   await sql`
     UPDATE parents
     SET
       username = ${username},
-      password = ${password},
+      password = ${hashedPassword},
       firstname = ${firstname},
       lastname = ${lastname},
       country_code = ${country_code},
@@ -285,10 +295,10 @@ const TeacherFormSchema = z.object({
 });
 
 // Create Teacher
-const CreateTeacher = TeacherFormSchema.omit({ id: true});;
+const CreateTeacher = TeacherFormSchema.omit({ id: true });
 
 export async function createTeacher(formData: FormData) {
-  const {username, password, firstname, lastname, country_code, phone, class_id} = CreateTeacher.parse({
+  const { username, password, firstname, lastname, country_code, phone, class_id } = CreateTeacher.parse({
     //id: formData.get('id'),
     username: formData.get('username'),
     password: formData.get('password'),
@@ -299,16 +309,20 @@ export async function createTeacher(formData: FormData) {
     class_id: formData.get('class_id'),
   });
 
-  // Store data into the database
+  // Hash the password using bcrypt
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  // Store data into the database with the hashed password
   await sql`
     INSERT INTO teachers (username, password, firstname, lastname, country_code, phone, class_id)
-    VALUES (${username}, ${password}, ${firstname}, ${lastname}, ${country_code}, ${phone}, ${class_id})
+    VALUES (${username}, ${hashedPassword}, ${firstname}, ${lastname}, ${country_code}, ${phone}, ${class_id})
   `;
 
-  // Refresh data and redirect back to the parents page
+  // Refresh data and redirect back to the teachers page
   revalidatePath('/dashboard/teachers');
   redirect('/dashboard/teachers');
 }
+
 
 // Update Teacher
 const UpdateTeacher = TeacherFormSchema.omit({ id: true});
@@ -325,11 +339,14 @@ export async function updateTeacher(teacher_id: string, formData: FormData) {
     class_id: formData.get('class_id'),
   });
 
+  // Hash the password using bcrypt
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
   await sql`
     UPDATE teachers
     SET
       username = ${username},
-      password = ${password},
+      password = ${hashedPassword},
       firstname = ${firstname},
       lastname = ${lastname},
       country_code = ${country_code},
