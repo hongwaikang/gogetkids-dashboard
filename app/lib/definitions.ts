@@ -100,7 +100,7 @@ export type Student = {
 };
 
 export type StudentsTable = {
-  id: number;
+  id: string;
   firstname: string;
   lastname: string;
   address: string;
