@@ -31,6 +31,7 @@ export default function EditTeacherForm({
                 readOnly
                 placeholder="Enter Teacher ID"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500 bg-gray-200"
+                required
               />
             </div>
           </div>
@@ -50,6 +51,7 @@ export default function EditTeacherForm({
 								defaultValue={teacher.username}
                 placeholder="Enter email"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>
@@ -69,6 +71,7 @@ export default function EditTeacherForm({
 								defaultValue={teacher.password}
                 placeholder="Enter password"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>
@@ -88,6 +91,7 @@ export default function EditTeacherForm({
 								defaultValue={teacher.firstname}
                 placeholder="Enter First Name"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>
@@ -107,6 +111,7 @@ export default function EditTeacherForm({
 								defaultValue={teacher.lastname}
                 placeholder="Enter Last Name"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>
@@ -126,6 +131,7 @@ export default function EditTeacherForm({
 								defaultValue={teacher.phone}
                 placeholder="Enter Phone Number"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>

@@ -20,6 +20,7 @@ export default function Form() {
                 type="text"
                 placeholder="Enter Student ID"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>
@@ -38,6 +39,7 @@ export default function Form() {
                 type="text"
                 placeholder="Enter First Name"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>
@@ -56,28 +58,11 @@ export default function Form() {
                 type="text"
                 placeholder="Enter Last Name"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>
         </div>
-
-        {/*Gender
-        <div className="mb-4">
-          <label htmlFor="gender" className="mb-2 block text-sm font-medium">
-            Gender
-          </label>
-          <div className="relative mt-2 rounded-md">
-            <select
-              id="gender"
-              name="gender"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
-            >
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-          </div>
-        </div>
-        */}
 
         {/* Date of Birth */}
         <div className="mb-4">
@@ -90,6 +75,7 @@ export default function Form() {
               name="dateofbirth"
               type="date"
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
+              required
             />
           </div>
         </div>
@@ -107,6 +93,7 @@ export default function Form() {
                 type="text"
                 placeholder="Enter Block No. and Street"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>
@@ -125,30 +112,10 @@ export default function Form() {
               maxLength={10}
               placeholder="Enter Postal Code"
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
+              required
             />
           </div>
         </div>
-
-        {/* Zone
-        <div className="mb-4">
-          <label htmlFor="zone" className="mb-2 block text-sm font-medium">
-            Select a Zone
-          </label>
-          <div className="relative mt-2 rounded-md">
-            <select
-              id="zone"
-              name="zone"
-              className="peer block w-full cursor-pointer rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
-            >
-              <option value="North">North</option>
-              <option value="South">South</option>
-              <option value="East">East</option>
-              <option value="West">West</option>
-              <option value="City">City</option>
-            </select>
-          </div>
-        </div>
-        */}
 
         {/* Class ID */}
         <div className="mb-4">

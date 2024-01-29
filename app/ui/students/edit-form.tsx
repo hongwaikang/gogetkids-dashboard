@@ -33,6 +33,7 @@ export default function EditStudentForm({
                 readOnly
                 placeholder="Enter Student ID"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500 bg-gray-200"
+                required
               />
             </div>
           </div>
@@ -52,6 +53,7 @@ export default function EditStudentForm({
 								defaultValue={student.firstname}
                 placeholder="Enter First Name"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>
@@ -71,6 +73,7 @@ export default function EditStudentForm({
 								defaultValue={student.lastname}
                 placeholder="Enter Last Name"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>
@@ -88,6 +91,7 @@ export default function EditStudentForm({
               type="date"
 							defaultValue={formatteddateofbirth}
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
+              required
             />
           </div>
         </div>
@@ -106,6 +110,7 @@ export default function EditStudentForm({
 								defaultValue={student.address}
                 placeholder="Enter Block No. and Street"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                required
               />
             </div>
           </div>
@@ -125,6 +130,7 @@ export default function EditStudentForm({
 							defaultValue={student.postalcode}
               placeholder="Enter Postal Code"
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
+              required
             />
           </div>
         </div>

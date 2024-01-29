@@ -5,53 +5,158 @@ import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
+// ---------------------------INVOICE--------------------------------------------
 // For Form validation
 const InvoiceFormSchema = z.object({
   id: z.string(),
-  customerId: z.string(),
-  amount: z.coerce.number(),
-  status: z.enum(['pending', 'paid']),
+  customerId: z.string({
+    invalid_type_error: 'Please select a customer.',
+  }),
+  amount: z.coerce.number()
+  .gt(0, { message: 'Please enter an amount greater than $0.' }),
+  status: z.enum(['pending', 'paid'], {
+    invalid_type_error: 'Please select an invoice status.',
+  }),
   date: z.string(),
 });
 
 // Create Invoice
 const CreateInvoice = InvoiceFormSchema.omit({ id: true, date: true });
 
-export async function createInvoice(formData: FormData) {
-    const { customerId, amount, status } = CreateInvoice.parse({
-      customerId: formData.get('customerId'),
-      amount: formData.get('amount'),
-      status: formData.get('status'),
-    });
+// This is temporary until @types/react-dom is updated
+export type State = {
+  errors?: {
+    customerId?: string[];
+    amount?: string[];
+    status?: string[];
+  };
+  message?: string | null;
+};
 
-    const amountInCents = amount * 100;
-    const date = new Date().toISOString().split('T')[0];
+// Create Invoice
+export async function createInvoice(prevState: State, formData: FormData) {
+  // Validate form using Zod
+  const validatedFields = CreateInvoice.safeParse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  });
 
-    // Store data into database
+  // If form validation fails, return errors early. Otherwise, continue.
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      message: 'Missing Fields. Failed to Create Invoice.',
+    };
+  }
+
+  // Prepare data for insertion into the database
+  const { customerId, amount, status } = validatedFields.data;
+  const amountInCents = amount * 100;
+  const date = new Date().toISOString().split('T')[0];
+
+  // Insert data into the database
+  try {
     await sql`
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+      INSERT INTO invoices (customer_id, amount, status, date)
+      VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
     `;
+  } catch (error) {
+    // If a database error occurs, return a more specific error.
+    return {
+      message: 'Database Error: Failed to Create Invoice.',
+    };
+  }
 
-    // Refresh data and redirect back to invoices page
-    revalidatePath('/dashboard/invoices');
-    redirect('/dashboard/invoices');
+  // Revalidate the cache for the invoices page and redirect the user.
+  revalidatePath('/dashboard/invoices');
+  redirect('/dashboard/invoices');
 }
 
+// Update Invoice
+const UpdateInvoice = InvoiceFormSchema.omit({ id: true, date: true });
+
+export async function updateInvoice(id: string, formData: FormData) {
+  const { customerId, amount, status } = UpdateInvoice.parse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  });
+
+  const amountInCents = amount * 100;
+
+  try {
+    await sql`
+        UPDATE invoices
+        SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+        WHERE id = ${id}
+      `;
+  } catch (error) {
+    return { message: 'Database Error: Failed to Update Invoice.' };
+  }
+
+  revalidatePath('/dashboard/invoices');
+  redirect('/dashboard/invoices');
+}
+
+// Delete Invoice
+export async function deleteInvoice(id: string) {
+
+  try {
+    await sql`DELETE FROM invoices WHERE id = ${id}`;
+    revalidatePath('/dashboard/invoices');
+    return { message: 'Deleted Invoice.' };
+  } catch (error) {
+    return { message: 'Database Error: Failed to Delete Invoice.' };
+  }
+}
+
+// -------------------------------------------------------------------------------------
+
+// ------------------------------------STUDENT-----------------------------------------
 // For Form validation
 const StudentFormSchema = z.object({
   id: z.string(),
-  firstname: z.string(),
-  lastname: z.string(),
-  dateofbirth: z.string(),
-  address: z.string(),
-  postalcode: z.string(),
-  class_id: z.string(),
-  parent_id: z.string(),
+  firstname: z.string({
+    invalid_type_error: 'Please enter a valid first name.',
+  }),
+  lastname: z.string({
+    invalid_type_error: 'Please enter a valid last name.',
+  }),
+  dateofbirth: z.string({
+    invalid_type_error: 'Please enter a valid date of birth.',
+  }),
+  address: z.string({
+    invalid_type_error: 'Please enter a valid address.',
+  }),
+  postalcode: z.string({
+    invalid_type_error: 'Please enter a valid postal code.',
+  }),
+  class_id: z.string({
+    invalid_type_error: 'Please select a valid class.',
+  }),
+  parent_id: z.string({
+    invalid_type_error: 'Please select a valid parent.',
+  }),
 });
 
 // Create Student
 const CreateStudent = StudentFormSchema;
+
+// This is temporary until @types/react-dom is updated
+export type StudentState = {
+  errors?: {
+    id?: string[];
+    firstname?: string[];
+    lastname?: string[];
+    dateofbirth?: string[];
+    address?: string[];
+    postalcode?: string[];
+    class_id?: string[];
+    parent_id?: string[];
+  };
+  message?: string | null;
+};
 
 export async function createStudent(formData: FormData) {
   const { id, firstname, lastname, dateofbirth, postalcode, address, class_id, parent_id } = CreateStudent.parse({
@@ -76,6 +181,44 @@ export async function createStudent(formData: FormData) {
   redirect('/dashboard/students');
 }
 
+// Update Student
+const UpdateStudent = StudentFormSchema;
+
+export async function updateStudent(student_id: string, formData: FormData) {
+  const { id, firstname, lastname, dateofbirth, address, postalcode, class_id, parent_id } = UpdateStudent.parse({
+    id: formData.get('id'),
+    firstname: formData.get('firstname'),
+    lastname: formData.get('lastname'),
+    dateofbirth: formData.get('dateofbirth'),
+    address: formData.get('address'),
+    postalcode: formData.get('postalcode'),
+    class_id: formData.get('class_id'),
+    parent_id: formData.get('parent_id'),
+  });
+
+  try {
+    await sql`
+    UPDATE students
+    SET
+      firstname = ${firstname},
+      lastname = ${lastname},
+      dateofbirth = ${dateofbirth},
+      address = ${address},
+      postalcode = ${postalcode},
+      class_id = ${class_id},
+      parent_id = ${parent_id}
+    WHERE id = ${id}
+  `;
+  } catch (error) {
+    return { message: 'Database Error: Failed to Update Student.' };
+  }
+
+  revalidatePath('/dashboard/students');
+  redirect('/dashboard/students');
+}
+// -----------------------------------------------------------------------------------
+
+// ------------------------------------PARENT-----------------------------------
 // For Form validation
 const ParentFormSchema = z.object({
   id: z.string(),
@@ -109,69 +252,12 @@ export async function createParent(formData: FormData) {
   revalidatePath('/dashboard/parents');
   redirect('/dashboard/parents');
 }
-
-// Update Invoice
-// Use Zod to update the expected types
-const UpdateInvoice = InvoiceFormSchema.omit({ id: true, date: true });
-
-// ...
-
-export async function updateInvoice(id: string, formData: FormData) {
-  const { customerId, amount, status } = UpdateInvoice.parse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
-
-  const amountInCents = amount * 100;
-
-  await sql`
-    UPDATE invoices
-    SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-    WHERE id = ${id}
-  `;
-
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
-}
-
-// Use Zod to update the expected types
-const UpdateStudent = StudentFormSchema
-
-// Update Student
-export async function updateStudent(student_id: string, formData: FormData) {
-  const { id, firstname, lastname, dateofbirth, address, postalcode, class_id, parent_id } = UpdateStudent.parse({
-    id: formData.get('id'),
-    firstname: formData.get('firstname'),
-    lastname: formData.get('lastname'),
-    dateofbirth: formData.get('dateofbirth'),
-    address: formData.get('address'),
-    postalcode: formData.get('postalcode'),
-    class_id: formData.get('class_id'),
-    parent_id: formData.get('parent_id'),
-  });
-
-  await sql`
-    UPDATE students
-    SET
-      firstname = ${firstname},
-      lastname = ${lastname},
-      dateofbirth = ${dateofbirth},
-      address = ${address},
-      postalcode = ${postalcode},
-      class_id = ${class_id},
-      parent_id = ${parent_id}
-    WHERE id = ${id}
-  `;
-
-  revalidatePath('/dashboard/students');
-  redirect('/dashboard/students');
-}
-
-// Use Zod to update the expected types
-const UpdateParent = ParentFormSchema
+// -----------------------------------------------------------------------------------
 
 // Update Parent
+const UpdateParent = ParentFormSchema
+
+
 export async function updateParent(parent_id: string, formData: FormData) {
   const { id, username, password, firstname, lastname, phone } = UpdateParent.parse({
     id: formData.get('id'),
@@ -196,7 +282,9 @@ export async function updateParent(parent_id: string, formData: FormData) {
   revalidatePath('/dashboard/parents');
   redirect('/dashboard/parents');
 }
+// ----------------------------------------------------------------------------------
 
+// ------------------------------------TEACHER---------------------------------
 // For Form validation
 const TeacherFormSchema = z.object({
   id: z.string(),
@@ -233,10 +321,9 @@ export async function createTeacher(formData: FormData) {
   redirect('/dashboard/teachers');
 }
 
-// Use Zod to update the expected types
+// Update Teacher
 const UpdateTeacher = TeacherFormSchema
 
-// Update Teacher
 export async function updateTeacher(teacher_id: string, formData: FormData) {
   const { id, username, password, firstname, lastname, phone, class_id } = UpdateTeacher.parse({
     id: formData.get('id'),
