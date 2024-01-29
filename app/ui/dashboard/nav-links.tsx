@@ -4,12 +4,13 @@ import {
   UserGroupIcon,
   DocumentDuplicateIcon,
 } from '@heroicons/react/24/outline';
-import { Groups as GroupsIcon,
-          Groups2 as Groups2Icon,
-          Groups3 as Groups3Icon,
-          Home as HomeIcon
+import {
+  Groups as GroupsIcon,
+  Groups2 as Groups2Icon,
+  Groups3 as Groups3Icon,
+  Home as HomeIcon,
+  ClassOutlined as ClassOutlinedIcon,
 } from '@mui/icons-material';
-
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -29,6 +30,11 @@ const links = [
     name: 'Customers',
     href: '/dashboard/customers',
     icon: UserGroupIcon,
+  },
+  {
+    name: 'Classes',
+    href: '/dashboard/classes',
+    icon: ClassOutlinedIcon,
   },
   {
     name: 'Students',
