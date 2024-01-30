@@ -14,6 +14,7 @@ import {
   ParentForm,
   TeacherForm,
   ClassesTable,
+  ClassForm,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
@@ -504,8 +505,7 @@ export async function fetchTeacherById(id: string) {
         teachers.firstname,
         teachers.lastname,
         teachers.country_code,
-        teachers.phone,
-        teachers.class_id
+        teachers.phone
       FROM teachers
       WHERE teachers.id = ${id};
     `;
@@ -572,5 +572,33 @@ export async function fetchClassesPages(query: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of classes.');
+  }
+}
+
+export async function fetchClassById(id: string) {
+  noStore();
+
+  try {
+    const data = await sql<ClassForm>`
+      SELECT
+        classes.id,
+        classes.name,
+        classes.level,
+        classes.teacher_id
+      FROM classes
+      WHERE classes.id = ${id};
+    `;
+
+    // Extract the first row from the result
+    const class1 = data.rows[0];
+
+    if (!class1) {
+      throw new Error('Class not found');
+    }
+
+    return class1;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch class.');
   }
 }

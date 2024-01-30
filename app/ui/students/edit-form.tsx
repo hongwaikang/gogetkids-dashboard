@@ -30,7 +30,7 @@ export default function EditStudentForm({
                 name="id"
                 type="text"
 								defaultValue={student.id}
-                readOnly
+                disabled
                 placeholder="Enter Student ID"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500 bg-gray-200"
                 required

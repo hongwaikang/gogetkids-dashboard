@@ -1,13 +1,21 @@
+'use client';
+
+import { ClassForm } from '@/app/lib/definitions';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
-import { createClass } from '@/app/lib/actions';
+import { updateClass } from '@/app/lib/actions';
 
-export default function Form() {
+export default function EditClassForm({
+  class1,
+}: {
+  class1: ClassForm;
+}) {
+
+  const updateClassWithId = updateClass.bind(null, class1.id);
 
   return (
-    <form action={createClass}>
+    <form action={updateClassWithId}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
-
         {/* Class ID */}
         <div className="mb-4">
           <label htmlFor="id" className="mb-2 block text-sm font-medium">
@@ -19,8 +27,10 @@ export default function Form() {
                 id="id"
                 name="id"
                 type="text"
+                defaultValue={class1.id}
+                disabled
                 placeholder="Enter Class ID"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500 bg-gray-200"
                 required
               />
             </div>
@@ -39,6 +49,7 @@ export default function Form() {
                 name="name"
                 type="text"
                 placeholder="Enter Class Name"
+                defaultValue={class1.name}
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                 required
               />
@@ -58,6 +69,7 @@ export default function Form() {
                 name="level"
                 type="text"
                 placeholder="Enter Level"
+                defaultValue={class1.level}
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                 required
               />
@@ -77,6 +89,7 @@ export default function Form() {
                 name="teacher_id"
                 type="text"
                 placeholder="Enter Teacher ID"
+                defaultValue={class1.teacher_id}
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
               />
             </div>
@@ -91,7 +104,7 @@ export default function Form() {
         >
           Cancel
         </Link>
-        <Button type="submit">Create Class</Button>
+        <Button type="submit">Edit Class</Button>
       </div>
     </form>
   );

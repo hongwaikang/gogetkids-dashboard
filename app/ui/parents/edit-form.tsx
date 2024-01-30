@@ -28,7 +28,7 @@ export default function EditParentForm({
                 name="id"
                 type="text"
                 defaultValue={parent.id}
-                readOnly
+                disabled
                 placeholder="Enter Parent ID"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500 bg-gray-200"
                 required

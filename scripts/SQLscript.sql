@@ -1,8 +1,8 @@
 -- DROP statements
 DROP TABLE IF EXISTS students;
 DROP TABLE IF EXISTS parents;
-DROP TABLE IF EXISTS teachers;
 DROP TABLE IF EXISTS classes;
+DROP TABLE IF EXISTS teachers;
 DROP TABLE IF EXISTS schools;
 
 -- Students

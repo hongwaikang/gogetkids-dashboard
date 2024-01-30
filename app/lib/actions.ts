@@ -360,22 +360,24 @@ const ClassFormSchema = z.object({
   id: z.string(),
   name: z.string(),
   level: z.string(),
+  teacher_id: z.string()
 });
 
-// Create Parent
+// Create Class
 const CreateClass = ClassFormSchema;
 
 export async function createClass(formData: FormData) {
-  const {id, name, level} = CreateClass.parse({
+  const {id, name, level, teacher_id} = CreateClass.parse({
     id: formData.get('id'),
     name: formData.get('name'),
     level: formData.get('level'),
+    teacher_id: formData.get('teacher_id'),
   });
 
   // Store data into the database
   await sql`
-    INSERT INTO classes (id, name, level)
-    VALUES (${id}, ${name}, ${level})
+    INSERT INTO classes (id, name, level, teacher_id)
+    VALUES (${id}, ${name}, ${level}, ${teacher_id})
   `;
 
   // Refresh data and redirect back to the parents page
@@ -383,3 +385,26 @@ export async function createClass(formData: FormData) {
   redirect('/dashboard/classes');
 }
 
+// Update Class
+const UpdateClass = ClassFormSchema;
+
+export async function updateClass(class_id: string, formData: FormData) {
+  const {name, level, teacher_id} = UpdateClass.parse({
+    //id: formData.get('id'),
+    name: formData.get('name'),
+    level: formData.get('level'),
+    teacher_id: formData.get('teacher_id'),
+  });
+
+  await sql`
+    UPDATE classes
+    SET
+      name = ${name},
+      level = ${level},
+      teacher_id = ${teacher_id}
+    WHERE id = ${class_id}
+  `;
+
+  revalidatePath('/dashboard/classes');
+  redirect('/dashboard/classes');
+}

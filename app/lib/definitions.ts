@@ -189,5 +189,12 @@ export type ClassesTable = {
   teacher_name: string;
 };
 
+export type ClassForm = {
+  id: string;
+  name: string;
+  level: string;
+  teacher_id: string;
+};
+
 
 
