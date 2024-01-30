@@ -291,14 +291,13 @@ const TeacherFormSchema = z.object({
   lastname: z.string(),
   country_code: z.string(),
   phone: z.string(),
-  class_id: z.string(),
 });
 
 // Create Teacher
 const CreateTeacher = TeacherFormSchema.omit({ id: true });
 
 export async function createTeacher(formData: FormData) {
-  const { username, password, firstname, lastname, country_code, phone, class_id } = CreateTeacher.parse({
+  const { username, password, firstname, lastname, country_code, phone} = CreateTeacher.parse({
     //id: formData.get('id'),
     username: formData.get('username'),
     password: formData.get('password'),
@@ -306,7 +305,6 @@ export async function createTeacher(formData: FormData) {
     lastname: formData.get('lastname'),
     country_code: formData.get('country_code'),
     phone: formData.get('phone'),
-    class_id: formData.get('class_id'),
   });
 
   // Hash the password using bcrypt
@@ -314,8 +312,8 @@ export async function createTeacher(formData: FormData) {
 
   // Store data into the database with the hashed password
   await sql`
-    INSERT INTO teachers (username, password, firstname, lastname, country_code, phone, class_id)
-    VALUES (${username}, ${hashedPassword}, ${firstname}, ${lastname}, ${country_code}, ${phone}, ${class_id})
+    INSERT INTO teachers (username, password, firstname, lastname, country_code, phone)
+    VALUES (${username}, ${hashedPassword}, ${firstname}, ${lastname}, ${country_code}, ${phone})
   `;
 
   // Refresh data and redirect back to the teachers page
@@ -328,7 +326,7 @@ export async function createTeacher(formData: FormData) {
 const UpdateTeacher = TeacherFormSchema.omit({ id: true});
 
 export async function updateTeacher(teacher_id: string, formData: FormData) {
-  const {username, password, firstname, lastname, country_code, phone, class_id} = UpdateTeacher.parse({
+  const {username, password, firstname, lastname, country_code, phone} = UpdateTeacher.parse({
     //id: formData.get('id'),
     username: formData.get('username'),
     password: formData.get('password'),
@@ -336,7 +334,6 @@ export async function updateTeacher(teacher_id: string, formData: FormData) {
     lastname: formData.get('lastname'),
     country_code: formData.get('country_code'),
     phone: formData.get('phone'),
-    class_id: formData.get('class_id'),
   });
 
   // Hash the password using bcrypt
@@ -350,11 +347,39 @@ export async function updateTeacher(teacher_id: string, formData: FormData) {
       firstname = ${firstname},
       lastname = ${lastname},
       country_code = ${country_code},
-      phone = ${phone},
-      class_id = ${class_id}
+      phone = ${phone}
     WHERE id = ${teacher_id}
   `;
 
   revalidatePath('/dashboard/teachers');
   redirect('/dashboard/teachers');
 }
+
+// Classes
+const ClassFormSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  level: z.string(),
+});
+
+// Create Parent
+const CreateClass = ClassFormSchema;
+
+export async function createClass(formData: FormData) {
+  const {id, name, level} = CreateClass.parse({
+    id: formData.get('id'),
+    name: formData.get('name'),
+    level: formData.get('level'),
+  });
+
+  // Store data into the database
+  await sql`
+    INSERT INTO classes (id, name, level)
+    VALUES (${id}, ${name}, ${level})
+  `;
+
+  // Refresh data and redirect back to the parents page
+  revalidatePath('/dashboard/classes');
+  redirect('/dashboard/classes');
+}
+

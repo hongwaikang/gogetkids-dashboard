@@ -26,6 +26,12 @@ export default async function ClassesTable({
                 <th scope="col" className="px-3 py-5 font-medium">
                   Level
                 </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Teacher ID
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Teacher Name
+                </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Actions</span>
                 </th>
@@ -47,6 +53,12 @@ export default async function ClassesTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {class1.level}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {class1.teacher_id}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {class1.teacher_name}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">

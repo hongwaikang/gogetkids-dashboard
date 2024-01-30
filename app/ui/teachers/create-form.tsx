@@ -141,7 +141,7 @@ export default function Form() {
           </div>
         </div>
 
-        {/* Class ID */}
+        {/* Class ID
         <div className="mb-4">
           <label htmlFor="class_id" className="mb-2 block text-sm font-medium">
             Class ID
@@ -158,6 +158,7 @@ export default function Form() {
             </div>
           </div>
         </div>
+         */}
 
       </div>
       <div className="mt-6 flex justify-end gap-4">

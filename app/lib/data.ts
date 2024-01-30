@@ -297,8 +297,11 @@ export async function fetchStudentsPages(query: string) {
     const count = await sql`SELECT COUNT(*)
       FROM students
       WHERE
-        CONCAT(firstname, ' ', lastname) ILIKE ${`%${query}%`} OR
-        address ILIKE ${`%${query}%`}
+        students.firstname ILIKE ${`%${query}%`} OR
+        students.lastname ILIKE ${`%${query}%`} OR
+        students.class_id ILIKE ${`%${query}%`} OR
+        students.parent_id::VARCHAR ILIKE ${`%${query}%`} OR
+        CONCAT(students.firstname, ' ', students.lastname) ILIKE ${`%${query}%`}
     `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
@@ -383,8 +386,12 @@ export async function fetchParentsPages(query: string) {
     const count = await sql`SELECT COUNT(*)
       FROM parents
       WHERE
-        CONCAT(firstname, ' ', lastname) ILIKE ${`%${query}%`} OR
-        phone ILIKE ${`%${query}%`}
+        parents.firstname ILIKE ${`%${query}%`} OR
+        parents.lastname ILIKE ${`%${query}%`} OR
+        parents.country_code ILIKE ${`%${query}%`} OR
+        parents.phone ILIKE ${`%${query}%`} OR
+        parents.username ILIKE ${`%${query}%`} OR
+        CONCAT(parents.firstname, ' ', parents.lastname) ILIKE ${`%${query}%`}
     `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
@@ -439,14 +446,16 @@ export async function fetchFilteredTeachers(query: string, currentPage: number) 
         teachers.firstname,
         teachers.lastname,
         teachers.username,
-        teachers.class_id,
+        teachers.country_code,
+        teachers.phone,
         CONCAT(teachers.firstname, ' ', teachers.lastname) AS name
       FROM teachers
       WHERE
         teachers.firstname ILIKE ${`%${query}%`} OR
         teachers.lastname ILIKE ${`%${query}%`} OR
         teachers.username ILIKE ${`%${query}%`} OR
-        teachers.class_id ILIKE ${`%${query}%`} OR
+        teachers.country_code ILIKE ${`%${query}%`} OR
+        teachers.phone ILIKE ${`%${query}%`} OR
         CONCAT(teachers.firstname, ' ', teachers.lastname) ILIKE ${`%${query}%`}
       ORDER BY name
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
@@ -467,8 +476,12 @@ export async function fetchTeachersPages(query: string) {
       SELECT COUNT(*)
       FROM teachers
       WHERE
-        CONCAT(firstname, ' ', lastname) ILIKE ${`%${query}%`} OR
-        class_id ILIKE ${`%${query}%`}
+        teachers.firstname ILIKE ${`%${query}%`} OR
+        teachers.lastname ILIKE ${`%${query}%`} OR
+        teachers.username ILIKE ${`%${query}%`} OR
+        teachers.country_code ILIKE ${`%${query}%`} OR
+        teachers.phone ILIKE ${`%${query}%`} OR
+        CONCAT(teachers.firstname, ' ', teachers.lastname) ILIKE ${`%${query}%`}
     `;
 
     const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
@@ -516,18 +529,22 @@ export async function fetchFilteredClasses(query: string, currentPage: number) {
   noStore();
 
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
   try {
     const classes = await sql<ClassesTable>`
       SELECT
         classes.id,
         classes.name,
-        classes.level
+        classes.level,
+        classes.teacher_id,
+        CONCAT(teachers.firstname, ' ', teachers.lastname) AS teacher_name
       FROM classes
+      LEFT JOIN teachers ON classes.teacher_id::VARCHAR = teachers.id::VARCHAR
       WHERE
-        classes.id ILIKE ${`%${query}%`} OR
         classes.name ILIKE ${`%${query}%`} OR
-        classes.level ILIKE ${`%${query}%`}
-      ORDER BY classes.id
+        classes.level ILIKE ${`%${query}%`} OR
+        classes.teacher_id::VARCHAR ILIKE ${`%${query}%`}
+      ORDER BY name
       LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
     `;
 

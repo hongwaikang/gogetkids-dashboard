@@ -157,8 +157,8 @@ export type Teacher = {
   password: string;
   firstname: string;
   lastname: string;
+  country_code: string;
   phone: string;
-  class_id: string;
 };
 
 export type TeachersTable = {
@@ -166,8 +166,8 @@ export type TeachersTable = {
   firstname: string;
   lastname: string;
   username: string;
+  country_code: string;
   phone: string;
-  class_id: string;
 };
 
 export type TeacherForm = {
@@ -178,7 +178,6 @@ export type TeacherForm = {
   lastname: string;
   country_code: string;
   phone: string;
-  class_id: string;
 }
 
 // Classes
@@ -186,6 +185,8 @@ export type ClassesTable = {
   id: string;
   name: string;
   level: string;
+  teacher_id: string;
+  teacher_name: string;
 };
 
 
