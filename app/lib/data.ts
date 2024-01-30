@@ -13,9 +13,12 @@ import {
   StudentForm,
   ParentForm,
   TeacherForm,
+  ClassesTable,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
+
+const ITEMS_PER_PAGE = 6;
 
 export async function fetchRevenue() {
   // Add noStore() here to prevent the response from being cached.
@@ -98,8 +101,6 @@ export async function fetchCardData() {
     throw new Error('Failed to fetch card data.');
   }
 }
-
-const ITEMS_PER_PAGE = 6;
 
 export async function fetchFilteredInvoices(
   query: string,
@@ -510,3 +511,49 @@ export async function fetchTeacherById(id: string) {
   }
 }
 
+// Classes
+export async function fetchFilteredClasses(query: string, currentPage: number) {
+  noStore();
+
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  try {
+    const classes = await sql<ClassesTable>`
+      SELECT
+        classes.id,
+        classes.name,
+        classes.level
+      FROM classes
+      WHERE
+        classes.id ILIKE ${`%${query}%`} OR
+        classes.name ILIKE ${`%${query}%`} OR
+        classes.level ILIKE ${`%${query}%`}
+      ORDER BY classes.id
+      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    `;
+
+    return classes.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch classes.');
+  }
+}
+
+export async function fetchClassesPages(query: string) {
+  noStore();
+
+  try {
+    const count = await sql`SELECT COUNT(*)
+      FROM classes
+      WHERE
+        id ILIKE ${`%${query}%`} OR
+        name ILIKE ${`%${query}%`} OR
+        level ILIKE ${`%${query}%`}
+    `;
+
+    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+    return totalPages;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch total number of classes.');
+  }
+}

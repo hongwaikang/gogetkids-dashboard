@@ -78,7 +78,7 @@ INSERT INTO teachers (firstname, lastname, username, password, country_code, pho
 VALUES ('Robert', 'Smith', 'robert.smith@gmail.com', 'securepass', '+65', '9999 6666', 'TC1');
 
 INSERT INTO schools (name, address)
-VALUES ('Test School', '456 School Ave');
+VALUES ('Test School', '456 School Ave');w
 
 INSERT INTO classes (id, name, level)
 VALUES ('TC1', 'TestClass1', 'P1');
