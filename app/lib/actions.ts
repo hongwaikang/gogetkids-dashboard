@@ -4,6 +4,10 @@ import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { NextResponse } from "next/server";
+import path from "path";
+import { writeFile } from "fs/promises";
+
 
 // For password hashing
 const bcrypt = require('bcrypt');
@@ -321,7 +325,6 @@ export async function createTeacher(formData: FormData) {
   redirect('/dashboard/teachers');
 }
 
-
 // Update Teacher
 const UpdateTeacher = TeacherFormSchema.omit({ id: true});
 
@@ -408,3 +411,9 @@ export async function updateClass(class_id: string, formData: FormData) {
   revalidatePath('/dashboard/classes');
   redirect('/dashboard/classes');
 }
+
+// Bulk Create Teachers
+export async function bulkCreateTeachers() {
+  
+}
+

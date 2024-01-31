@@ -1,5 +1,5 @@
-import Form from '@/app/ui/teachers/create-form';
 import Breadcrumbs from '@/app/ui/teachers/breadcrumbs';
+import BulkImportForm from '@/app/ui/teachers/bulkimport-form';
 
 export default async function Page() {
 
@@ -9,13 +9,13 @@ export default async function Page() {
         breadcrumbs={[
           { label: 'Teachers', href: '/dashboard/teachers' },
           {
-            label: 'Create Teacher',
-            href: '/dashboard/teachers/create',
+            label: 'Bulk Import',
+            href: '/dashboard/teachers/bulk-import',
             active: true,
           },
         ]}
       />
-      <Form/>
+      <BulkImportForm/>
     </main>
   );
 }
