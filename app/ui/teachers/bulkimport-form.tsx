@@ -1,10 +1,38 @@
+'use client'
+// BulkImportForm.tsx
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
-import { bulkCreateTeachers } from '@/app/lib/actions';
+import React, { useRef } from 'react';
+import { parseCSV } from '@/app/lib/csvParser'; // Import the CSV parser
 
 export default function BulkImportForm() {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleFileUpload = () => {
+    if (fileInputRef.current && fileInputRef.current.files) {
+      const file = fileInputRef.current.files[0];
+
+      console.log('File selected:', file);
+      console.log('File type:', file.type);
+
+      // Log the file content
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        console.log('File content:', e.target?.result);
+      };
+      reader.readAsText(file);
+
+      // Print CSV content to the console using Papaparse
+      parseCSV(file)
+        .then((csvData) => console.log('Parsed CSV Content:', csvData))
+        .catch((error) => console.error('Error parsing CSV:', error));
+    } else {
+      console.error('No file selected or file input not found.');
+    }
+  };
+
   return (
-    <form action={bulkCreateTeachers}>
+    <form>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* File Input */}
         <div className="mb-4">
@@ -14,6 +42,7 @@ export default function BulkImportForm() {
           <div className="relative mt-2 rounded-md">
             <div className="relative">
               <input
+                ref={fileInputRef}
                 id="csvFile"
                 name="csvFile"
                 type="file"
@@ -32,7 +61,10 @@ export default function BulkImportForm() {
         >
           Cancel
         </Link>
-        <Button type="submit">Create Teacher</Button>
+        {/* Use handleFileUpload as onClick handler */}
+        <Button type="button" onClick={handleFileUpload}>
+          Print CSV Content
+        </Button>
       </div>
     </form>
   );

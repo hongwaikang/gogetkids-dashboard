@@ -15,9 +15,11 @@ import {
   TeacherForm,
   ClassesTable,
   ClassForm,
+  Teacher,
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
+import Papa from 'papaparse';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -601,4 +603,104 @@ export async function fetchClassById(id: string) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch class.');
   }
+}
+
+// Example structure for CSV parsing function
+/*
+export async function parseTeacherCSV(file: File): Promise<Teacher[]> {
+  return new Promise((resolve, reject) => {
+    Papa.parse(file, {
+      header: false, // Assume no header in the CSV
+      skipEmptyLines: true,
+      complete: (result) => {
+        if (result.errors.length > 0) {
+          reject(result.errors[0].message);
+        } else {
+          const teacherData: Teacher[] = result.data.map((row) => {
+            const typedRow = row as unknown[];
+
+            if (typedRow.length !== 6) {
+              throw new Error('Invalid CSV structure');
+            }
+
+            const [firstname, lastname, username, password, country_code, phone] = typedRow as [
+              string,
+              string,
+              string,
+              string,
+              string,
+              string
+            ];
+
+            return {
+              id: '',
+              firstname,
+              lastname,
+              username,
+              password,
+              country_code,
+              phone,
+            };
+          });
+
+          resolve(teacherData);
+        }
+      },
+      error: (error) => {
+        reject(error.message);
+      },
+    });
+  });
+}
+*/
+
+export async function parseTeacherCSV(file: File): Promise<Teacher[]> {
+  return new Promise((resolve, reject) => {
+    Papa.parse(file, {
+      header: false, // Assume no header in the CSV
+      skipEmptyLines: true,
+      complete: (result) => {
+        console.log('PapaParse complete callback executed');
+        if (result.errors.length > 0) {
+          console.error('Error in CSV parsing:', result.errors[0].message);
+          reject(result.errors[0].message);
+        } else {
+          try {
+            const teacherData: Teacher[] = result.data.map((row: any, index: number) => {
+              if (!(row instanceof Array) || row.length !== 6) {
+                throw new Error(`Invalid CSV structure in row ${index + 1}`);
+              }
+
+              const [firstname, lastname, username, password, country_code, phone] = row;
+
+              return {
+                id: '', // Empty string for the id
+                firstname,
+                lastname,
+                username,
+                password,
+                country_code,
+                phone,
+              };
+            });
+
+            console.log('Parsed teacher data:', teacherData);
+            resolve(teacherData);
+          } catch (error) {
+            if (error instanceof Error) {
+              console.error('Error processing parsed data:', error.message);
+              reject(error.message);
+            } else {
+              console.error('Unknown error processing parsed data:', error);
+              reject('Unknown error');
+            }
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error in PapaParse:', error.message);
+        reject(error.message);
+      },
+    });
+  });
 }

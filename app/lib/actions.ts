@@ -4,9 +4,8 @@ import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { NextResponse } from "next/server";
-import path from "path";
-import { writeFile } from "fs/promises";
+import { parseTeacherCSV } from './data';
+import Papa from 'papaparse';
 
 
 // For password hashing
@@ -411,9 +410,3 @@ export async function updateClass(class_id: string, formData: FormData) {
   revalidatePath('/dashboard/classes');
   redirect('/dashboard/classes');
 }
-
-// Bulk Create Teachers
-export async function bulkCreateTeachers() {
-  
-}
-
