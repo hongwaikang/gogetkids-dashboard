@@ -1,31 +1,27 @@
 'use client'
-// BulkImportForm.tsx
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import React, { useRef } from 'react';
-import { parseCSV } from '@/app/lib/csvParser'; // Import the CSV parser
+import { parseCSVandInsertTeachers } from '@/app/lib/csvParser';
 
 export default function BulkImportForm() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleFileUpload = () => {
+  const handleFileUpload = async () => {
     if (fileInputRef.current && fileInputRef.current.files) {
       const file = fileInputRef.current.files[0];
 
       console.log('File selected:', file);
       console.log('File type:', file.type);
 
-      // Log the file content
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        console.log('File content:', e.target?.result);
-      };
-      reader.readAsText(file);
+      try {
+        // Insert function
+        parseCSVandInsertTeachers(file);
 
-      // Print CSV content to the console using Papaparse
-      parseCSV(file)
-        .then((csvData) => console.log('Parsed CSV Content:', csvData))
-        .catch((error) => console.error('Error parsing CSV:', error));
+        console.log('Teachers inserted successfully');
+      } catch (error) {
+        console.error('Error importing teachers:', error);
+      }
     } else {
       console.error('No file selected or file input not found.');
     }

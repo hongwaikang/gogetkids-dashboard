@@ -1,2 +1,3 @@
-harry.styles@gmail.com,Harry,Styles,Password123,+65,9988 7766
-lebron.james@lakers.com,Lebron,James,Password456,+65,94321234
+firstname,lastname,username,password,country_code,phone
+Harry,Styles,harry.styles@gmail.com,Password123,+65,99887766
+Lebron,James,lebron.james@lakers.com,Password456,+65,94321234
