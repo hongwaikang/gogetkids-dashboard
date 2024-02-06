@@ -19,7 +19,6 @@ import {
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
-import Papa from 'papaparse';
 
 const ITEMS_PER_PAGE = 6;
 

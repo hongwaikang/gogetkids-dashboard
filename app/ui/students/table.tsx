@@ -33,10 +33,10 @@ export default async function StudentsTable({
                   Class ID
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Parent ID
+                  Parent Username
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Parent Name
+                  Status
                 </th>
                 <th
                   scope="col"
@@ -49,28 +49,28 @@ export default async function StudentsTable({
             <tbody className="bg-white">
               {students.map((student) => (
                 <tr
-                  key={student.id}
+                  key={student._id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    {student.id}
+                    {student.studentid}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     {`${student.firstname} ${student.lastname}`}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {student.class_id}
+                    {student.class_name}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {student.parent_id}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {student.parent_name}
+                    {student.status}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <UpdateStudent id={student.id} />
-                      <DeleteStudent id={student.id} />
+                      <UpdateStudent id={student.studentid} />
+                      <DeleteStudent id={student.studentid} />
                     </div>
                   </td>
                 </tr>

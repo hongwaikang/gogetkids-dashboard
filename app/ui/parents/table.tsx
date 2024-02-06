@@ -1,5 +1,5 @@
 import { UpdateParent, DeleteParent } from '@/app/ui/parents/buttons';
-import { fetchFilteredParents } from '@/app/lib/data';
+import { fetchFilteredParents } from '@/app/lib/testData';
 
 export default async function ParentsTable({
   query,
@@ -8,7 +8,13 @@ export default async function ParentsTable({
   query: string;
   currentPage: number;
 }) {
-  const parents = await fetchFilteredParents(query, currentPage);
+  let parents: any[] = [];
+
+  try {
+    parents = await fetchFilteredParents(query, currentPage);
+  } catch (error) {
+    console.error('Error fetching parents:', error);
+  }
 
   return (
     <div className="mt-6 flow-root">
@@ -18,16 +24,13 @@ export default async function ParentsTable({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  ID
+                  Email
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Email {/* New Header for Email */}
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Phone
+                  Contact Number
                 </th>
                 {/* Actions column */}
                 <th scope="col" className="relative py-3 pl-6 pr-3">
@@ -38,22 +41,19 @@ export default async function ParentsTable({
             <tbody className="bg-white">
               {parents?.map((parent) => (
                 <tr
-                  key={parent.id}
+                  key={parent._id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
-                      <p>{parent.id}</p>
+                      <p>{parent.email}</p>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {`${parent.firstname} ${parent.lastname}`}
+                    {`${parent.firstName} ${parent.lastName}`}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {parent.username} {/* Display Email */}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {`${parent.country_code} ${parent.phone}`}
+                    {parent.phoneNum}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">

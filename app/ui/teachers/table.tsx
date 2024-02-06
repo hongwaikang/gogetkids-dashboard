@@ -1,5 +1,5 @@
 import { UpdateTeacher, DeleteTeacher } from '@/app/ui/teachers/buttons';
-import { fetchFilteredTeachers } from '@/app/lib/data';
+import { fetchFilteredTeachers } from '@/app/lib/testData';
 
 export default async function TeachersTable({
   query,
@@ -8,27 +8,31 @@ export default async function TeachersTable({
   query: string;
   currentPage: number;
 }) {
-  const teachers = await fetchFilteredTeachers(query, currentPage);
+  let teachers: any[] = [];
+
+  try {
+    teachers = await fetchFilteredTeachers(query, currentPage);
+  } catch (error) {
+    console.error('Error fetching teachers:', error);
+  }
 
   return (
     <div className="mt-6 flow-root">
       <div className="inline-block min-w-full align-middle">
         <div className="rounded-lg bg-gray-50 p-2 md:pt-0">
-          <table className="min-w-full text-gray-900">
+          <table className="hidden min-w-full text-gray-900 md:table">
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  ID
+                  Email
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Email
+                  Contact Number
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Phone
-                </th>
+                {/* Actions column */}
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Actions</span>
                 </th>
@@ -37,27 +41,24 @@ export default async function TeachersTable({
             <tbody className="bg-white">
               {teachers?.map((teacher) => (
                 <tr
-                  key={teacher.id}
+                  key={teacher._id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
-                      <p>{teacher.id}</p>
+                      <p>{teacher.email}</p>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {`${teacher.firstname} ${teacher.lastname}`}
+                    {`${teacher.firstName} ${teacher.lastName}`}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {teacher.username}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {`${teacher.country_code} ${teacher.phone}`}
+                    {teacher.phoneNum}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <UpdateTeacher id={teacher.id} />
-                      <DeleteTeacher id={teacher.id} />
+                      <UpdateTeacher id={teacher._id} />
+                      <DeleteTeacher id={teacher._id} />
                     </div>
                   </td>
                 </tr>
@@ -68,5 +69,4 @@ export default async function TeachersTable({
       </div>
     </div>
   );
-
 }

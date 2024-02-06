@@ -1,5 +1,5 @@
 import { UpdateClass, DeleteClass } from '@/app/ui/classes/buttons';
-import { fetchFilteredClasses } from '@/app/lib/data';
+import { fetchFilteredClasses } from '@/app/lib/testData';
 
 export default async function ClassesTable({
   query,
@@ -8,7 +8,13 @@ export default async function ClassesTable({
   query: string;
   currentPage: number;
 }) {
-  const classes = await fetchFilteredClasses(query, currentPage);
+  let classes: any[] = [];
+
+  try {
+    classes = await fetchFilteredClasses(query, currentPage);
+  } catch (error) {
+    console.error('Error fetching classes:', error);
+  }
 
   return (
     <div className="mt-6 flow-root">
@@ -18,19 +24,13 @@ export default async function ClassesTable({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  ID
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Name
+                  Class Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Level
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Teacher ID
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  Teacher Name
+                  Teacher Email
                 </th>
                 <th scope="col" className="relative py-3 pl-6 pr-3">
                   <span className="sr-only">Actions</span>
@@ -40,30 +40,24 @@ export default async function ClassesTable({
             <tbody className="bg-white">
               {classes?.map((class1) => (
                 <tr
-                  key={class1.id}
+                  key={class1._id}
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex items-center gap-3">
-                      <p>{class1.id}</p>
+                      <p>{class1.class_name}</p>
                     </div>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {class1.name}
+                    {class1.class_level}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {class1.level}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {class1.teacher_id}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {class1.teacher_name}
+                    {class1.teacherid}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <UpdateClass id={class1.id} />
-                      <DeleteClass id={class1.id} />
+                      <UpdateClass id={class1._id} />
+                      <DeleteClass id={class1._id} />
                     </div>
                   </td>
                 </tr>
