@@ -5,7 +5,7 @@ import { CreateStudent } from '@/app/ui/students/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { StudentsTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchStudentsPages } from '@/app/lib/data';
+import { fetchStudentsPages } from '@/app/lib/testData';
 
 export default async function Page({
     searchParams,
