@@ -1,28 +1,32 @@
+'use client'
+
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
-import { createStudent } from '@/app/lib/actions';
+import { createStudent } from '@/app/lib/testActions';
 
-export default function Form() {
+interface Props {
+  parents: string[]; // Define the type of the parents prop
+  classes: string[]; // Define the type of the classes prop
+}
 
+export default function Form({ parents, classes }: Props) { // Destructure the parents and classes props
   return (
     <form action={createStudent}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Student ID
         <div className="mb-4">
-          <label htmlFor="id" className="mb-2 block text-sm font-medium">
+          <label htmlFor="studentid" className="mb-2 block text-sm font-medium">
             Student ID
           </label>
           <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="id"
-                name="id"
-                type="text"
-                placeholder="Enter Student ID"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-                required
-              />
-            </div>
+            <input
+              id="studentid"
+              name="studentid"
+              type="number"
+              placeholder="Enter Student ID"
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+              required
+            />
           </div>
         </div>
         */}
@@ -48,7 +52,7 @@ export default function Form() {
 
         {/* Last Name */}
         <div className="mb-4">
-          <label htmlFor="amount" className="mb-2 block text-sm font-medium">
+          <label htmlFor="lastname" className="mb-2 block text-sm font-medium">
             Last Name
           </label>
           <div className="relative mt-2 rounded-md">
@@ -65,15 +69,34 @@ export default function Form() {
           </div>
         </div>
 
+        {/* Gender */}
+        <div className="mb-4">
+          <label htmlFor="gender" className="mb-2 block text-sm font-medium">
+            Gender
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <select
+              id="gender"
+              name="gender"
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2"
+              required
+            >
+              <option value="">Select Gender</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </select>
+          </div>
+        </div>
+
         {/* Date of Birth */}
         <div className="mb-4">
-          <label htmlFor="dateofbirth" className="mb-2 block text-sm font-medium">
+          <label htmlFor="dob" className="mb-2 block text-sm font-medium">
             Date of Birth
           </label>
           <div className="relative mt-2 rounded-md">
             <input
-              id="dateofbirth"
-              name="dateofbirth"
+              id="dob"
+              name="dob"
               type="date"
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
               required
@@ -102,13 +125,13 @@ export default function Form() {
 
         {/* Postalcode */}
         <div className="mb-4">
-          <label htmlFor="postalcode" className="mb-2 block text-sm font-medium">
+          <label htmlFor="postcode" className="mb-2 block text-sm font-medium">
             Postal Code
           </label>
           <div className="relative mt-2 rounded-md">
             <input
-              id="postalcode"
-              name="postalcode"
+              id="postcode"
+              name="postcode"
               type="text"
               maxLength={6}
               placeholder="Enter Postal Code"
@@ -118,39 +141,61 @@ export default function Form() {
           </div>
         </div>
 
-        {/* Class ID */}
+        {/* Zone */}
         <div className="mb-4">
-          <label htmlFor="class_id" className="mb-2 block text-sm font-medium">
-            Class ID
+          <label htmlFor="zone" className="mb-2 block text-sm font-medium">
+            Zone
           </label>
           <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="class_id"
-                name="class_id"
-                type="text"
-                placeholder="Enter Class ID"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-              />
-            </div>
+            <input
+              id="zone"
+              name="zone"
+              type="text"
+              placeholder="Enter Zone"
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            />
           </div>
         </div>
 
-        {/* Parent ID */}
+        {/* Class Name */}
         <div className="mb-4">
-          <label htmlFor="parent_id" className="mb-2 block text-sm font-medium">
-            Parent ID
+          <label htmlFor="class_name" className="mb-2 block text-sm font-medium">
+            Class Name
           </label>
           <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="parent_id"
-                name="parent_id"
-                type="text"
-                placeholder="Enter Parent's ID"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-              />
-            </div>
+            <select
+              id="class_name"
+              name="class_name"
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2"
+            >
+              <option value="">Select Class</option>
+              {classes.map((className, index) => (
+                <option key={index} value={className}>
+                  {className}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Parent's Email */}
+        <div className="mb-4">
+          <label htmlFor="parent_id" className="mb-2 block text-sm font-medium">
+            Parent Email
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <select
+              id="parent_id"
+              name="parent_id"
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2"
+            >
+              <option value="">Select Parent Email</option>
+              {parents.map((email, index) => (
+                <option key={index} value={email}>
+                  {email}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 

@@ -61,19 +61,19 @@ export async function fetchFilteredParents(query: string, currentPage: number) {
     const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
     try {
-        const students = await parentsCollection
+        const parents = await parentsCollection
             .find({
 							role: 'parent',
             })
-            .sort({ name: 1 }) // Assuming 'name' field exists for sorting
+            .sort({ name: 1 })
             .skip(offset)
             .limit(ITEMS_PER_PAGE)
             .toArray();
 
-        return students;
+        return parents;
     } catch (error) {
         console.error('Database Error:', error);
-        throw new Error('Failed to fetch students.');
+        throw new Error('Failed to fetch parents.');
     } finally {
         await client.close(); // Close the connection when done
     }
@@ -99,6 +99,27 @@ export async function fetchParentsPages(query: string) {
 	}
 }
 
+// Update this to take in school prop
+export async function fetchAllParentsEmail() {
+	const client = await connect();
+	const db = client.db('GoGetKids'); // Access the database from the client instance
+	const parentsCollection = db.collection('users');
+
+	try {
+			const parentsEmails = await parentsCollection
+					.find({ role: 'parent' })
+					.project({ _id: 0, email: 1 }) // Projection to include only the email field
+					.toArray();
+
+			return parentsEmails.map(parent => parent.email);
+	} catch (error) {
+			console.error('Database Error:', error);
+			throw new Error('Failed to fetch parents emails.');
+	} finally {
+			await client.close(); // Close the connection when done
+	}
+}
+
 // Teachers
 export async function fetchFilteredTeachers(query: string, currentPage: number) {
 	const client = await connect();
@@ -108,7 +129,7 @@ export async function fetchFilteredTeachers(query: string, currentPage: number) 
 	const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
 	try {
-			const students = await teachersCollection
+			const teachers = await teachersCollection
 					.find({
 						role: 'teacher',
 					})
@@ -117,10 +138,10 @@ export async function fetchFilteredTeachers(query: string, currentPage: number) 
 					.limit(ITEMS_PER_PAGE)
 					.toArray();
 
-			return students;
+			return teachers;
 	} catch (error) {
 			console.error('Database Error:', error);
-			throw new Error('Failed to fetch students.');
+			throw new Error('Failed to fetch teachers.');
 	} finally {
 			await client.close(); // Close the connection when done
 	}
@@ -188,4 +209,25 @@ export async function fetchClassesPages(query: string) {
 	} finally {
 			await client.close(); // Close the connection when done
 	}
+}
+
+// Update this to take in school prop
+export async function fetchAllClassNames() {
+  const client = await connect();
+  const db = client.db('GoGetKids'); // Access the database from the client instance
+  const classesCollection = db.collection('classes');
+
+  try {
+    const classNames = await classesCollection
+      .find({})
+      .project({ _id: 0, class_name: 1 }) // Projection to include only the class_name field
+      .toArray();
+
+    return classNames.map(clazz => clazz.class_name);
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch class names.');
+  } finally {
+    await client.close(); // Close the connection when done
+  }
 }

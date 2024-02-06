@@ -1,7 +1,10 @@
 import Form from '@/app/ui/students/create-form';
 import Breadcrumbs from '@/app/ui/students/breadcrumbs';
+import { fetchAllParentsEmail, fetchAllClassNames } from '@/app/lib/testData';
 
 export default async function Page() {
+  const parents = await fetchAllParentsEmail();
+  const classes = await fetchAllClassNames();
 
   return (
     <main>
@@ -15,7 +18,8 @@ export default async function Page() {
           },
         ]}
       />
-      <Form/>
+      {/* Pass in fetched parents and classes in to Form */}
+      <Form parents={parents} classes={classes}/>
     </main>
   );
 }
