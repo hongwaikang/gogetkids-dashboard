@@ -1,4 +1,5 @@
-import { connect } from './dbConfig';
+import { connect, disconnect } from './dbConfig';
+import { Db, ObjectId } from 'mongodb';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -43,6 +44,31 @@ export async function fetchStudentsPages(query: string) {
     } finally {
         await client.close(); // Close the connection when done
     }
+}
+
+export async function fetchStudentById(id: ObjectId) {
+  let client;
+  let db: Db | undefined;
+  try {
+    client = await connect();
+    db = client.db('GoGetKids'); // Connect to the 'GoGetKids' database
+
+    const student = await db.collection('students').findOne({ _id: id });
+
+    if (student) {
+      console.log('Fetched student:', student); // Log the fetched student object
+      return student;
+    } else {
+      throw new Error('Student not found.');
+    }
+  } catch (error: any) {
+    console.error('Error fetching student:', error.message);
+    throw new Error('Failed to fetch student.');
+  } finally {
+    if (client) {
+      await client.close();
+    }
+  }
 }
 
 // ------------------------------------------------------------------------------------------------------

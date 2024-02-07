@@ -69,8 +69,8 @@ export default async function StudentsTable({
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <UpdateStudent id={student.studentid} />
-                      <DeleteStudent id={student.studentid} />
+                      <UpdateStudent id={student._id} />
+                      <DeleteStudent id={student._id} />
                     </div>
                   </td>
                 </tr>

@@ -1,95 +1,100 @@
-'use client';
+'use client'
 
-import { StudentForm } from '@/app/lib/definitions';
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
-import { updateStudent } from '@/app/lib/actions';
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { updateStudent } from '@/app/lib/testActions';
 
 export default function EditStudentForm({
   student,
+  classes,
+  parents,
 }: {
-  student: StudentForm;
+  student: any; // Adjust the type definition accordingly
+  classes: string[]; // Array of class names
+  parents: string[]; // Array of parent emails
 }) {
-	// For dateofbirth
-	const formatteddateofbirth = new Date(student.dateofbirth).toLocaleDateString('en-CA');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const updateStudentWithId = updateStudent.bind(null, student.id);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const formData = new FormData(e.currentTarget);
+    try {
+      await updateStudent(student._id.$oid, formData);
+      toast.success('Student updated successfully!');
+    } catch (error) {
+      toast.error('Failed to update student. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <form action={updateStudentWithId}>
+    <form onSubmit={handleSubmit}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
-          {/* Student ID */}
-					<div className="mb-4">
-          <label htmlFor="id" className="mb-2 block text-sm font-medium">
-            Student ID
-          </label>
-          <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="id"
-                name="id"
-                type="text"
-								defaultValue={student.id}
-                disabled
-                placeholder="Enter Student ID"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500 bg-gray-200"
-                required
-              />
-            </div>
-          </div>
-        </div>
-
         {/* First Name */}
         <div className="mb-4">
           <label htmlFor="firstname" className="mb-2 block text-sm font-medium">
             First Name
           </label>
-          <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="firstname"
-                name="firstname"
-                type="text"
-								defaultValue={student.firstname}
-                placeholder="Enter First Name"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-                required
-              />
-            </div>
-          </div>
+          <input
+            id="firstname"
+            name="firstname"
+            type="text"
+            defaultValue={student.firstname}
+            className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            required
+          />
         </div>
 
         {/* Last Name */}
         <div className="mb-4">
-          <label htmlFor="amount" className="mb-2 block text-sm font-medium">
+          <label htmlFor="lastname" className="mb-2 block text-sm font-medium">
             Last Name
           </label>
+          <input
+            id="lastname"
+            name="lastname"
+            type="text"
+            defaultValue={student.lastname}
+            className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            required
+          />
+        </div>
+
+        {/* Gender */}
+        <div className="mb-4">
+          <label htmlFor="gender" className="mb-2 block text-sm font-medium">
+            Gender
+          </label>
           <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="lastname"
-                name="lastname"
-                type="text"
-								defaultValue={student.lastname}
-                placeholder="Enter Last Name"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-                required
-              />
-            </div>
+            <select
+              id="gender"
+              name="gender"
+              defaultValue={student.gender}
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2"
+              required
+            >
+              <option value="">Select Gender</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+            </select>
           </div>
         </div>
 
         {/* Date of Birth */}
         <div className="mb-4">
-          <label htmlFor="dateofbirth" className="mb-2 block text-sm font-medium">
+          <label htmlFor="dob" className="mb-2 block text-sm font-medium">
             Date of Birth
           </label>
           <div className="relative mt-2 rounded-md">
             <input
-              id="dateofbirth"
-              name="dateofbirth"
+              id="dob"
+              name="dob"
               type="date"
-							defaultValue={formatteddateofbirth}
+              defaultValue={student.dob}
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
               required
             />
@@ -107,7 +112,7 @@ export default function EditStudentForm({
                 id="address"
                 name="address"
                 type="text"
-								defaultValue={student.address}
+                defaultValue={student.address}
                 placeholder="Enter Block No. and Street"
                 className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
                 required
@@ -118,16 +123,16 @@ export default function EditStudentForm({
 
         {/* Postalcode */}
         <div className="mb-4">
-          <label htmlFor="postalcode" className="mb-2 block text-sm font-medium">
+          <label htmlFor="postcode" className="mb-2 block text-sm font-medium">
             Postal Code
           </label>
           <div className="relative mt-2 rounded-md">
             <input
-              id="postalcode"
-              name="postalcode"
+              id="postcode"
+              name="postcode"
               type="text"
-              maxLength={10}
-							defaultValue={student.postalcode}
+              maxLength={6}
+              defaultValue={student.postcode}
               placeholder="Enter Postal Code"
               className="peer block w-full rounded-md border border-gray-200 py-2 pl-4 text-sm outline-2 placeholder:text-gray-500"
               required
@@ -135,41 +140,64 @@ export default function EditStudentForm({
           </div>
         </div>
 
-        {/* Class ID */}
+        {/* Zone */}
         <div className="mb-4">
-          <label htmlFor="class_id" className="mb-2 block text-sm font-medium">
-            Class ID
+          <label htmlFor="zone" className="mb-2 block text-sm font-medium">
+            Zone
           </label>
           <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="class_id"
-                name="class_id"
-                type="text"
-								defaultValue={student.class_id}
-                placeholder="Enter Class ID"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-              />
-            </div>
+            <input
+              id="zone"
+              name="zone"
+              type="text"
+              defaultValue={student.zone}
+              placeholder="Enter Zone"
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            />
           </div>
         </div>
 
-        {/* Parent ID */}
+        {/* Class Name */}
         <div className="mb-4">
-          <label htmlFor="parent_id" className="mb-2 block text-sm font-medium">
-            Parent ID
+          <label htmlFor="class_name" className="mb-2 block text-sm font-medium">
+            Class Name
           </label>
           <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="parent_id"
-                name="parent_id"
-                type="text"
-								defaultValue={student.parent_id}
-                placeholder="Enter Parent's ID"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-              />
-            </div>
+            <select
+              id="class_name"
+              name="class_name"
+              defaultValue={student.class_name}
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2"
+            >
+              <option value="">Select Class</option>
+              {classes.map((className, index) => (
+                <option key={index} value={className}>
+                  {className}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Parent's Email */}
+        <div className="mb-4">
+          <label htmlFor="parent_id" className="mb-2 block text-sm font-medium">
+            Parent Email
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <select
+              id="parent_id"
+              name="parent_id"
+              defaultValue={student.parent_id}
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2"
+            >
+              <option value="">Select Parent Email</option>
+              {parents.map((email, index) => (
+                <option key={index} value={email}>
+                  {email}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -179,9 +207,11 @@ export default function EditStudentForm({
           href="/dashboard/students"
           className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
-          Cancel
+          Return
         </Link>
-        <Button type="submit">Edit Student</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? 'Updating...' : 'Update Student'}
+        </Button>
       </div>
     </form>
   );

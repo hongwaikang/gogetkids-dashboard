@@ -1,10 +1,14 @@
+// page.tsx
 import Form from '@/app/ui/students/edit-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
-import { fetchStudentById } from '@/app/lib/data';
+import { fetchStudentById, fetchAllParentsEmail, fetchAllClassNames } from '@/app/lib/testData';
+import { ObjectId } from 'mongodb'; // Import ObjectId from the mongodb library
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const id = params.id;
+  const id = new ObjectId(params.id); // Convert id to ObjectId
   const student = await fetchStudentById(id);
+  const parents = await fetchAllParentsEmail();
+  const classes = await fetchAllClassNames();
 
   return (
     <main>
@@ -13,12 +17,12 @@ export default async function Page({ params }: { params: { id: string } }) {
           { label: 'Students', href: '/dashboard/students' },
           {
             label: 'Edit Student',
-            href: `/dashboard/students/${id}/edit`,
+            href: `/dashboard/students/${params.id}/edit`, // Use params.id directly here
             active: true,
           },
         ]}
       />
-      <Form student={student} />
+      <Form student={student} classes={classes} parents={parents} />
     </main>
   );
 }
