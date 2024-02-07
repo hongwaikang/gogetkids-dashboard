@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { createStudent } from '@/app/lib/testActions';
 
 interface Props {
@@ -9,11 +11,29 @@ interface Props {
   classes: string[]; // Define the type of the classes prop
 }
 
-export default function Form({ parents, classes }: Props) { // Destructure the parents and classes props
-  return (
-    <form action={createStudent}>
-      <div className="rounded-md bg-gray-50 p-4 md:p-6">
+export default function Form({ parents, classes }: Props) {
+  const [isLoading, setIsLoading] = useState(false);
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const formData = new FormData(e.currentTarget);
+    try {
+      await createStudent(formData);
+      // If createStudent does not throw an error, display success toast
+      toast.success('Student created successfully!');
+    } catch (error) {
+      // If createStudent throws an error, display error toast
+      toast.error('Failed to create student. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="rounded-md bg-gray-50 p-4 md:p-6">
+        {/* Your form inputs here */}
         {/* First Name */}
         <div className="mb-4">
           <label htmlFor="firstname" className="mb-2 block text-sm font-medium">
@@ -190,7 +210,9 @@ export default function Form({ parents, classes }: Props) { // Destructure the p
         >
           Cancel
         </Link>
-        <Button type="submit">Create Student</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? 'Creating...' : 'Create Student'}
+        </Button>
       </div>
     </form>
   );

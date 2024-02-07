@@ -1,20 +1,24 @@
 'use server'
 
+import { Db } from 'mongodb';
 import { connect } from './dbConfig';
 import { z } from 'zod';
-import { Db } from 'mongodb';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 // Define the schema for form data validation using Zod
 const studentSchema = z.object({
-  firstname: z.string().nonempty(),
-  lastname: z.string().nonempty(),
+  firstname: z.string(),
+  lastname: z.string(),
   gender: z.string(), // Gender is required
-  dob: z.string().nonempty(),
-  address: z.string().nonempty(),
-  postcode: z.string().nonempty(),
+  dob: z.string(),
+  address: z.string(),
+  postcode: z.string(),
   zone: z.string().optional(), // Optional field
   class_name: z.string().optional(), // Optional field
   parent_id: z.string().optional(), // Optional field
+  status: z.enum(["At Home", "In School", "In Bus", ""]), // Enum for status
+  school_name: z.string()
 });
 
 // Function to generate a random student ID
@@ -30,6 +34,7 @@ async function isStudentIdUnique(db: Db, studentid: number) {
 }
 
 export async function createStudent(formData: FormData) {
+  let client;
   try {
     // Validate form data using Zod schema
     const validatedData = studentSchema.parse({
@@ -39,14 +44,16 @@ export async function createStudent(formData: FormData) {
       dob: formData.get('dob'),
       address: formData.get('address'),
       postcode: formData.get('postcode'),
-      zone: formData.get('zone'),
-      class_name: formData.get('class_name'),
-      parent_id: formData.get('parent_id'),
+      zone: formData.get('zone') || '',
+      class_name: formData.get('class_name') || '',
+      parent_id: formData.get('parent_id') || '',
+      status: '',
+      school_name: ''
     });
 
     let studentid;
     // Generate a unique student ID
-    const client = await connect();
+    client = await connect();
     const db = client.db('GoGetKids'); // Specify the database name here
     while (true) {
       studentid = generateStudentId();
@@ -65,16 +72,20 @@ export async function createStudent(formData: FormData) {
     if (result.insertedId) {
       // Data inserted successfully
       console.log('Student created successfully:', result.insertedId);
+      return { success: true }; // Return success message to client-side
     } else {
       // Error occurred during insertion
       console.error('Failed to create student.');
+      return { success: false }; // Return error message to client-side
     }
-
-    // Close the connection
-    await client.close();
   } catch (error: any) {
     // Handle validation or database insertion errors
     console.error('Error creating student:', error.message);
-    // Optionally, redirect to an error page or display an error message to the user
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+    }
   }
 }
