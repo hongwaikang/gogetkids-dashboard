@@ -2,7 +2,7 @@ import { connect } from './dbConfig';
 
 const ITEMS_PER_PAGE = 6;
 
-// Students
+// ---------------------------------------------- STUDENTS ----------------------------------------------
 export async function fetchFilteredStudents(query: string, currentPage: number) {
     const client = await connect();
     const db = client.db('GoGetKids'); // Access the database from the client instance
@@ -45,7 +45,9 @@ export async function fetchStudentsPages(query: string) {
     }
 }
 
-// Parents
+// ------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------------- PARENTS -----------------------------------------------
 export async function fetchFilteredParents(query: string, currentPage: number) {
     const client = await connect();
     const db = client.db('GoGetKids'); // Access the database from the client instance
@@ -112,8 +114,9 @@ export async function fetchAllParentsEmail() {
 			await client.close(); // Close the connection when done
 	}
 }
+// ------------------------------------------------------------------------------------------------------
 
-// Teachers
+// ---------------------------------------------- TEACHERS ----------------------------------------------
 export async function fetchFilteredTeachers(query: string, currentPage: number) {
 	const client = await connect();
 	const db = client.db('GoGetKids'); // Access the database from the client instance
@@ -160,7 +163,29 @@ export async function fetchTeachersPages(query: string) {
 	}
 }
 
-// Classes
+export async function fetchAllTeachersEmail() {
+  const client = await connect();
+  const db = client.db('GoGetKids'); // Access the database from the client instance
+  const teachersCollection = db.collection('users');
+
+  try {
+    const teachersEmails = await teachersCollection
+      .find({ role: 'teacher' }) // Adjust the role to search for teachers
+      .project({ _id: 0, email: 1 }) // Projection to include only the email field
+      .toArray();
+
+    return teachersEmails.map(teacher => teacher.email);
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch teachers emails.');
+  } finally {
+    await client.close(); // Close the connection when done
+  }
+}
+
+// ------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------------- CLASSES -----------------------------------------------
 export async function fetchFilteredClasses(query: string, currentPage: number) {
 	const client = await connect();
 	const db = client.db('GoGetKids'); // Access the database from the client instance
@@ -224,3 +249,4 @@ export async function fetchAllClassNames() {
     await client.close(); // Close the connection when done
   }
 }
+// ------------------------------------------------------------------------------------------------------

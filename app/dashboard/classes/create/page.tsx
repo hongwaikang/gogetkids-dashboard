@@ -1,7 +1,9 @@
 import Form from '@/app/ui/classes/create-form';
 import Breadcrumbs from '@/app/ui/classes/breadcrumbs';
+import { fetchAllTeachersEmail } from '@/app/lib/testData';
 
 export default async function Page() {
+  const teachers = await fetchAllTeachersEmail();
 
   return (
     <main>
@@ -15,7 +17,7 @@ export default async function Page() {
           },
         ]}
       />
-      <Form/>
+      <Form teachers={teachers} />
     </main>
   );
 }
