@@ -1,9 +1,21 @@
-'use server';
+'use server'
 
-import { connect } from '@/app/lib/dbConfig';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
+import { connect } from './dbConfig';
+import { z } from 'zod';
 import { Db } from 'mongodb';
+
+// Define the schema for form data validation using Zod
+const studentSchema = z.object({
+  firstname: z.string().nonempty(),
+  lastname: z.string().nonempty(),
+  gender: z.string(), // Gender is required
+  dob: z.string().nonempty(),
+  address: z.string().nonempty(),
+  postcode: z.string().nonempty(),
+  zone: z.string().optional(), // Optional field
+  class_name: z.string().optional(), // Optional field
+  parent_id: z.string().optional(), // Optional field
+});
 
 // Function to generate a random student ID
 function generateStudentId() {
@@ -11,6 +23,7 @@ function generateStudentId() {
   return Math.floor(Math.random() * 900000) + 100000;
 }
 
+// Function to check if the generated student ID is unique
 async function isStudentIdUnique(db: Db, studentid: number) {
   const existingStudent = await db.collection('students').findOne({ studentid });
   return !existingStudent;
@@ -18,48 +31,34 @@ async function isStudentIdUnique(db: Db, studentid: number) {
 
 export async function createStudent(formData: FormData) {
   try {
-    const firstname = formData.get('firstname') || '';
-    const lastname = formData.get('lastname') || '';
-    const gender = formData.get('gender') || '';
-    const dob = formData.get('dob') || '';
-    const postcode = formData.get('postcode') || '';
-    const zone = formData.get('zone') || '';
-    const address = formData.get('address') || '';
-    const parent_id = formData.get('parent_id') || '';
-    const class_name = formData.get('class_name') || '';
-
-    const status = '';
-    const school_name = '';
+    // Validate form data using Zod schema
+    const validatedData = studentSchema.parse({
+      firstname: formData.get('firstname'),
+      lastname: formData.get('lastname'),
+      gender: formData.get('gender'),
+      dob: formData.get('dob'),
+      address: formData.get('address'),
+      postcode: formData.get('postcode'),
+      zone: formData.get('zone'),
+      class_name: formData.get('class_name'),
+      parent_id: formData.get('parent_id'),
+    });
 
     let studentid;
     // Generate a unique student ID
+    const client = await connect();
+    const db = client.db('GoGetKids'); // Specify the database name here
     while (true) {
       studentid = generateStudentId();
-      const client = await connect();
-      const db = client.db();
       if (await isStudentIdUnique(db, studentid)) {
         break;
       }
     }
 
-    // Connect to MongoDB
-    const client = await connect();
-    const db = client.db(); // Access the database from the client
-
     // Insert student data into the MongoDB collection
     const result = await db.collection('students').insertOne({
       studentid,
-      firstname,
-      lastname,
-      gender,
-      dob,
-      status,
-      postcode,
-      zone,
-      address,
-      parent_id,
-      school_name,
-      class_name,
+      ...validatedData,
     });
 
     // Check if the insertion was successful
@@ -71,13 +70,11 @@ export async function createStudent(formData: FormData) {
       console.error('Failed to create student.');
     }
 
-    // Refresh data and redirect back to the students page
-    revalidatePath('/dashboard/students');
-    redirect('/dashboard/students');
-
-      } catch (error: any) {
-        // Handle validation or database insertion errors
-        console.error('Error creating student:', error.message);
-        // Optionally, you can redirect to an error page or display an error message to the user
-      }
+    // Close the connection
+    await client.close();
+  } catch (error: any) {
+    // Handle validation or database insertion errors
+    console.error('Error creating student:', error.message);
+    // Optionally, redirect to an error page or display an error message to the user
+  }
 }

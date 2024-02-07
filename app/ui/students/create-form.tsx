@@ -13,23 +13,6 @@ export default function Form({ parents, classes }: Props) { // Destructure the p
   return (
     <form action={createStudent}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        {/* Student ID
-        <div className="mb-4">
-          <label htmlFor="studentid" className="mb-2 block text-sm font-medium">
-            Student ID
-          </label>
-          <div className="relative mt-2 rounded-md">
-            <input
-              id="studentid"
-              name="studentid"
-              type="number"
-              placeholder="Enter Student ID"
-              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-              required
-            />
-          </div>
-        </div>
-        */}
 
         {/* First Name */}
         <div className="mb-4">

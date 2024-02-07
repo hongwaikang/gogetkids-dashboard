@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import Papa from 'papaparse';
 
 // For password hashing
 const bcrypt = require('bcrypt');

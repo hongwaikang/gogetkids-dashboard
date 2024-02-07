@@ -33,14 +33,7 @@ export async function fetchStudentsPages(query: string) {
     const studentsCollection = db.collection('students');
 
     try {
-        const count = await studentsCollection.countDocuments({
-            $or: [
-                { firstname: { $regex: query, $options: 'i' } },
-                { lastname: { $regex: query, $options: 'i' } },
-                { class_id: { $regex: query, $options: 'i' } },
-                // Add more fields for filtering if needed
-            ]
-        });
+        const count = await studentsCollection.countDocuments();
 
         const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
         return totalPages;
