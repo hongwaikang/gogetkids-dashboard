@@ -3,9 +3,11 @@
 import { Db } from 'mongodb';
 import { connect } from './dbConfig';
 import { z } from 'zod';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
+// For password hashing
+const bcrypt = require('bcrypt');
+const saltRounds = 10; // Adjust the number of salt rounds as needed
 
+// ---------------------------------------------- STUDENTS ----------------------------------------------
 // Define the schema for form data validation using Zod
 const studentSchema = z.object({
   firstname: z.string(),
@@ -81,6 +83,72 @@ export async function createStudent(formData: FormData) {
   } catch (error: any) {
     // Handle validation or database insertion errors
     console.error('Error creating student:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+    }
+  }
+}
+
+// ------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------------- PARENTS ----------------------------------------------
+// Define the schema for parent data validation using Zod
+const parentSchema = z.object({
+  email: z.string().email(), // Email is required and must be a valid email format
+  firstName: z.string(),
+  lastName: z.string(),
+  password: z.string(), // Password is required
+  phoneNum: z.string(),
+  role: z.enum(["parent"]), // Role must be "parent"
+});
+
+export async function createParent(formData: FormData) {
+  let client;
+  let db: Db; // Declare db variable here
+  try {
+    // Validate form data using Zod schema
+    const validatedData = parentSchema.parse({
+      email: formData.get('email'),
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      password: formData.get('password'),
+      phoneNum: formData.get('phoneNum'),
+      role: 'parent', // Hardcoded role as "parent"
+    });
+
+    // Check if the email is unique
+    client = await connect();
+    db = client.db('GoGetKids'); // Specify the database name here
+    const existingParent = await db.collection('users').findOne({ email: validatedData.email });
+    if (existingParent) {
+      throw new Error('Email is already in use.');
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(validatedData.password, saltRounds); // Use bcrypt to hash the password with 10 salt rounds
+
+    // Insert parent data into the MongoDB collection with hashed password
+    const result = await db.collection('users').insertOne({
+      ...validatedData,
+      password: hashedPassword, // Replace plain password with hashed password
+    });
+
+    // Check if the insertion was successful
+    if (result.insertedId) {
+      // Data inserted successfully
+      console.log('Parent created successfully:', result.insertedId);
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during insertion
+      console.error('Failed to create parent.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database insertion errors
+    console.error('Error creating parent:', error.message);
     return { success: false, errorMessage: error.message }; // Return error message to client-side
   } finally {
     // Close the connection
