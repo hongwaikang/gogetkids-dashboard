@@ -1,6 +1,6 @@
 'use server'
 
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { connect } from './dbConfig';
 import { z } from 'zod';
 // For password hashing
@@ -10,6 +10,7 @@ const saltRounds = 10; // Adjust the number of salt rounds as needed
 // ---------------------------------------------- STUDENTS ----------------------------------------------
 // Define the schema for form data validation using Zod
 const studentSchema = z.object({
+  studentid: z.number(),
   firstname: z.string(),
   lastname: z.string(),
   gender: z.string(), // Gender is required
@@ -91,6 +92,71 @@ export async function createStudent(formData: FormData) {
     }
   }
 }
+
+export async function updateStudent(id: string, formData: FormData) {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    // Explicitly convert studentid to a number
+    const studentId = Number(formData.get('studentid'));
+
+    // Validate form data using Zod schema
+    const validatedData = studentSchema.parse({
+      studentid: studentId,
+      firstname: formData.get('firstname'),
+      lastname: formData.get('lastname'),
+      gender: formData.get('gender'),
+      dob: formData.get('dob'),
+      address: formData.get('address'),
+      postcode: formData.get('postcode'),
+      zone: formData.get('zone') || '',
+      class_name: formData.get('class_name') || '',
+      parent_id: formData.get('parent_id') || '',
+      status: '',
+      school_name: ''
+    });
+
+    console.log('Validated Data:', validatedData); // Log validated data
+
+    client = await connect();
+    console.log('Connected to MongoDB'); // Log successful connection
+
+    const db = client.db('GoGetKids'); // Specify the database name here
+
+    // Update student data in the MongoDB collection
+    const result = await db.collection('students').updateOne(
+      { _id: objectId }, // Use the ObjectId here
+      { $set: validatedData }
+    );
+
+    console.log('Update Result:', result); // Log update result
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      // Data updated successfully
+      console.log('Student updated successfully:', id);
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during update
+      console.error('Failed to update student.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database update errors
+    console.error('Error updating student:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed'); // Log when the connection is closed
+    }
+  }
+}
+
+
 // ------------------------------------------------------------------------------------------------------
 
 // ---------------------------------------------- PARENTS -----------------------------------------------

@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 
 export interface Student {
   _id: ObjectId; // Update _id to be of type ObjectId
+  studentid: number;
   firstname: string;
   lastname: string;
   gender: string;
