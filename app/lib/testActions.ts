@@ -3,6 +3,9 @@
 import { Db, ObjectId } from 'mongodb';
 import { connect } from './dbConfig';
 import { z } from 'zod';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+
 // For password hashing
 const bcrypt = require('bcrypt');
 const saltRounds = 10; // Adjust the number of salt rounds as needed
@@ -24,10 +27,9 @@ const studentSchema = z.object({
   school_name: z.string()
 });
 
-// Function to generate a random student ID
 function generateStudentId() {
-  // Generate a random number between 100000 and 999999
-  return Math.floor(Math.random() * 900000) + 100000;
+  // Generate a random number between 100000 and 999999 and convert it to a number
+  return +Math.floor(Math.random() * 900000) + 100000;
 }
 
 // Function to check if the generated student ID is unique
@@ -39,8 +41,18 @@ async function isStudentIdUnique(db: Db, studentid: number) {
 export async function createStudent(formData: FormData) {
   let client;
   try {
+    // Generate a unique student ID
+    let studentid;
+    client = await connect();
+    const db = client.db('GoGetKids');
+    let isUnique = false;
+    while (!isUnique) {
+      studentid = generateStudentId();
+      isUnique = await isStudentIdUnique(db, studentid);
+    }
+
     // Validate form data using Zod schema
-    const validatedData = studentSchema.parse({
+    const validatedData = {
       firstname: formData.get('firstname'),
       lastname: formData.get('lastname'),
       gender: formData.get('gender'),
@@ -52,29 +64,22 @@ export async function createStudent(formData: FormData) {
       parent_id: formData.get('parent_id') || '',
       status: '',
       school_name: ''
-    });
+    };
 
-    let studentid;
-    // Generate a unique student ID
-    client = await connect();
-    const db = client.db('GoGetKids'); // Specify the database name here
-    while (true) {
-      studentid = generateStudentId();
-      if (await isStudentIdUnique(db, studentid)) {
-        break;
-      }
-    }
-
-    // Insert student data into the MongoDB collection
-    const result = await db.collection('students').insertOne({
+    // Manually add studentid to the data object
+    const studentData = {
       studentid,
       ...validatedData,
-    });
+    };
+
+    // Insert student data into the MongoDB collection
+    const result = await db.collection('students').insertOne(studentData);
 
     // Check if the insertion was successful
     if (result.insertedId) {
       // Data inserted successfully
       console.log('Student created successfully:', result.insertedId);
+      revalidatePath('/dashboard/students')
       return { success: true }; // Return success message to client-side
     } else {
       // Error occurred during insertion
@@ -137,6 +142,7 @@ export async function updateStudent(id: string, formData: FormData) {
     if (result.modifiedCount === 1) {
       // Data updated successfully
       console.log('Student updated successfully:', id);
+      revalidatePath('/dashboard/students');
       return { success: true }; // Return success message to client-side
     } else {
       // Error occurred during update
