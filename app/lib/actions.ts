@@ -4,6 +4,7 @@ import { Db, ObjectId } from 'mongodb';
 import { connect } from './dbConfig';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import toast from 'react-hot-toast';
 
 // For password hashing
 const bcrypt = require('bcrypt');
@@ -161,6 +162,42 @@ export async function updateStudent(id: string, formData: FormData) {
   }
 }
 
+export async function deleteStudent(id: string) {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    client = await connect();
+    const db = client.db('GoGetKids');
+
+    // Delete the student from the MongoDB collection
+    const result = await db.collection('students').deleteOne({ _id: objectId });
+
+    // Check if the deletion was successful
+    if (result.deletedCount === 1) {
+      // Data deleted successfully
+      console.log('Student deleted successfully:', id);
+      revalidatePath('/dashboard/students');
+      return { success: true }; // Return success message to client-side
+    } else {
+      // No document matched the query criteria, so nothing was deleted
+      console.error('Student not found:', id);
+      return { success: false, errorMessage: 'Student not found' }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle database deletion errors
+    console.error('Error deleting student:', error.message);
+    toast.error('Failed to delete student. Please try again.');
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed');
+    }
+  }
+}
 
 // ------------------------------------------------------------------------------------------------------
 
