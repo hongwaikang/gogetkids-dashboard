@@ -78,62 +78,73 @@ const BulkImportForm = () => {
 
   return (
     <form>
-      <div className="rounded-md bg-gray-50 p-4 md:p-6">
+      <div className="rounded-md bg-gray-50 p-6 md:p-8 space-y-6">
         {/* JSON File Input */}
-        <div className="mb-4">
-          <label htmlFor="jsonFile" className="mb-2 block text-sm font-medium">
+        <div>
+          <label htmlFor="jsonFile" className="block text-sm font-medium">
             Upload JSON File
           </label>
-          <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                ref={jsonFileInputRef}
-                id="jsonFile"
-                name="jsonFile"
-                type="file"
-                accept=".json"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-                required
-              />
-            </div>
+          <div className="mt-2">
+            <input
+              ref={jsonFileInputRef}
+              id="jsonFile"
+              name="jsonFile"
+              type="file"
+              accept=".json"
+              className="peer block w-full rounded-md border border-gray-200 py-2 px-3 text-sm outline-2 placeholder:text-gray-500"
+              required
+            />
           </div>
+          <p className="mt-2 text-sm text-gray-600">Please ensure that the uploaded JSON file follows the specified format:</p>
+          <pre className="mt-2 bg-gray-100 p-2 rounded-md overflow-auto">{`{
+  "email": "emily.wilson@example.com",
+  "firstName": "Emily",
+  "lastName": "Wilson",
+  "password": "Passwordabc",
+  "phoneNum": "8888888888",
+  "role": "teacher",
+  "school_name": "Springfield High School"
+}`}</pre>
+          {/* Bulk Create JSON Button */}
+          <Button type="button" onClick={handleJSONFileUpload} className="mt-4">
+            Bulk Create JSON
+          </Button>
         </div>
 
         {/* CSV File Input */}
-        <div className="mb-4">
-          <label htmlFor="csvFile" className="mb-2 block text-sm font-medium">
+        <div>
+          <label htmlFor="csvFile" className="block text-sm font-medium">
             Upload CSV File
           </label>
-          <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                ref={csvFileInputRef}
-                id="csvFile"
-                name="csvFile"
-                type="file"
-                accept=".csv"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-                required
-              />
-            </div>
+          <div className="mt-2">
+            <input
+              ref={csvFileInputRef}
+              id="csvFile"
+              name="csvFile"
+              type="file"
+              accept=".csv"
+              className="peer block w-full rounded-md border border-gray-200 py-2 px-3 text-sm outline-2 placeholder:text-gray-500"
+              required
+            />
           </div>
-        </div>
+          <p className="mt-2 text-sm text-gray-600">Please ensure that the uploaded CSV file has the following headers as the first line in the specified format:</p>
 
-        {/* Moved Bulk Create Button */}
-        <div className="mt-6 flex justify-end gap-4">
-          <Link
-            href="/dashboard/teachers"
-            className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-          >
-            Return
-          </Link>
-          <Button type="button" onClick={handleJSONFileUpload}>
-            Bulk Create JSON
-          </Button>
-          <Button type="button" onClick={handleCSVFileUpload}>
+          <pre className="mt-2 bg-gray-100 p-2 rounded-md overflow-auto">email,firstName,lastName,password,phoneNum,role,school_name</pre>
+          {/* Bulk Create CSV Button */}
+          <Button type="button" onClick={handleCSVFileUpload} className="mt-4">
             Bulk Create CSV
           </Button>
         </div>
+      </div>
+
+      {/* Return Button */}
+      <div className="mt-6 flex justify-end">
+        <Link
+          href="/dashboard/teachers"
+          className="h-10 flex items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+        >
+          Return
+        </Link>
       </div>
     </form>
   );
