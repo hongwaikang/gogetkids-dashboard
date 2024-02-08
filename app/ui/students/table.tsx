@@ -1,5 +1,5 @@
 import { UpdateStudent, DeleteStudent } from '@/app/ui/students/buttons';
-import { fetchFilteredStudents } from '@/app/lib/testData';
+import { fetchFilteredStudents } from '@/app/lib/data';
 
 export default async function StudentsTable({
   query,

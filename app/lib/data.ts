@@ -1,607 +1,385 @@
-import { sql } from '@vercel/postgres';
-import {
-  CustomerField,
-  CustomersTableType,
-  InvoiceForm,
-  InvoicesTable,
-  LatestInvoiceRaw,
-  User,
-  Revenue,
-  StudentsTable,
-  ParentsTable,
-  TeachersTable,
-  StudentForm,
-  ParentForm,
-  TeacherForm,
-  ClassesTable,
-  ClassForm,
-  Teacher,
-} from './definitions';
-import { formatCurrency } from './utils';
-import { unstable_noStore as noStore } from 'next/cache';
+import { connect, disconnect } from './dbConfig';
+import { Db, ObjectId } from 'mongodb';
 
 const ITEMS_PER_PAGE = 6;
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 1000;
 
-export async function fetchRevenue() {
-  // Add noStore() here to prevent the response from being cached.
-  // This is equivalent to in fetch(..., {cache: 'no-store'}).
-  noStore();
-
-  try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
-
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    const data = await sql<Revenue>`SELECT * FROM revenue`;
-
-    // console.log('Data fetch completed after 3 seconds.');
-
-    return data.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
-  }
-}
-
-export async function fetchLatestInvoices() {
-  noStore();
-
-  try {
-    const data = await sql<LatestInvoiceRaw>`
-      SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      ORDER BY invoices.date DESC
-      LIMIT 5`;
-
-    const latestInvoices = data.rows.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
-    }));
-    return latestInvoices;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest invoices.');
-  }
-}
-
-export async function fetchCardData() {
-  noStore();
-
-  try {
-    // You can probably combine these into a single SQL query
-    // However, we are intentionally splitting them to demonstrate
-    // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-    const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-    const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
-
-    const data = await Promise.all([
-      invoiceCountPromise,
-      customerCountPromise,
-      invoiceStatusPromise,
-    ]);
-
-    const numberOfInvoices = Number(data[0].rows[0].count ?? '0');
-    const numberOfCustomers = Number(data[1].rows[0].count ?? '0');
-    const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
-    const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
-
-    return {
-      numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,
-    };
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch card data.');
-  }
-}
-
-export async function fetchFilteredInvoices(
-  query: string,
-  currentPage: number,
-) {
-  noStore();
-
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-
-  try {
-    const invoices = await sql<InvoicesTable>`
-      SELECT
-        invoices.id,
-        invoices.amount,
-        invoices.date,
-        invoices.status,
-        customers.name,
-        customers.email,
-        customers.image_url
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      WHERE
-        customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`} OR
-        invoices.amount::text ILIKE ${`%${query}%`} OR
-        invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}
-      ORDER BY invoices.date DESC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
-    `;
-
-    return invoices.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoices.');
-  }
-}
-
-export async function fetchInvoicesPages(query: string) {
-  noStore();
-
-  try {
-    const count = await sql`SELECT COUNT(*)
-    FROM invoices
-    JOIN customers ON invoices.customer_id = customers.id
-    WHERE
-      customers.name ILIKE ${`%${query}%`} OR
-      customers.email ILIKE ${`%${query}%`} OR
-      invoices.amount::text ILIKE ${`%${query}%`} OR
-      invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}
-  `;
-
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
-    return totalPages;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of invoices.');
-  }
-}
-
-export async function fetchInvoiceById(id: string) {
-  noStore();
-
-  try {
-    const data = await sql<InvoiceForm>`
-      SELECT
-        invoices.id,
-        invoices.customer_id,
-        invoices.amount,
-        invoices.status
-      FROM invoices
-      WHERE invoices.id = ${id};
-    `;
-
-    const invoice = data.rows.map((invoice) => ({
-      ...invoice,
-      // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
-    }));
-
-    console.log(invoice); // Invoice is an empty array []
-    return invoice[0];
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoice.');
-  }
-}
-
-export async function fetchCustomers() {
-  try {
-    const data = await sql<CustomerField>`
-      SELECT
-        id,
-        name
-      FROM customers
-      ORDER BY name ASC
-    `;
-
-    const customers = data.rows;
-    return customers;
-  } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch all customers.');
-  }
-}
-
-export async function fetchFilteredCustomers(query: string) {
-  noStore();
-
-  try {
-    const data = await sql<CustomersTableType>`
-		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url,
-		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
-		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
-		WHERE
-		  customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`}
-		GROUP BY customers.id, customers.name, customers.email, customers.image_url
-		ORDER BY customers.name ASC
-	  `;
-
-    const customers = data.rows.map((customer) => ({
-      ...customer,
-      total_pending: formatCurrency(customer.total_pending),
-      total_paid: formatCurrency(customer.total_paid),
-    }));
-
-    return customers;
-  } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch customer table.');
-  }
-}
-
-export async function getUser(email: string) {
-  try {
-    const user = await sql`SELECT * FROM users WHERE email=${email}`;
-    return user.rows[0] as User;
-  } catch (error) {
-    console.error('Failed to fetch user:', error);
-    throw new Error('Failed to fetch user.');
-  }
-}
-
-// Students
-
+// ---------------------------------------------- STUDENTS ----------------------------------------------
 export async function fetchFilteredStudents(query: string, currentPage: number) {
-  noStore();
+    const client = await connect();
+    const db = client.db('GoGetKids'); // Access the database from the client instance
+    const studentsCollection = db.collection('students');
 
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  try {
-    const students = await sql<StudentsTable>`
-      SELECT
-        students.id,
-        students.firstname,
-        students.lastname,
-        students.class_id,
-        students.parent_id,
-        CONCAT(students.firstname, ' ', students.lastname) AS name,
-        CONCAT(parents.firstname, ' ', parents.lastname) AS parent_name
-      FROM students
-      LEFT JOIN parents ON students.parent_id::VARCHAR = parents.id::VARCHAR
-      WHERE
-        students.firstname ILIKE ${`%${query}%`} OR
-        students.lastname ILIKE ${`%${query}%`} OR
-        students.class_id ILIKE ${`%${query}%`} OR
-        students.parent_id::VARCHAR ILIKE ${`%${query}%`} OR
-        CONCAT(students.firstname, ' ', students.lastname) ILIKE ${`%${query}%`} OR
-        CONCAT(parents.firstname, ' ', parents.lastname) ILIKE ${`%${query}%`}
-      ORDER BY name
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
-    `;
+    try {
+        const students = await studentsCollection
+            .find()
+            .sort({ name: 1 }) // Assuming 'name' field exists for sorting
+            .skip(offset)
+            .limit(ITEMS_PER_PAGE)
+            .toArray();
 
-    return students.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch students.');
-  }
+        return students;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch students.');
+    } finally {
+        await client.close(); // Close the connection when done
+    }
 }
 
 export async function fetchStudentsPages(query: string) {
-  noStore();
+  let retries = 0;
+  while (retries < MAX_RETRIES) {
+      try {
+          const client = await connect();
+          const db = client.db('GoGetKids'); // Access the database from the client instance
+          const studentsCollection = db.collection('students');
 
-  try {
-    const count = await sql`SELECT COUNT(*)
-      FROM students
-      WHERE
-        students.firstname ILIKE ${`%${query}%`} OR
-        students.lastname ILIKE ${`%${query}%`} OR
-        students.class_id ILIKE ${`%${query}%`} OR
-        students.parent_id::VARCHAR ILIKE ${`%${query}%`} OR
-        CONCAT(students.firstname, ' ', students.lastname) ILIKE ${`%${query}%`}
-    `;
+          const count = await studentsCollection.countDocuments();
 
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
-    return totalPages;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of students.');
+          const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+          return totalPages;
+      } catch (error) {
+          console.error('Error fetching students:', error);
+          retries++;
+          if (retries < MAX_RETRIES) {
+              console.log(`Retrying in ${RETRY_DELAY_MS / 1000} seconds...`);
+              await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+          } else {
+              console.error('Max retries exceeded. Failed to fetch total number of students.');
+              throw new Error('Failed to fetch total number of students.');
+          }
+      }
   }
 }
 
-export async function fetchStudentById(id: string) {
-  noStore();
-
+export async function fetchStudentById(id: ObjectId) {
+  let client;
+  let db: Db | undefined;
   try {
-    const data = await sql<StudentForm>`
-      SELECT
-        students.id,
-        students.firstname,
-        students.lastname,
-        students.dateofbirth,
-        students.address,
-        students.postalcode,
-        students.class_id,
-        students.parent_id
-      FROM students
-      WHERE students.id = ${id};
-    `;
+    client = await connect();
+    db = client.db('GoGetKids'); // Connect to the 'GoGetKids' database
 
-    // Extract the first row from the result
-    const student = data.rows[0];
+    const student = await db.collection('students').findOne({ _id: id });
 
-    if (!student) {
-      throw new Error('Student not found');
+    if (student) {
+      console.log('Fetched student:', student); // Log the fetched student object
+      return student;
+    } else {
+      throw new Error('Student not found.');
     }
-
-    return student;
-  } catch (error) {
-    console.error('Database Error:', error);
+  } catch (error: any) {
+    console.error('Error fetching student:', error.message);
     throw new Error('Failed to fetch student.');
+  } finally {
+    if (client) {
+      await client.close();
+    }
   }
 }
 
-// Parents
+// ------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------------- PARENTS -----------------------------------------------
 export async function fetchFilteredParents(query: string, currentPage: number) {
-  noStore();
+    const client = await connect();
+    const db = client.db('GoGetKids'); // Access the database from the client instance
+    const parentsCollection = db.collection('users');
 
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE; // Assuming ITEMS_PER_PAGE is defined somewhere
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  try {
-    const parents = await sql<ParentsTable>`
-      SELECT
-        parents.id,
-        parents.firstname,
-        parents.lastname,
-        parents.country_code,
-        parents.phone,
-        parents.username,
-        CONCAT(parents.firstname, ' ', parents.lastname) AS name
-      FROM parents
-      WHERE
-        parents.firstname ILIKE ${`%${query}%`} OR
-        parents.lastname ILIKE ${`%${query}%`} OR
-        parents.country_code ILIKE ${`%${query}%`} OR
-        parents.phone ILIKE ${`%${query}%`} OR
-        parents.username ILIKE ${`%${query}%`} OR
-        CONCAT(parents.firstname, ' ', parents.lastname) ILIKE ${`%${query}%`}
-      ORDER BY name
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
-    `;
+    try {
+        const parents = await parentsCollection
+            .find({
+							role: 'parent',
+            })
+            .sort({ name: 1 })
+            .skip(offset)
+            .limit(ITEMS_PER_PAGE)
+            .toArray();
 
-    return parents.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch parents.');
-  }
+        return parents;
+    } catch (error) {
+        console.error('Database Error:', error);
+        throw new Error('Failed to fetch parents.');
+    } finally {
+        await client.close(); // Close the connection when done
+    }
 }
 
 export async function fetchParentsPages(query: string) {
-  noStore();
+  let retries = 0;
+  while (retries < MAX_RETRIES) {
+      try {
+          const client = await connect();
+          const db = client.db('GoGetKids'); // Access the database from the client instance
+          const parentsCollection = db.collection('users');
 
-  try {
-    const count = await sql`SELECT COUNT(*)
-      FROM parents
-      WHERE
-        parents.firstname ILIKE ${`%${query}%`} OR
-        parents.lastname ILIKE ${`%${query}%`} OR
-        parents.country_code ILIKE ${`%${query}%`} OR
-        parents.phone ILIKE ${`%${query}%`} OR
-        parents.username ILIKE ${`%${query}%`} OR
-        CONCAT(parents.firstname, ' ', parents.lastname) ILIKE ${`%${query}%`}
-    `;
+          const count = await parentsCollection.countDocuments({ role: 'parent' });
 
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
-    return totalPages;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of parents.');
+          const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+          return totalPages;
+      } catch (error) {
+          console.error('Error fetching parents:', error);
+          retries++;
+          if (retries < MAX_RETRIES) {
+              console.log(`Retrying in ${RETRY_DELAY_MS / 1000} seconds...`);
+              await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+          } else {
+              console.error('Max retries exceeded. Failed to fetch total number of parents.');
+              throw new Error('Failed to fetch total number of parents.');
+          }
+      }
   }
 }
 
-export async function fetchParentById(id: string) {
-  noStore();
+// Update this to take in school prop
+export async function fetchAllParentsEmail() {
+	const client = await connect();
+	const db = client.db('GoGetKids'); // Access the database from the client instance
+	const parentsCollection = db.collection('users');
 
+	try {
+			const parentsEmails = await parentsCollection
+					.find({ role: 'parent' })
+					.project({ _id: 0, email: 1 }) // Projection to include only the email field
+					.toArray();
+
+			return parentsEmails.map(parent => parent.email);
+	} catch (error) {
+			console.error('Database Error:', error);
+			throw new Error('Failed to fetch parents emails.');
+	} finally {
+			await client.close(); // Close the connection when done
+	}
+}
+
+export async function fetchParentById(id: ObjectId) {
+  let client;
+  let db: Db | undefined;
   try {
-    const data = await sql<ParentForm>`
-      SELECT
-        parents.id,
-        parents.username,
-        parents.password,
-        parents.firstname,
-        parents.lastname,
-        parents.country_code,
-        parents.phone
-      FROM parents
-      WHERE parents.id = ${id};
-    `;
+    client = await connect();
+    db = client.db('GoGetKids'); // Connect to the 'GoGetKids' database
 
-    // Extract the first row from the result
-    const parent = data.rows[0];
+    const parent = await db.collection('users').findOne({ _id: id, role: 'parent' });
 
-    if (!parent) {
-      throw new Error('Parent not found');
+    if (parent) {
+      console.log('Fetched parent:', parent); // Log the fetched parent object
+      return parent;
+    } else {
+      throw new Error('Parent not found.');
     }
-
-    return parent;
-  } catch (error) {
-    console.error('Database Error:', error);
+  } catch (error: any) {
+    console.error('Error fetching parent:', error.message);
     throw new Error('Failed to fetch parent.');
+  } finally {
+    if (client) {
+      await client.close();
+    }
   }
 }
+// ------------------------------------------------------------------------------------------------------
 
-// Teachers
+// ---------------------------------------------- TEACHERS ----------------------------------------------
 export async function fetchFilteredTeachers(query: string, currentPage: number) {
-  noStore();
+	const client = await connect();
+	const db = client.db('GoGetKids'); // Access the database from the client instance
+	const teachersCollection = db.collection('users');
 
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE; // Assuming ITEMS_PER_PAGE is defined somewhere
+	const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  try {
-    const teachers = await sql<TeachersTable>`
-      SELECT
-        teachers.id,
-        teachers.firstname,
-        teachers.lastname,
-        teachers.username,
-        teachers.country_code,
-        teachers.phone,
-        CONCAT(teachers.firstname, ' ', teachers.lastname) AS name
-      FROM teachers
-      WHERE
-        teachers.firstname ILIKE ${`%${query}%`} OR
-        teachers.lastname ILIKE ${`%${query}%`} OR
-        teachers.username ILIKE ${`%${query}%`} OR
-        teachers.country_code ILIKE ${`%${query}%`} OR
-        teachers.phone ILIKE ${`%${query}%`} OR
-        CONCAT(teachers.firstname, ' ', teachers.lastname) ILIKE ${`%${query}%`}
-      ORDER BY name
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
-    `;
+	try {
+			const teachers = await teachersCollection
+					.find({
+						role: 'teacher',
+					})
+					.sort({ name: 1 }) // Assuming 'name' field exists for sorting
+					.skip(offset)
+					.limit(ITEMS_PER_PAGE)
+					.toArray();
 
-    return teachers.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch teachers.');
-  }
+			return teachers;
+	} catch (error) {
+			console.error('Database Error:', error);
+			throw new Error('Failed to fetch teachers.');
+	} finally {
+			await client.close(); // Close the connection when done
+	}
 }
 
 export async function fetchTeachersPages(query: string) {
-  noStore();
+  let retries = 0;
+  while (retries < MAX_RETRIES) {
+      try {
+          const client = await connect();
+          const db = client.db('GoGetKids'); // Access the database from the client instance
+          const teachersCollection = db.collection('users');
 
-  try {
-    const count = await sql`
-      SELECT COUNT(*)
-      FROM teachers
-      WHERE
-        teachers.firstname ILIKE ${`%${query}%`} OR
-        teachers.lastname ILIKE ${`%${query}%`} OR
-        teachers.username ILIKE ${`%${query}%`} OR
-        teachers.country_code ILIKE ${`%${query}%`} OR
-        teachers.phone ILIKE ${`%${query}%`} OR
-        CONCAT(teachers.firstname, ' ', teachers.lastname) ILIKE ${`%${query}%`}
-    `;
+          const count = await teachersCollection.countDocuments({ role: 'teacher' });
 
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
-    return totalPages;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of teachers.');
+          const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+          return totalPages;
+      } catch (error) {
+          console.error('Error fetching teachers:', error);
+          retries++;
+          if (retries < MAX_RETRIES) {
+              console.log(`Retrying in ${RETRY_DELAY_MS / 1000} seconds...`);
+              await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+          } else {
+              console.error('Max retries exceeded. Failed to fetch total number of teachers.');
+              throw new Error('Failed to fetch total number of teachers.');
+          }
+      }
   }
 }
 
-export async function fetchTeacherById(id: string) {
-  noStore();
+export async function fetchAllTeachersEmail() {
+  const client = await connect();
+  const db = client.db('GoGetKids'); // Access the database from the client instance
+  const teachersCollection = db.collection('users');
 
   try {
-    const data = await sql<TeacherForm>`
-      SELECT
-        teachers.id,
-        teachers.username,
-        teachers.password,
-        teachers.firstname,
-        teachers.lastname,
-        teachers.country_code,
-        teachers.phone
-      FROM teachers
-      WHERE teachers.id = ${id};
-    `;
+    const teachersEmails = await teachersCollection
+      .find({ role: 'teacher' }) // Adjust the role to search for teachers
+      .project({ _id: 0, email: 1 }) // Projection to include only the email field
+      .toArray();
 
-    // Extract the first row from the result
-    const teacher = data.rows[0];
+    return teachersEmails.map(teacher => teacher.email);
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch teachers emails.');
+  } finally {
+    await client.close(); // Close the connection when done
+  }
+}
 
-    if (!teacher) {
-      throw new Error('Teacher not found');
+export async function fetchTeacherById(id: ObjectId) {
+  let client;
+  let db: Db | undefined;
+  try {
+    client = await connect();
+    db = client.db('GoGetKids');
+
+    // Fetch teacher data based on ID and role
+    const teacher = await db.collection('users').findOne({ _id: id, role: 'teacher' });
+
+    if (teacher) {
+      console.log('Fetched teacher:', teacher);
+      return teacher;
+    } else {
+      throw new Error('Teacher not found.');
     }
-
-    return teacher;
-  } catch (error) {
-    console.error('Database Error:', error);
+  } catch (error: any) {
+    console.error('Error fetching teacher:', error.message);
     throw new Error('Failed to fetch teacher.');
+  } finally {
+    if (client) {
+      await client.close();
+    }
   }
 }
+// ------------------------------------------------------------------------------------------------------
 
-// Classes
+// ---------------------------------------------- CLASSES -----------------------------------------------
 export async function fetchFilteredClasses(query: string, currentPage: number) {
-  noStore();
+	const client = await connect();
+	const db = client.db('GoGetKids'); // Access the database from the client instance
+	const teachersCollection = db.collection('classes');
 
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+	const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
-  try {
-    const classes = await sql<ClassesTable>`
-      SELECT
-        classes.id,
-        classes.name,
-        classes.level,
-        classes.teacher_id,
-        CONCAT(teachers.firstname, ' ', teachers.lastname) AS teacher_name
-      FROM classes
-      LEFT JOIN teachers ON classes.teacher_id::VARCHAR = teachers.id::VARCHAR
-      WHERE
-        classes.name ILIKE ${`%${query}%`} OR
-        classes.level ILIKE ${`%${query}%`} OR
-        classes.teacher_id::VARCHAR ILIKE ${`%${query}%`}
-      ORDER BY name
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
-    `;
+	//TO DO find school id
+	try {
+			const students = await teachersCollection
+					.find()
+					.sort({ name: 1 }) // Assuming 'name' field exists for sorting
+					.skip(offset)
+					.limit(ITEMS_PER_PAGE)
+					.toArray();
 
-    return classes.rows;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch classes.');
-  }
+			return students;
+	} catch (error) {
+			console.error('Database Error:', error);
+			throw new Error('Failed to fetch students.');
+	} finally {
+			await client.close(); // Close the connection when done
+	}
 }
 
 export async function fetchClassesPages(query: string) {
-  noStore();
+  let retries = 0;
+  while (retries < MAX_RETRIES) {
+      try {
+          const client = await connect();
+          const db = client.db('GoGetKids'); // Access the database from the client instance
+          const classesCollection = db.collection('classes');
 
-  try {
-    const count = await sql`SELECT COUNT(*)
-      FROM classes
-      WHERE
-        id ILIKE ${`%${query}%`} OR
-        name ILIKE ${`%${query}%`} OR
-        level ILIKE ${`%${query}%`}
-    `;
+          const count = await classesCollection.countDocuments();
 
-    const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
-    return totalPages;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of classes.');
+          const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+          return totalPages;
+      } catch (error) {
+          console.error('Error fetching classes:', error);
+          retries++;
+          if (retries < MAX_RETRIES) {
+              console.log(`Retrying in ${RETRY_DELAY_MS / 1000} seconds...`);
+              await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+          } else {
+              console.error('Max retries exceeded. Failed to fetch total number of classes.');
+              throw new Error('Failed to fetch total number of classes.');
+          }
+      }
   }
 }
 
-export async function fetchClassById(id: string) {
-  noStore();
+// Update this to take in school prop
+export async function fetchAllClassNames() {
+  const client = await connect();
+  const db = client.db('GoGetKids'); // Access the database from the client instance
+  const classesCollection = db.collection('classes');
 
   try {
-    const data = await sql<ClassForm>`
-      SELECT
-        classes.id,
-        classes.name,
-        classes.level,
-        classes.teacher_id
-      FROM classes
-      WHERE classes.id = ${id};
-    `;
+    const classNames = await classesCollection
+      .find({})
+      .project({ _id: 0, class_name: 1 }) // Projection to include only the class_name field
+      .toArray();
 
-    // Extract the first row from the result
-    const class1 = data.rows[0];
+    return classNames.map(clazz => clazz.class_name);
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch class names.');
+  } finally {
+    await client.close(); // Close the connection when done
+  }
+}
 
-    if (!class1) {
-      throw new Error('Class not found');
+export async function fetchClassById(id: ObjectId) {
+  let client;
+  let db: Db | undefined;
+  try {
+    client = await connect();
+    db = client.db('GoGetKids');
+
+    // Fetch class data based on ID
+    const classroom = await db.collection('classes').findOne({ _id: id });
+
+    if (classroom) {
+      console.log('Fetched class:', classroom);
+      return classroom;
+    } else {
+      throw new Error('Class not found.');
     }
-
-    return class1;
-  } catch (error) {
-    console.error('Database Error:', error);
+  } catch (error: any) {
+    console.error('Error fetching class:', error.message);
     throw new Error('Failed to fetch class.');
+  } finally {
+    if (client) {
+      await client.close();
+    }
   }
 }
 
-
+// ------------------------------------------------------------------------------------------------------

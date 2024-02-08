@@ -1,6 +1,6 @@
 import Form from '@/app/ui/parents/edit-form';
 import Breadcrumbs from '@/app/ui/parents/breadcrumbs';
-import { fetchParentById } from '@/app/lib/testData';
+import { fetchParentById } from '@/app/lib/data';
 import { ObjectId } from 'mongodb';
 
 export default async function Page({ params }: { params: { id: string } }) {

@@ -1,409 +1,506 @@
-'use server';
+'use server'
 
+import { Db, ObjectId } from 'mongodb';
+import { connect } from './dbConfig';
 import { z } from 'zod';
-import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 // For password hashing
 const bcrypt = require('bcrypt');
-const saltRounds = 10; // Adjust the number of salt rounds as needed
+const saltRounds = 10;
 
-// ---------------------------INVOICE--------------------------------------------
-// For Form validation
-const InvoiceFormSchema = z.object({
-  id: z.string(),
-  customerId: z.string({
-    invalid_type_error: 'Please select a customer.',
-  }),
-  amount: z.coerce.number()
-  .gt(0, { message: 'Please enter an amount greater than $0.' }),
-  status: z.enum(['pending', 'paid'], {
-    invalid_type_error: 'Please select an invoice status.',
-  }),
-  date: z.string(),
+// ---------------------------------------------- STUDENTS ----------------------------------------------
+// Define the schema for form data validation using Zod
+const studentSchema = z.object({
+  studentid: z.number(),
+  firstname: z.string(),
+  lastname: z.string(),
+  gender: z.string(), // Gender is required
+  dob: z.string(),
+  address: z.string(),
+  postcode: z.string(),
+  zone: z.string().optional(), // Optional field
+  class_name: z.string().optional(), // Optional field
+  parent_id: z.string().optional(), // Optional field
+  status: z.enum(["At Home", "In School", "In Bus", ""]), // Enum for status
+  school_name: z.string()
 });
 
-// Create Invoice
-const CreateInvoice = InvoiceFormSchema.omit({ id: true, date: true });
-
-// This is temporary until @types/react-dom is updated
-export type State = {
-  errors?: {
-    customerId?: string[];
-    amount?: string[];
-    status?: string[];
-  };
-  message?: string | null;
-};
-
-// Create Invoice
-export async function createInvoice(prevState: State, formData: FormData) {
-  // Validate form using Zod
-  const validatedFields = CreateInvoice.safeParse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
-
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Create Invoice.',
-    };
-  }
-
-  // Prepare data for insertion into the database
-  const { customerId, amount, status } = validatedFields.data;
-  const amountInCents = amount * 100;
-  const date = new Date().toISOString().split('T')[0];
-
-  // Insert data into the database
-  try {
-    await sql`
-      INSERT INTO invoices (customer_id, amount, status, date)
-      VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-    `;
-  } catch (error) {
-    // If a database error occurs, return a more specific error.
-    return {
-      message: 'Database Error: Failed to Create Invoice.',
-    };
-  }
-
-  // Revalidate the cache for the invoices page and redirect the user.
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
+function generateStudentId() {
+  // Generate a random number between 100000 and 999999 and convert it to a number
+  return +Math.floor(Math.random() * 900000) + 100000;
 }
 
-// Update Invoice
-const UpdateInvoice = InvoiceFormSchema.omit({ id: true, date: true });
-
-export async function updateInvoice(id: string, formData: FormData) {
-  const { customerId, amount, status } = UpdateInvoice.parse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
-
-  const amountInCents = amount * 100;
-
-  try {
-    await sql`
-        UPDATE invoices
-        SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-        WHERE id = ${id}
-      `;
-  } catch (error) {
-    return { message: 'Database Error: Failed to Update Invoice.' };
-  }
-
-  revalidatePath('/dashboard/invoices');
-  redirect('/dashboard/invoices');
+// Function to check if the generated student ID is unique
+async function isStudentIdUnique(db: Db, studentid: number) {
+  const existingStudent = await db.collection('students').findOne({ studentid });
+  return !existingStudent;
 }
-
-// Delete Invoice
-export async function deleteInvoice(id: string) {
-
-  try {
-    await sql`DELETE FROM invoices WHERE id = ${id}`;
-    revalidatePath('/dashboard/invoices');
-    return { message: 'Deleted Invoice.' };
-  } catch (error) {
-    return { message: 'Database Error: Failed to Delete Invoice.' };
-  }
-}
-
-// -------------------------------------------------------------------------------------
-
-// ------------------------------------STUDENT-----------------------------------------
-// For Form validation
-const StudentFormSchema = z.object({
-  id: z.string(),
-  firstname: z.string({
-    invalid_type_error: 'Please enter a valid first name.',
-  }),
-  lastname: z.string({
-    invalid_type_error: 'Please enter a valid last name.',
-  }),
-  dateofbirth: z.string({
-    invalid_type_error: 'Please enter a valid date of birth.',
-  }),
-  address: z.string({
-    invalid_type_error: 'Please enter a valid address.',
-  }),
-  postalcode: z.string({
-    invalid_type_error: 'Please enter a valid postal code.',
-  }),
-  class_id: z.string({
-    invalid_type_error: 'Please select a valid class.',
-  }),
-  parent_id: z.string({
-    invalid_type_error: 'Please select a valid parent.',
-  }),
-});
-
-// Create Student
-const CreateStudent = StudentFormSchema.omit({ id: true});
 
 export async function createStudent(formData: FormData) {
-  const {firstname, lastname, dateofbirth, postalcode, address, class_id, parent_id } = CreateStudent.parse({
-    //id: formData.get('id'),
-    firstname: formData.get('firstname'),
-    lastname: formData.get('lastname'),
-    dateofbirth: formData.get('dateofbirth'),
-    address: formData.get('address'),
-    postalcode: formData.get('postalcode'),
-    class_id: formData.get('class_id'),
-    parent_id: formData.get('parent_id'),
-  });
-
-  // Store data into the database
-  await sql`
-    INSERT INTO students (firstname, lastname, dateofbirth, address, postalcode, class_id, parent_id)
-    VALUES (${firstname}, ${lastname}, ${dateofbirth}, ${address}, ${postalcode}, ${class_id}, ${parent_id})
-  `;
-
-  // Refresh data and redirect back to the students page
-  revalidatePath('/dashboard/students');
-  redirect('/dashboard/students');
-}
-
-// Update Student
-const UpdateStudent = StudentFormSchema.omit({ id: true});;
-
-export async function updateStudent(student_id: string, formData: FormData) {
-  const {firstname, lastname, dateofbirth, address, postalcode, class_id, parent_id } = UpdateStudent.parse({
-    firstname: formData.get('firstname'),
-    lastname: formData.get('lastname'),
-    dateofbirth: formData.get('dateofbirth'),
-    address: formData.get('address'),
-    postalcode: formData.get('postalcode'),
-    class_id: formData.get('class_id'),
-    parent_id: formData.get('parent_id'),
-  });
-
+  let client;
   try {
-    await sql`
-    UPDATE students
-    SET
-      firstname = ${firstname},
-      lastname = ${lastname},
-      dateofbirth = ${dateofbirth},
-      address = ${address},
-      postalcode = ${postalcode},
-      class_id = ${class_id},
-      parent_id = ${parent_id}
-    WHERE id = ${student_id}
-  `;
-  } catch (error) {
-    return { message: 'Database Error: Failed to Update Student.' };
+    // Generate a unique student ID
+    let studentid;
+    client = await connect();
+    const db = client.db('GoGetKids');
+    let isUnique = false;
+    while (!isUnique) {
+      studentid = generateStudentId();
+      isUnique = await isStudentIdUnique(db, studentid);
+    }
+
+    // Validate form data using Zod schema
+    const validatedData = {
+      firstname: formData.get('firstname'),
+      lastname: formData.get('lastname'),
+      gender: formData.get('gender'),
+      dob: formData.get('dob'),
+      address: formData.get('address'),
+      postcode: formData.get('postcode'),
+      zone: formData.get('zone') || '',
+      class_name: formData.get('class_name') || '',
+      parent_id: formData.get('parent_id') || '',
+      status: '',
+      school_name: ''
+    };
+
+    // Manually add studentid to the data object
+    const studentData = {
+      studentid,
+      ...validatedData,
+    };
+
+    // Insert student data into the MongoDB collection
+    const result = await db.collection('students').insertOne(studentData);
+
+    // Check if the insertion was successful
+    if (result.insertedId) {
+      // Data inserted successfully
+      console.log('Student created successfully:', result.insertedId);
+      revalidatePath('/dashboard/students')
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during insertion
+      console.error('Failed to create student.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database insertion errors
+    console.error('Error creating student:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+    }
   }
-
-  revalidatePath('/dashboard/students');
-  redirect('/dashboard/students');
 }
-// -----------------------------------------------------------------------------------
 
-// ------------------------------------PARENT-----------------------------------
-// For Form validation
-const ParentFormSchema = z.object({
-  id: z.string(),
-  username: z.string(),
-  password: z.string(),
-  firstname: z.string(),
-  lastname: z.string(),
-  country_code: z.string(),
-  phone: z.string(),
+export async function updateStudent(id: string, formData: FormData) {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    // Explicitly convert studentid to a number
+    const studentId = Number(formData.get('studentid'));
+
+    // Validate form data using Zod schema
+    const validatedData = studentSchema.parse({
+      studentid: studentId,
+      firstname: formData.get('firstname'),
+      lastname: formData.get('lastname'),
+      gender: formData.get('gender'),
+      dob: formData.get('dob'),
+      address: formData.get('address'),
+      postcode: formData.get('postcode'),
+      zone: formData.get('zone') || '',
+      class_name: formData.get('class_name') || '',
+      parent_id: formData.get('parent_id') || '',
+      status: '',
+      school_name: ''
+    });
+
+    console.log('Validated Data:', validatedData); // Log validated data
+
+    client = await connect();
+    console.log('Connected to MongoDB'); // Log successful connection
+
+    const db = client.db('GoGetKids'); // Specify the database name here
+
+    // Update student data in the MongoDB collection
+    const result = await db.collection('students').updateOne(
+      { _id: objectId }, // Use the ObjectId here
+      { $set: validatedData }
+    );
+
+    console.log('Update Result:', result); // Log update result
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      // Data updated successfully
+      console.log('Student updated successfully:', id);
+      revalidatePath('/dashboard/students');
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during update
+      console.error('Failed to update student.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database update errors
+    console.error('Error updating student:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed'); // Log when the connection is closed
+    }
+  }
+}
+
+
+// ------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------------- PARENTS -----------------------------------------------
+// Define the schema for parent data validation using Zod
+const parentSchema = z.object({
+  email: z.string().email(), // Email is required and must be a valid email format
+  firstName: z.string(),
+  lastName: z.string(),
+  password: z.string(), // Password is required
+  phoneNum: z.string(),
+  role: z.enum(["parent"]), // Role must be "parent"
 });
-
-// Create Parent
-const CreateParent = ParentFormSchema.omit({ id: true});
 
 export async function createParent(formData: FormData) {
-  const {username, password, firstname, lastname, country_code, phone } = CreateParent.parse({
-    //id: formData.get('id'),
-    username: formData.get('username'),
-    password: formData.get('password'),
-    firstname: formData.get('firstname'),
-    lastname: formData.get('lastname'),
-    country_code: formData.get('country_code'),
-    phone: formData.get('phone'),
-  });
+  let client;
+  let db: Db; // Declare db variable here
+  try {
+    // Validate form data using Zod schema
+    const validatedData = parentSchema.parse({
+      email: formData.get('email'),
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      password: formData.get('password'),
+      phoneNum: formData.get('phoneNum'),
+      role: 'parent', // Hardcoded role as "parent"
+    });
 
-  // Hash the password using bcrypt
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
+    // Check if the email is unique
+    client = await connect();
+    db = client.db('GoGetKids'); // Specify the database name here
+    const existingParent = await db.collection('users').findOne({ email: validatedData.email });
+    if (existingParent) {
+      throw new Error('Email is already in use.');
+    }
 
-  // Store data into the database
-  await sql`
-    INSERT INTO parents (username, password, firstname, lastname, country_code, phone)
-    VALUES (${username}, ${hashedPassword}, ${firstname}, ${lastname}, ${country_code} ,${phone})
-  `;
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(validatedData.password, saltRounds); // Use bcrypt to hash the password with 10 salt rounds
 
-  // Refresh data and redirect back to the parents page
-  revalidatePath('/dashboard/parents');
-  redirect('/dashboard/parents');
+    // Insert parent data into the MongoDB collection with hashed password
+    const result = await db.collection('users').insertOne({
+      ...validatedData,
+      password: hashedPassword, // Replace plain password with hashed password
+    });
+
+    // Check if the insertion was successful
+    if (result.insertedId) {
+      // Data inserted successfully
+      console.log('Parent created successfully:', result.insertedId);
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during insertion
+      console.error('Failed to create parent.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database insertion errors
+    console.error('Error creating parent:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+    }
+  }
 }
-// -----------------------------------------------------------------------------------
 
-// Update Parent
-const UpdateParent = ParentFormSchema.omit({ id: true});
+export async function updateParent(id: string, formData: FormData) {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
 
-export async function updateParent(parent_id: string, formData: FormData) {
-  const {username, password, firstname, lastname, country_code, phone } = UpdateParent.parse({
-    //id: formData.get('id'),
-    username: formData.get('username'),
-    password: formData.get('password'),
-    firstname: formData.get('firstname'),
-    lastname: formData.get('lastname'),
-    country_code: formData.get('country_code'),
-    phone: formData.get('phone'),
-  });
+    // Validate form data using Zod schema
+    const validatedData = parentSchema.parse({
+      email: formData.get('email'),
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      password: formData.get('password'),
+      phoneNum: formData.get('phoneNum'),
+      role: 'parent', // Hardcoded role as "parent"
+    });
 
-  // Hash the password using bcrypt
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
+    console.log('Validated Data:', validatedData); // Log validated data
 
-  await sql`
-    UPDATE parents
-    SET
-      username = ${username},
-      password = ${hashedPassword},
-      firstname = ${firstname},
-      lastname = ${lastname},
-      country_code = ${country_code},
-      phone = ${phone}
-    WHERE id = ${parent_id}
-  `;
+    client = await connect();
+    console.log('Connected to MongoDB'); // Log successful connection
 
-  revalidatePath('/dashboard/parents');
-  redirect('/dashboard/parents');
+    const db = client.db('GoGetKids'); // Specify the database name here
+
+    // Update parent data in the MongoDB collection
+    const result = await db.collection('users').updateOne(
+      { _id: objectId }, // Use the ObjectId here
+      { $set: validatedData }
+    );
+
+    console.log('Update Result:', result); // Log update result
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      // Data updated successfully
+      console.log('Parent updated successfully:', id);
+      revalidatePath('/dashboard/parents');
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during update
+      console.error('Failed to update parent.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database update errors
+    console.error('Error updating parent:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed'); // Log when the connection is closed
+    }
+  }
 }
-// ----------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------------
 
-// ------------------------------------TEACHER---------------------------------
-// For Form validation
-const TeacherFormSchema = z.object({
-  id: z.string(),
-  username: z.string(),
-  password: z.string(),
-  firstname: z.string(),
-  lastname: z.string(),
-  country_code: z.string(),
-  phone: z.string(),
+// ---------------------------------------------- TEACHERS ----------------------------------------------
+// Define the schema for teacher data validation using Zod
+const teacherSchema = z.object({
+  email: z.string().email(), // Email is required and must be a valid email format
+  firstName: z.string(),
+  lastName: z.string(),
+  password: z.string(), // Password is required
+  phoneNum: z.string(),
+  role: z.enum(["teacher"]), // Role must be "teacher"
+  school_name: z.string(),
 });
-
-// Create Teacher
-const CreateTeacher = TeacherFormSchema.omit({ id: true });
 
 export async function createTeacher(formData: FormData) {
-  const { username, password, firstname, lastname, country_code, phone} = CreateTeacher.parse({
-    //id: formData.get('id'),
-    username: formData.get('username'),
-    password: formData.get('password'),
-    firstname: formData.get('firstname'),
-    lastname: formData.get('lastname'),
-    country_code: formData.get('country_code'),
-    phone: formData.get('phone'),
-  });
+  let client;
+  let db: Db; // Declare db variable here
+  try {
+    // Validate form data using Zod schema
+    const validatedData = teacherSchema.parse({
+      email: formData.get('email'),
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      password: formData.get('password'),
+      phoneNum: formData.get('phoneNum'),
+      role: 'teacher', // Hardcoded role as "teacher"
+      school_name: '',
+    });
 
-  // Hash the password using bcrypt
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
+    // Check if the email is unique
+    client = await connect();
+    db = client.db('GoGetKids'); // Specify the database name here
+    const existingTeacher = await db.collection('users').findOne({ email: validatedData.email });
+    if (existingTeacher) {
+      throw new Error('Email is already in use.');
+    }
 
-  // Store data into the database with the hashed password
-  await sql`
-    INSERT INTO teachers (username, password, firstname, lastname, country_code, phone)
-    VALUES (${username}, ${hashedPassword}, ${firstname}, ${lastname}, ${country_code}, ${phone})
-  `;
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(validatedData.password, saltRounds); // Use bcrypt to hash the password with 10 salt rounds
 
-  // Refresh data and redirect back to the teachers page
-  revalidatePath('/dashboard/teachers');
-  redirect('/dashboard/teachers');
+    // Insert teacher data into the MongoDB collection with hashed password
+    const result = await db.collection('users').insertOne({
+      ...validatedData,
+      password: hashedPassword, // Replace plain password with hashed password
+    });
+
+    // Check if the insertion was successful
+    if (result.insertedId) {
+      // Data inserted successfully
+      console.log('Teacher created successfully:', result.insertedId);
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during insertion
+      console.error('Failed to create teacher.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database insertion errors
+    console.error('Error creating teacher:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+    }
+  }
 }
 
-// Update Teacher
-const UpdateTeacher = TeacherFormSchema.omit({ id: true});
+export async function updateTeacher(id: string, formData: FormData) {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
 
-export async function updateTeacher(teacher_id: string, formData: FormData) {
-  const {username, password, firstname, lastname, country_code, phone} = UpdateTeacher.parse({
-    //id: formData.get('id'),
-    username: formData.get('username'),
-    password: formData.get('password'),
-    firstname: formData.get('firstname'),
-    lastname: formData.get('lastname'),
-    country_code: formData.get('country_code'),
-    phone: formData.get('phone'),
-  });
+    // Validate form data using Zod schema
+    const validatedData = teacherSchema.parse({
+      email: formData.get('email'),
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      password: formData.get('password'),
+      phoneNum: formData.get('phoneNum'),
+      role: 'teacher', // Change role to "teacher"
+      school_name: '',
+    });
 
-  // Hash the password using bcrypt
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
+    console.log('Validated Data:', validatedData); // Log validated data
 
-  await sql`
-    UPDATE teachers
-    SET
-      username = ${username},
-      password = ${hashedPassword},
-      firstname = ${firstname},
-      lastname = ${lastname},
-      country_code = ${country_code},
-      phone = ${phone}
-    WHERE id = ${teacher_id}
-  `;
+    client = await connect();
+    console.log('Connected to MongoDB');
 
-  revalidatePath('/dashboard/teachers');
-  redirect('/dashboard/teachers');
+    const db = client.db('GoGetKids');
+
+    // Update teacher data in the MongoDB collection
+    const result = await db.collection('users').updateOne(
+      { _id: objectId },
+      { $set: validatedData }
+    );
+
+    console.log('Update Result:', result);
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      console.log('Teacher updated successfully:', id);
+      revalidatePath('/dashboard/teachers');
+      return { success: true };
+    } else {
+      console.error('Failed to update teacher.');
+      return { success: false };
+    }
+  } catch (error: any) {
+    console.error('Error updating teacher:', error.message);
+    return { success: false, errorMessage: error.message };
+  } finally {
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed');
+    }
+  }
 }
 
-// Classes
-const ClassFormSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  level: z.string(),
-  teacher_id: z.string()
+// ------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------------- CLASSES ----------------------------------------------
+// Define the schema for class data validation using Zod
+const classSchema = z.object({
+  class_name: z.string(), // Class name is required
+  class_level: z.string(), // Class level is required
+  teacherid: z.string().email(), // Teacher ID is required
+  school_name: z.string(), // School name is required
 });
 
-// Create Class
-const CreateClass = ClassFormSchema;
-
 export async function createClass(formData: FormData) {
-  const {id, name, level, teacher_id} = CreateClass.parse({
-    id: formData.get('id'),
-    name: formData.get('name'),
-    level: formData.get('level'),
-    teacher_id: formData.get('teacher_id'),
-  });
+  let client;
+  let db: Db; // Declare db variable here
+  try {
+    // Validate form data using Zod schema
+    const validatedData = classSchema.parse({
+      class_name: formData.get('class_name'),
+      class_level: formData.get('class_level'),
+      teacherid: formData.get('teacher_email'),
+      school_name: '',
+    });
 
-  // Store data into the database
-  await sql`
-    INSERT INTO classes (id, name, level, teacher_id)
-    VALUES (${id}, ${name}, ${level}, ${teacher_id})
-  `;
+    // Additional validation steps if necessary
 
-  // Refresh data and redirect back to the parents page
-  revalidatePath('/dashboard/classes');
-  redirect('/dashboard/classes');
+    // Connect to the MongoDB database
+    client = await connect();
+    db = client.db('GoGetKids'); // Specify the database name here
+
+    // Insert class data into the MongoDB collection
+    const result = await db.collection('classes').insertOne(validatedData);
+
+    // Check if the insertion was successful
+    if (result.insertedId) {
+      // Data inserted successfully
+      console.log('Class created successfully:', result.insertedId);
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during insertion
+      console.error('Failed to create class.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database insertion errors
+    console.error('Error creating class:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+    }
+  }
 }
 
-// Update Class
-const UpdateClass = ClassFormSchema;
+const updateClassSchema = classSchema.omit({ school_name: true });
 
-export async function updateClass(class_id: string, formData: FormData) {
-  const {name, level, teacher_id} = UpdateClass.parse({
-    //id: formData.get('id'),
-    name: formData.get('name'),
-    level: formData.get('level'),
-    teacher_id: formData.get('teacher_id'),
-  });
+export async function updateClass(id: string, formData: FormData) {
+  let client;
+  try {
+    const objectId = new ObjectId(id); // Convert id to ObjectId
 
-  await sql`
-    UPDATE classes
-    SET
-      name = ${name},
-      level = ${level},
-      teacher_id = ${teacher_id}
-    WHERE id = ${class_id}
-  `;
+    // Validate form data
+    const validatedData = updateClassSchema.parse({
+      class_name: formData.get('class_name'),
+      class_level: formData.get('class_level'),
+      teacherid: formData.get('teacherid'),
+    });
 
-  revalidatePath('/dashboard/classes');
-  redirect('/dashboard/classes');
+    console.log('Validated Data:', validatedData);
+
+    client = await connect();
+    console.log('Connected to MongoDB');
+
+    const db: Db = client.db('GoGetKids'); // Specify the database name
+
+    // Update class data in the MongoDB collection
+    const result = await db.collection('classes').updateOne(
+      { _id: objectId }, // Use the ObjectId here
+      { $set: validatedData }
+    );
+
+    console.log('Update Result:', result);
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      console.log('Class updated successfully:', id);
+      return { success: true };
+    } else {
+      console.error('Failed to update class.');
+      return { success: false };
+    }
+  } catch (error: any) {
+    console.error('Error updating class:', error.message);
+    return { success: false, errorMessage: error.message };
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed');
+    }
+  }
 }

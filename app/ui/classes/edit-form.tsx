@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/app/ui/button';
-import { updateClass } from '@/app/lib/testActions';
+import { updateClass } from '@/app/lib/actions';
 
 export default function EditClassForm({ classroom, teachers }: { classroom: any; teachers: string[] }) {
   const [isLoading, setIsLoading] = useState(false);

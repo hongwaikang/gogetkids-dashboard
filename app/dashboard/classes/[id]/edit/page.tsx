@@ -1,6 +1,6 @@
 import Form from '@/app/ui/classes/edit-form';
 import Breadcrumbs from '@/app/ui/classes/breadcrumbs';
-import { fetchClassById, fetchAllTeachersEmail } from '@/app/lib/testData';
+import { fetchClassById, fetchAllTeachersEmail } from '@/app/lib/data';
 import { ObjectId } from 'mongodb';
 
 export default async function Page({ params }: { params: { id: string } }) {

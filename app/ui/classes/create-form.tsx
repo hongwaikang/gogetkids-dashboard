@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { createClass } from '@/app/lib/testActions'; // Import the function for creating a class
+import { createClass } from '@/app/lib/actions'; // Import the function for creating a class
 
 interface Props {
   teachers: string[]; // Define the type of the teachers prop

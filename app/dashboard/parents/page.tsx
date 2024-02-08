@@ -5,7 +5,7 @@ import { CreateParent } from '@/app/ui/parents/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { ParentsTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchParentsPages } from '@/app/lib/testData';
+import { fetchParentsPages } from '@/app/lib/data';
 
 export default async function Page({
     searchParams,

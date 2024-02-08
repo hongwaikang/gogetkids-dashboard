@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { updateTeacher } from '@/app/lib/testActions'; // Import the correct update function for teachers
+import { updateTeacher } from '@/app/lib/actions'; // Import the correct update function for teachers
 
 export default function EditTeacherForm({
   teacher,

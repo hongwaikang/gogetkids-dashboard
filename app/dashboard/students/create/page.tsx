@@ -1,6 +1,6 @@
 import Form from '@/app/ui/students/create-form';
 import Breadcrumbs from '@/app/ui/students/breadcrumbs';
-import { fetchAllParentsEmail, fetchAllClassNames } from '@/app/lib/testData';
+import { fetchAllParentsEmail, fetchAllClassNames } from '@/app/lib/data';
 
 export default async function Page() {
   const parents = await fetchAllParentsEmail();

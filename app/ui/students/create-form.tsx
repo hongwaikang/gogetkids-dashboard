@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { createStudent } from '@/app/lib/testActions';
+import { createStudent } from '@/app/lib/actions';
 
 interface Props {
   parents: string[]; // Define the type of the parents prop

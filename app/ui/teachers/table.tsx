@@ -1,5 +1,5 @@
 import { UpdateTeacher, DeleteTeacher } from '@/app/ui/teachers/buttons';
-import { fetchFilteredTeachers } from '@/app/lib/testData';
+import { fetchFilteredTeachers } from '@/app/lib/data';
 
 export default async function TeachersTable({
   query,

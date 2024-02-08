@@ -1,5 +1,5 @@
 import { UpdateClass, DeleteClass } from '@/app/ui/classes/buttons';
-import { fetchFilteredClasses } from '@/app/lib/testData';
+import { fetchFilteredClasses } from '@/app/lib/data';
 
 export default async function ClassesTable({
   query,

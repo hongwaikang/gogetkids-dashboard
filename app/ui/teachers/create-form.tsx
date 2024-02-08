@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/app/ui/button';
-import { createTeacher } from '@/app/lib/testActions'; // Updated import
+import { createTeacher } from '@/app/lib/actions'; // Updated import
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';

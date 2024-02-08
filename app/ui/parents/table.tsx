@@ -1,5 +1,5 @@
 import { UpdateParent, DeleteParent } from '@/app/ui/parents/buttons';
-import { fetchFilteredParents } from '@/app/lib/testData';
+import { fetchFilteredParents } from '@/app/lib/data';
 
 export default async function ParentsTable({
   query,

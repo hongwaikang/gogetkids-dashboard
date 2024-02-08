@@ -5,7 +5,7 @@ import { CreateTeacher, BulkImportTeachers } from '@/app/ui/teachers/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { TeachersTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchTeachersPages } from '@/app/lib/testData';
+import { fetchTeachersPages } from '@/app/lib/data';
 
 export default async function Page({
     searchParams,
