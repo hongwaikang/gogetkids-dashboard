@@ -1,110 +1,87 @@
-'use client';
+'use client'
 
-import { ClassForm } from '@/app/lib/definitions';
-import Link from 'next/link';
+import { useState } from 'react';
 import { Button } from '@/app/ui/button';
-import { updateClass } from '@/app/lib/actions';
+import { updateClass } from '@/app/lib/testActions';
 
-export default function EditClassForm({
-  class1,
-}: {
-  class1: ClassForm;
-}) {
+export default function EditClassForm({ classroom, teachers }: { classroom: any; teachers: string[] }) {
+  const [isLoading, setIsLoading] = useState(false);
 
-  const updateClassWithId = updateClass.bind(null, class1.id);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const formData = new FormData(e.currentTarget);
+    try {
+      await updateClass(classroom._id, formData);
+      // Handle success
+    } catch (error) {
+      // Handle error
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <form action={updateClassWithId}>
+    <form onSubmit={handleSubmit}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        {/* Class ID */}
-        <div className="mb-4">
-          <label htmlFor="id" className="mb-2 block text-sm font-medium">
-            Class ID
-          </label>
-          <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="id"
-                name="id"
-                type="text"
-                defaultValue={class1.id}
-                disabled
-                placeholder="Enter Class ID"
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500 bg-gray-200"
-                required
-              />
-            </div>
-          </div>
-        </div>
-
         {/* Class Name */}
         <div className="mb-4">
-          <label htmlFor="name" className="mb-2 block text-sm font-medium">
+          <label htmlFor="class_name" className="mb-2 block text-sm font-medium">
             Class Name
           </label>
-          <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="name"
-                name="name"
-                type="text"
-                placeholder="Enter Class Name"
-                defaultValue={class1.name}
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-                required
-              />
-            </div>
-          </div>
+          <input
+            id="class_name"
+            name="class_name"
+            type="text"
+            defaultValue={classroom.class_name}
+            className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            required
+          />
         </div>
 
-        {/* Level */}
+        {/* Class Level */}
         <div className="mb-4">
-          <label htmlFor="level" className="mb-2 block text-sm font-medium">
-            Level
+          <label htmlFor="class_level" className="mb-2 block text-sm font-medium">
+            Class Level
           </label>
-          <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="level"
-                name="level"
-                type="text"
-                placeholder="Enter Level"
-                defaultValue={class1.level}
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-                required
-              />
-            </div>
-          </div>
+          <input
+            id="class_level"
+            name="class_level"
+            type="text"
+            defaultValue={classroom.class_level}
+            className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            required
+          />
         </div>
 
-        {/* Teacher ID */}
+        {/* Teacher's Email */}
         <div className="mb-4">
-          <label htmlFor="teacher_id" className="mb-2 block text-sm font-medium">
-            Teacher ID
+          <label htmlFor="teacherid" className="mb-2 block text-sm font-medium">
+            Teacher Email
           </label>
           <div className="relative mt-2 rounded-md">
-            <div className="relative">
-              <input
-                id="teacher_id"
-                name="teacher_id"
-                type="text"
-                placeholder="Enter Teacher ID"
-                defaultValue={class1.teacher_id}
-                className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-              />
-            </div>
+            <select
+              id="teacherid"
+              name="teacherid"
+              defaultValue={classroom.teacherid}
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2"
+              required
+            >
+              <option value="">Select Teacher Email</option>
+              {teachers.map((teacher, index) => (
+                <option key={index} value={teacher}>
+                  {teacher}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
       </div>
       <div className="mt-6 flex justify-end gap-4">
-        <Link
-          href="/dashboard/classes"
-          className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-        >
-          Cancel
-        </Link>
-        <Button type="submit">Edit Class</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? 'Updating...' : 'Update Class'}
+        </Button>
       </div>
     </form>
   );

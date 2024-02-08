@@ -1,9 +1,10 @@
 import Form from '@/app/ui/parents/edit-form';
 import Breadcrumbs from '@/app/ui/parents/breadcrumbs';
-import { fetchParentById } from '@/app/lib/data';
+import { fetchParentById } from '@/app/lib/testData';
+import { ObjectId } from 'mongodb';
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const id = params.id;
+  const id = new ObjectId(params.id);
   const parent = await fetchParentById(id);
 
   return (
@@ -13,7 +14,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           { label: 'Parents', href: '/dashboard/parents' },
           {
             label: 'Edit Parent',
-            href: `/dashboard/parents/${id}/edit`,
+            href: `/dashboard/parents/${params.id}/edit`,
             active: true,
           },
         ]}

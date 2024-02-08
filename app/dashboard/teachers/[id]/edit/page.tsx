@@ -1,10 +1,11 @@
 import Form from '@/app/ui/teachers/edit-form';
 import Breadcrumbs from '@/app/ui/teachers/breadcrumbs';
-import { fetchTeacherById } from '@/app/lib/data';
+import { fetchTeacherById } from '@/app/lib/testData';
+import { ObjectId } from 'mongodb';
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const id = params.id;
-  const teacher = await fetchTeacherById(id);
+  const id = new ObjectId(params.id);
+  const teacher = await fetchTeacherById(id); // Fetch teacher data instead of parent data
 
   return (
     <main>
@@ -13,7 +14,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           { label: 'Teachers', href: '/dashboard/teachers' },
           {
             label: 'Edit Teacher',
-            href: `/dashboard/teachers/${id}/edit`,
+            href: `/dashboard/teachers/${params.id}/edit`,
             active: true,
           },
         ]}

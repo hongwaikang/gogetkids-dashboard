@@ -1,8 +1,7 @@
 import Breadcrumbs from '@/app/ui/teachers/breadcrumbs';
 import BulkImportForm from '@/app/ui/teachers/bulkimport-form';
 
-export default async function Page() {
-
+export default function Page() {
   return (
     <main>
       <Breadcrumbs
@@ -15,7 +14,7 @@ export default async function Page() {
           },
         ]}
       />
-      <BulkImportForm/>
+      <BulkImportForm />
     </main>
   );
 }

@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache';
 
 // For password hashing
 const bcrypt = require('bcrypt');
-const saltRounds = 10; // Adjust the number of salt rounds as needed
+const saltRounds = 10;
 
 // ---------------------------------------------- STUDENTS ----------------------------------------------
 // Define the schema for form data validation using Zod
@@ -227,6 +227,61 @@ export async function createParent(formData: FormData) {
     }
   }
 }
+
+export async function updateParent(id: string, formData: FormData) {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    // Validate form data using Zod schema
+    const validatedData = parentSchema.parse({
+      email: formData.get('email'),
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      password: formData.get('password'),
+      phoneNum: formData.get('phoneNum'),
+      role: 'parent', // Hardcoded role as "parent"
+    });
+
+    console.log('Validated Data:', validatedData); // Log validated data
+
+    client = await connect();
+    console.log('Connected to MongoDB'); // Log successful connection
+
+    const db = client.db('GoGetKids'); // Specify the database name here
+
+    // Update parent data in the MongoDB collection
+    const result = await db.collection('users').updateOne(
+      { _id: objectId }, // Use the ObjectId here
+      { $set: validatedData }
+    );
+
+    console.log('Update Result:', result); // Log update result
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      // Data updated successfully
+      console.log('Parent updated successfully:', id);
+      revalidatePath('/dashboard/parents');
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during update
+      console.error('Failed to update parent.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database update errors
+    console.error('Error updating parent:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed'); // Log when the connection is closed
+    }
+  }
+}
 // ------------------------------------------------------------------------------------------------------
 
 // ---------------------------------------------- TEACHERS ----------------------------------------------
@@ -294,6 +349,59 @@ export async function createTeacher(formData: FormData) {
     }
   }
 }
+
+export async function updateTeacher(id: string, formData: FormData) {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    // Validate form data using Zod schema
+    const validatedData = teacherSchema.parse({
+      email: formData.get('email'),
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      password: formData.get('password'),
+      phoneNum: formData.get('phoneNum'),
+      role: 'teacher', // Change role to "teacher"
+      school_name: '',
+    });
+
+    console.log('Validated Data:', validatedData); // Log validated data
+
+    client = await connect();
+    console.log('Connected to MongoDB');
+
+    const db = client.db('GoGetKids');
+
+    // Update teacher data in the MongoDB collection
+    const result = await db.collection('users').updateOne(
+      { _id: objectId },
+      { $set: validatedData }
+    );
+
+    console.log('Update Result:', result);
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      console.log('Teacher updated successfully:', id);
+      revalidatePath('/dashboard/teachers');
+      return { success: true };
+    } else {
+      console.error('Failed to update teacher.');
+      return { success: false };
+    }
+  } catch (error: any) {
+    console.error('Error updating teacher:', error.message);
+    return { success: false, errorMessage: error.message };
+  } finally {
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed');
+    }
+  }
+}
+
 // ------------------------------------------------------------------------------------------------------
 
 // ---------------------------------------------- CLASSES ----------------------------------------------
@@ -301,7 +409,7 @@ export async function createTeacher(formData: FormData) {
 const classSchema = z.object({
   class_name: z.string(), // Class name is required
   class_level: z.string(), // Class level is required
-  teacherid: z.string(), // Teacher ID is required
+  teacherid: z.string().email(), // Teacher ID is required
   school_name: z.string(), // School name is required
 });
 
@@ -344,6 +452,55 @@ export async function createClass(formData: FormData) {
     // Close the connection
     if (client) {
       await client.close();
+    }
+  }
+}
+
+const updateClassSchema = classSchema.omit({ school_name: true });
+
+export async function updateClass(id: string, formData: FormData) {
+  let client;
+  try {
+    const objectId = new ObjectId(id); // Convert id to ObjectId
+
+    // Validate form data
+    const validatedData = updateClassSchema.parse({
+      class_name: formData.get('class_name'),
+      class_level: formData.get('class_level'),
+      teacherid: formData.get('teacherid'),
+    });
+
+    console.log('Validated Data:', validatedData);
+
+    client = await connect();
+    console.log('Connected to MongoDB');
+
+    const db: Db = client.db('GoGetKids'); // Specify the database name
+
+    // Update class data in the MongoDB collection
+    const result = await db.collection('classes').updateOne(
+      { _id: objectId }, // Use the ObjectId here
+      { $set: validatedData }
+    );
+
+    console.log('Update Result:', result);
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      console.log('Class updated successfully:', id);
+      return { success: true };
+    } else {
+      console.error('Failed to update class.');
+      return { success: false };
+    }
+  } catch (error: any) {
+    console.error('Error updating class:', error.message);
+    return { success: false, errorMessage: error.message };
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed');
     }
   }
 }

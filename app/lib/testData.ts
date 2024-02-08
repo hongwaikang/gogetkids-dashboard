@@ -156,6 +156,31 @@ export async function fetchAllParentsEmail() {
 			await client.close(); // Close the connection when done
 	}
 }
+
+export async function fetchParentById(id: ObjectId) {
+  let client;
+  let db: Db | undefined;
+  try {
+    client = await connect();
+    db = client.db('GoGetKids'); // Connect to the 'GoGetKids' database
+
+    const parent = await db.collection('users').findOne({ _id: id, role: 'parent' });
+
+    if (parent) {
+      console.log('Fetched parent:', parent); // Log the fetched parent object
+      return parent;
+    } else {
+      throw new Error('Parent not found.');
+    }
+  } catch (error: any) {
+    console.error('Error fetching parent:', error.message);
+    throw new Error('Failed to fetch parent.');
+  } finally {
+    if (client) {
+      await client.close();
+    }
+  }
+}
 // ------------------------------------------------------------------------------------------------------
 
 // ---------------------------------------------- TEACHERS ----------------------------------------------
@@ -231,6 +256,31 @@ export async function fetchAllTeachersEmail() {
   }
 }
 
+export async function fetchTeacherById(id: ObjectId) {
+  let client;
+  let db: Db | undefined;
+  try {
+    client = await connect();
+    db = client.db('GoGetKids');
+
+    // Fetch teacher data based on ID and role
+    const teacher = await db.collection('users').findOne({ _id: id, role: 'teacher' });
+
+    if (teacher) {
+      console.log('Fetched teacher:', teacher);
+      return teacher;
+    } else {
+      throw new Error('Teacher not found.');
+    }
+  } catch (error: any) {
+    console.error('Error fetching teacher:', error.message);
+    throw new Error('Failed to fetch teacher.');
+  } finally {
+    if (client) {
+      await client.close();
+    }
+  }
+}
 // ------------------------------------------------------------------------------------------------------
 
 // ---------------------------------------------- CLASSES -----------------------------------------------
@@ -305,4 +355,31 @@ export async function fetchAllClassNames() {
     await client.close(); // Close the connection when done
   }
 }
+
+export async function fetchClassById(id: ObjectId) {
+  let client;
+  let db: Db | undefined;
+  try {
+    client = await connect();
+    db = client.db('GoGetKids');
+
+    // Fetch class data based on ID
+    const classroom = await db.collection('classes').findOne({ _id: id });
+
+    if (classroom) {
+      console.log('Fetched class:', classroom);
+      return classroom;
+    } else {
+      throw new Error('Class not found.');
+    }
+  } catch (error: any) {
+    console.error('Error fetching class:', error.message);
+    throw new Error('Failed to fetch class.');
+  } finally {
+    if (client) {
+      await client.close();
+    }
+  }
+}
+
 // ------------------------------------------------------------------------------------------------------

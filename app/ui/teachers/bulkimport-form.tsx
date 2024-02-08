@@ -1,10 +1,12 @@
-'use client'
+// bulkimport-form.tsx
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import React, { useRef } from 'react';
-import { parseCSVandInsertTeachers } from '@/app/lib/csvParser';
+import { parseCSV } from '@/app/lib/csvParser';
 
-export default function BulkImportForm() {
+const BulkImportForm = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileUpload = async () => {
@@ -15,12 +17,10 @@ export default function BulkImportForm() {
       console.log('File type:', file.type);
 
       try {
-        // Insert function
-        parseCSVandInsertTeachers(file);
-
-        console.log('Teachers inserted successfully');
+        // Parse the CSV file
+        await parseCSV(file); // Await the result of parseCSV
       } catch (error) {
-        console.error('Error importing teachers:', error);
+        console.error('Error parsing CSV:', error);
       }
     } else {
       console.error('No file selected or file input not found.');
@@ -59,9 +59,11 @@ export default function BulkImportForm() {
         </Link>
         {/* Use handleFileUpload as onClick handler */}
         <Button type="button" onClick={handleFileUpload}>
-          Print CSV Content
+          Bulk Create
         </Button>
       </div>
     </form>
   );
-}
+};
+
+export default BulkImportForm;

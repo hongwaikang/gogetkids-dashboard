@@ -57,8 +57,8 @@ export default async function ParentsTable({
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <UpdateParent id={parent.id} />
-                      <DeleteParent id={parent.id} />
+                      <UpdateParent id={parent._id} />
+                      <DeleteParent id={parent._id} />
                     </div>
                   </td>
                 </tr>
