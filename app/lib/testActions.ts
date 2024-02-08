@@ -4,7 +4,6 @@ import { Db, ObjectId } from 'mongodb';
 import { connect } from './dbConfig';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 // For password hashing
 const bcrypt = require('bcrypt');
