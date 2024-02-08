@@ -18,10 +18,11 @@ async function executeWithRetry<T>(fn: () => Promise<T>): Promise<T> {
         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
       } else {
         console.error('Max retries exceeded.');
-        throw new Error('Max retries exceeded.');
+        throw new Error('Max retries exceeded.'); // Explicitly throw an error
       }
     }
   }
+  throw new Error('Function execution failed.'); // Add a default return statement
 }
 
 export async function fetchFilteredStudents(query: string, currentPage: number) {
