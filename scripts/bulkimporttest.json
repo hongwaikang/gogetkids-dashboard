@@ -1,0 +1,38 @@
+[
+  {
+    "email": "john.doe@example.com",
+    "firstName": "John",
+    "lastName": "Doe",
+    "password": "Password123",
+    "phoneNum": "1234567890",
+    "role": "teacher",
+    "school_name": "Springfield High School"
+  },
+  {
+    "email": "jane.smith@example.com",
+    "firstName": "Jane",
+    "lastName": "Smith",
+    "password": "Password456",
+    "phoneNum": "9876543210",
+    "role": "teacher",
+    "school_name": "Springfield High School"
+  },
+  {
+    "email": "michael.johnson@example.com",
+    "firstName": "Michael",
+    "lastName": "Johnson",
+    "password": "Password789",
+    "phoneNum": "5555555555",
+    "role": "teacher",
+    "school_name": "Springfield High School"
+  },
+  {
+    "email": "emily.wilson@example.com",
+    "firstName": "Emily",
+    "lastName": "Wilson",
+    "password": "Passwordabc",
+    "phoneNum": "8888888888",
+    "role": "teacher",
+    "school_name": "Springfield High School"
+  }
+]

@@ -1,4 +1,7 @@
+'use server'
+
 import Papa from 'papaparse';
+import { connect, disconnect } from './dbConfig';
 
 interface Teacher {
   email: string;
@@ -38,4 +41,36 @@ export async function parseCSV(file: File): Promise<Teacher[]> {
       },
     });
   });
+}
+
+export async function parseJSON(jsonData: any): Promise<Teacher[]> {
+  console.log('Parsing JSON data...');
+
+  const parsedTeachers: Teacher[] = JSON.parse(jsonData);
+
+  console.log('JSON parsing complete');
+
+  return parsedTeachers;
+}
+
+export async function insertTeachersFromJSON(parsedTeachers: Teacher[]): Promise<void> {
+  console.log('Inserting teachers into the database...');
+
+  try {
+    const client = await connect();
+    const database = client.db('GoGetKids');
+    const teachersCollection = database.collection('users');
+
+    await teachersCollection.insertMany(parsedTeachers.map(teacher => ({
+      ...teacher,
+      role: 'teacher', // Add role field with value 'teacher'
+    })));
+
+    console.log('Teachers inserted successfully');
+  } catch (error) {
+    console.error('Error inserting teachers:', error);
+    throw error;
+  } finally {
+    await disconnect();
+  }
 }
