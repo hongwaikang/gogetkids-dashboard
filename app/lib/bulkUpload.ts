@@ -12,7 +12,7 @@ interface Teacher {
   role: string;
   school_name: string;
 }
-
+/*
 export async function parseCSV(file: File): Promise<Teacher[]> {
   console.log('Parsing CSV file...');
 
@@ -41,7 +41,7 @@ export async function parseCSV(file: File): Promise<Teacher[]> {
       },
     });
   });
-}
+} */
 
 export async function parseJSON(jsonData: any): Promise<Teacher[]> {
   console.log('Parsing JSON data...');
@@ -72,5 +72,34 @@ export async function insertTeachersFromJSON(parsedTeachers: Teacher[]): Promise
     throw error;
   } finally {
     await disconnect();
+  }
+}
+
+export async function parseCSVToJSON(csvData: string): Promise<Teacher[]> {
+  console.log('Parsing CSV data to JSON...');
+
+  const parsedTeachers: Teacher[] = [];
+
+  const results = Papa.parse(csvData, { header: true });
+
+  if (results && results.data && results.data.length > 0) {
+    for (const data of results.data) {
+      // Assuming CSV file headers match the Teacher interface properties
+      const { email, firstName, lastName, password, phoneNum, role, school_name } = data as any;
+      const teacher: Teacher = {
+        email: email || '',
+        firstName: firstName || '',
+        lastName: lastName || '',
+        password: password || '',
+        phoneNum: phoneNum || '',
+        role: role || '',
+        school_name: school_name || ''
+      };
+      parsedTeachers.push(teacher);
+    }
+    console.log('CSV parsing complete');
+    return parsedTeachers;
+  } else {
+    throw new Error('CSV data is empty or invalid.');
   }
 }
