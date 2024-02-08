@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/app/ui/button';
 import { updateClass } from '@/app/lib/actions';
+import { toast } from 'react-hot-toast';
 
 export default function EditClassForm({ classroom, teachers }: { classroom: any; teachers: string[] }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -14,8 +15,10 @@ export default function EditClassForm({ classroom, teachers }: { classroom: any;
     try {
       await updateClass(classroom._id, formData);
       // Handle success
+      toast.success('Class updated successfully!');
     } catch (error) {
       // Handle error
+      toast.error('Failed to update class. Please try again.');
     } finally {
       setIsLoading(false);
     }
