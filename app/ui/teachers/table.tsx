@@ -1,5 +1,6 @@
 import { UpdateTeacher, DeleteTeacher } from '@/app/ui/teachers/buttons';
 import { fetchFilteredTeachers } from '@/app/lib/data';
+import Link from 'next/link';
 
 export default async function TeachersTable({
   query,
@@ -45,9 +46,11 @@ export default async function TeachersTable({
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <div className="flex items-center gap-3">
-                      <p>{teacher.email}</p>
-                    </div>
+                    <Link href={`/dashboard/teachers/${teacher._id}`}>
+                      <span className="text-blue-600 cursor-pointer underline">
+                        {teacher.email}
+                      </span>
+                    </Link>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {`${teacher.firstName} ${teacher.lastName}`}
