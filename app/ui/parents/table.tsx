@@ -1,5 +1,6 @@
 import { UpdateParent, DeleteParent } from '@/app/ui/parents/buttons';
 import { fetchFilteredParents } from '@/app/lib/data';
+import Link from 'next/link';
 
 export default async function ParentsTable({
   query,
@@ -45,9 +46,11 @@ export default async function ParentsTable({
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <div className="flex items-center gap-3">
-                      <p>{parent.email}</p>
-                    </div>
+                    <Link href={`/dashboard/parents/${parent._id}`}>
+                      <span className="text-blue-600 cursor-pointer underline">
+                        <p>{parent.email}</p>
+                      </span>
+                    </Link>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {`${parent.firstName} ${parent.lastName}`}
