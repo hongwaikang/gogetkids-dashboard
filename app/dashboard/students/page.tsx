@@ -1,7 +1,7 @@
 import Pagination from '@/app/ui/students/pagination';
 import Search from '@/app/ui/search';
 import Table from '@/app/ui/students/table';
-import { CreateStudent } from '@/app/ui/students/buttons';
+import { CreateStudent, BulkImportStudents } from '@/app/ui/students/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { StudentsTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
@@ -31,6 +31,7 @@ export default async function Page({
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Search students..." />
         <CreateStudent />
+        <BulkImportStudents />
       </div>
       <Suspense key={query + currentPage} fallback={<StudentsTableSkeleton />}>
         <Table query={query} currentPage={currentPage} />

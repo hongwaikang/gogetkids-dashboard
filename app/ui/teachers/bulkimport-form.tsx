@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import React, { useRef } from 'react';
-import { parseJSON, parseCSVToJSON, insertTeachersFromJSON } from '@/app/lib/bulkUpload';
+import { parseTeachersJSON, parseTeachersCSVToJSON, insertTeachersFromJSON } from '@/app/lib/bulkUpload';
 import toast from 'react-hot-toast';
 
 const BulkImportForm = () => {
@@ -24,7 +24,7 @@ const BulkImportForm = () => {
 
           try {
             // Parse the JSON data
-            const parsedTeachers = await parseJSON(jsonData);
+            const parsedTeachers = await parseTeachersJSON(jsonData);
             console.log('Parsed teachers:', parsedTeachers);
 
             // Insert teachers into the database
@@ -57,7 +57,7 @@ const BulkImportForm = () => {
 
           try {
             // Parse the CSV data to JSON
-            const parsedTeachers = await parseCSVToJSON(csvData);
+            const parsedTeachers = await parseTeachersCSVToJSON(csvData);
             console.log('Parsed teachers from CSV:', parsedTeachers);
 
             // Insert teachers into the database
