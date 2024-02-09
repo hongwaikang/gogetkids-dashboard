@@ -1,9 +1,7 @@
-// page.tsx
 import Form from '@/app/ui/students/edit-form';
 import Breadcrumbs from '@/app/ui/students/breadcrumbs';
 import { fetchStudentById, fetchAllParentsEmail, fetchAllClassNames } from '@/app/lib/data';
-import { ObjectId } from 'mongodb'; // Import ObjectId from the mongodb library
-
+import { ObjectId } from 'mongodb';
 export default async function Page({ params }: { params: { id: string } }) {
   const id = new ObjectId(params.id); // Convert id to ObjectId
   const student = await fetchStudentById(id);
