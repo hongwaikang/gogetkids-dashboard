@@ -3,6 +3,8 @@
 import Papa from 'papaparse';
 import { connect, disconnect } from './dbConfig';
 
+// ---------------------------------------------- TEACHERS -----------------------------------------------
+
 interface Teacher {
   email: string;
   firstName: string;
@@ -73,8 +75,9 @@ export async function insertTeachersFromJSON(parsedTeachers: Teacher[]): Promise
     await disconnect();
   }
 }
+// -------------------------------------------------------------------------------------------------------
 
-// Interface for Student
+// ---------------------------------------------- STUDENTS -----------------------------------------------
 interface Student {
   studentid: number | undefined;
   firstname: string;
@@ -122,6 +125,50 @@ export async function parseStudentsJSON(jsonData: any): Promise<Student[]> {
   return parsedStudents;
 }
 
+export async function parseStudentsCSVToJSON(csvData: string): Promise<Student[]> {
+  console.log('Parsing CSV data to JSON...');
+
+  const parsedStudents: Student[] = [];
+
+  const results = Papa.parse(csvData, { header: true });
+
+  if (results && results.data && results.data.length > 0) {
+    for (const data of results.data) {
+      // Assuming CSV file headers match the Student interface properties
+      const { firstname, lastname, gender, address, postcode, dob, zone, parent_id, class_name, school_name } = data as any;
+      const student: Student = {
+        studentid: undefined, // Placeholder, will be generated later
+        firstname: firstname || '',
+        lastname: lastname || '',
+        gender: gender || '',
+        address: address || '',
+        postcode: parseInt(postcode) || 0,
+        dob: dob || '',
+        zone: zone || '',
+        parent_id: parent_id || '',
+        class_name: class_name || '',
+        school_name: school_name || ''
+      };
+      parsedStudents.push(student);
+    }
+    console.log('CSV parsing complete');
+    console.log('Generating and validating student IDs...');
+    for (const student of parsedStudents) {
+      let isUnique = false;
+      let studentid: number | undefined;
+      while (!isUnique) {
+        studentid = generateStudentId();
+        isUnique = await isStudentIdUnique(studentid);
+      }
+      student.studentid = studentid;
+    }
+    console.log('Student IDs generated and validated successfully');
+    return parsedStudents;
+  } else {
+    throw new Error('CSV data is empty or invalid.');
+  }
+}
+
 export async function insertStudentsFromJSON(parsedStudents: Student[]): Promise<void> {
   console.log('Inserting students into the database...');
   try {
@@ -137,3 +184,4 @@ export async function insertStudentsFromJSON(parsedStudents: Student[]): Promise
     await disconnect();
   }
 }
+// -------------------------------------------------------------------------------------------------------
