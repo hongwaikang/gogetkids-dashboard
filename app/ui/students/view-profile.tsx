@@ -56,6 +56,9 @@ const ViewProfile = ({ student }: { student: any }) => {
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-4">
+        <Link href={`/dashboard/students/${student._id}/edit`} className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200">
+          Edit Profile
+        </Link>
         <Link href="/dashboard/students" className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200">
           Return
         </Link>
