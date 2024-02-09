@@ -1,0 +1,86 @@
+[
+  {
+    "firstname": "Harry",
+    "lastname": "Potter",
+    "gender": "Male",
+    "address": "4 Privet Drive",
+    "postcode": "54321",
+    "dob": "1980-07-31",
+    "zone": "A",
+    "parent_id": "potterfamily@example.com",
+    "class_name": "Gryffindor",
+    "school_name": "Hogwarts School of Witchcraft and Wizardry"
+  },
+  {
+    "firstname": "Hermione",
+    "lastname": "Granger",
+    "gender": "Female",
+    "address": "12 Grimmauld Place",
+    "postcode": "98765",
+    "dob": "1979-09-19",
+    "zone": "B",
+    "parent_id": "grangerparents@example.com",
+    "class_name": "Gryffindor",
+    "school_name": "Hogwarts School of Witchcraft and Wizardry"
+  },
+  {
+    "firstname": "Ron",
+    "lastname": "Weasley",
+    "gender": "Male",
+    "address": "The Burrow",
+    "postcode": "12345",
+    "dob": "1980-03-01",
+    "zone": "C",
+    "parent_id": "weasleyfamily@example.com",
+    "class_name": "Gryffindor",
+    "school_name": "Hogwarts School of Witchcraft and Wizardry"
+  },
+  {
+    "firstname": "Luna",
+    "lastname": "Lovegood",
+    "gender": "Female",
+    "address": "Ottery St. Catchpole",
+    "postcode": "54321",
+    "dob": "1981-02-13",
+    "zone": "D",
+    "parent_id": "lovegoodfamily@example.com",
+    "class_name": "Ravenclaw",
+    "school_name": "Hogwarts School of Witchcraft and Wizardry"
+  },
+  {
+    "firstname": "Draco",
+    "lastname": "Malfoy",
+    "gender": "Male",
+    "address": "Malfoy Manor",
+    "postcode": "67890",
+    "dob": "1980-06-05",
+    "zone": "E",
+    "parent_id": "malfoyfamily@example.com",
+    "class_name": "Slytherin",
+    "school_name": "Hogwarts School of Witchcraft and Wizardry"
+  },
+  {
+    "firstname": "Cho",
+    "lastname": "Chang",
+    "gender": "Female",
+    "address": "Craigh na Dun",
+    "postcode": "24680",
+    "dob": "1979-09-14",
+    "zone": "F",
+    "parent_id": "changfamily@example.com",
+    "class_name": "Ravenclaw",
+    "school_name": "Hogwarts School of Witchcraft and Wizardry"
+  },
+  {
+    "firstname": "Cedric",
+    "lastname": "Diggory",
+    "gender": "Male",
+    "address": "Hufflepuff Basement",
+    "postcode": "13579",
+    "dob": "1977-09-01",
+    "zone": "G",
+    "parent_id": "diggoryfamily@example.com",
+    "class_name": "Hufflepuff",
+    "school_name": "Hogwarts School of Witchcraft and Wizardry"
+  }
+]
