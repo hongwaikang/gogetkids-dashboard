@@ -185,3 +185,70 @@ export async function insertStudentsFromJSON(parsedStudents: Student[]): Promise
   }
 }
 // -------------------------------------------------------------------------------------------------------
+
+// ---------------------------------------------- CLASSES -----------------------------------------------
+// Interface for classes
+interface Class {
+  class_name: string;
+  class_level: string;
+  teacherid: string;
+  school_name: string;
+}
+
+// Function to parse JSON data for classes
+export async function parseClassesJSON(jsonData: any): Promise<Class[]> {
+  console.log('Parsing JSON data for classes...');
+
+  const parsedClasses: Class[] = JSON.parse(jsonData);
+
+  console.log('JSON parsing complete');
+
+  return parsedClasses;
+}
+
+// Function to parse CSV data to JSON for classes
+export async function parseClassesCSVToJSON(csvData: string): Promise<Class[]> {
+  console.log('Parsing CSV data to JSON for classes...');
+
+  const parsedClasses: Class[] = [];
+
+  const results = Papa.parse(csvData, { header: true });
+
+  if (results && results.data && results.data.length > 0) {
+    for (const data of results.data) {
+      // Assuming CSV file headers match the Class interface properties
+      const { class_name, class_level, teacherid, school_name } = data as any;
+      const classObj: Class = {
+        class_name: class_name || '',
+        class_level: class_level || '',
+        teacherid: teacherid || '',
+        school_name: school_name || ''
+      };
+      parsedClasses.push(classObj);
+    }
+    console.log('CSV parsing complete');
+    return parsedClasses;
+  } else {
+    throw new Error('CSV data is empty or invalid.');
+  }
+}
+
+// Function to insert classes into the database
+export async function insertClassesFromJSON(parsedClasses: Class[]): Promise<void> {
+  console.log('Inserting classes into the database...');
+
+  try {
+    const client = await connect();
+    const database = client.db('GoGetKids');
+    const classesCollection = database.collection('classes');
+
+    await classesCollection.insertMany(parsedClasses);
+
+    console.log('Classes inserted successfully');
+  } catch (error) {
+    console.error('Error inserting classes:', error);
+    throw error;
+  } finally {
+    await disconnect();
+  }
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "class_name": "1A",
+    "class_level": "Primary 1",
+    "teacherid": "john.doe@example.com",
+    "school_name": "school123"
+  },
+  {
+    "class_name": "1B",
+    "class_level": "Primary 1",
+    "teacherid": "jane.smith@example.com",
+    "school_name": "school123"
+  },
+  {
+    "class_name": "2A",
+    "class_level": "Primary 2",
+    "teacherid": "mike.jones@example.com",
+    "school_name": "school123"
+  },
+  {
+    "class_name": "2B",
+    "class_level": "Primary 2",
+    "teacherid": "emily.wilson@example.com",
+    "school_name": "school123"
+  },
+  {
+    "class_name": "3A",
+    "class_level": "Primary 3",
+    "teacherid": "matt.anderson@example.com",
+    "school_name": "school123"
+  },
+  {
+    "class_name": "3B",
+    "class_level": "Primary 3",
+    "teacherid": "olivia.johnson@example.com",
+    "school_name": "school123"
+  },
+  {
+    "class_name": "4A",
+    "class_level": "Primary 4",
+    "teacherid": "chris.wilson@example.com",
+    "school_name": "school123"
+  },
+  {
+    "class_name": "4B",
+    "class_level": "Primary 4",
+    "teacherid": "lisa.miller@example.com",
+    "school_name": "school123"
+  },
+  {
+    "class_name": "5A",
+    "class_level": "Primary 5",
+    "teacherid": "david.brown@example.com",
+    "school_name": "school123"
+  },
+  {
+    "class_name": "5B",
+    "class_level": "Primary 5",
+    "teacherid": "sarah.davis@example.com",
+    "school_name": "school123"
+  },
+  {
+    "class_name": "6A",
+    "class_level": "Primary 6",
+    "teacherid": "jason.murphy@example.com",
+    "school_name": "school123"
+  },
+  {
+    "class_name": "6B",
+    "class_level": "Primary 6",
+    "teacherid": "jessica.parker@example.com",
+    "school_name": "school123"
+  }
+]

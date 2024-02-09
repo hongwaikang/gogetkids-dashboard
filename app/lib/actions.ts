@@ -520,7 +520,7 @@ export async function deleteTeacher(id: string) {
 const classSchema = z.object({
   class_name: z.string(), // Class name is required
   class_level: z.string(), // Class level is required
-  teacherid: z.string().email(), // Teacher ID is required
+  teacherid: z.string().email().optional(), // Teacher ID is required
   school_name: z.string(), // School name is required
 });
 
@@ -532,7 +532,7 @@ export async function createClass(formData: FormData) {
     const validatedData = classSchema.parse({
       class_name: formData.get('class_name'),
       class_level: formData.get('class_level'),
-      teacherid: formData.get('teacher_email'),
+      teacherid: formData.get('teacher_email') || '',
       school_name: '',
     });
 

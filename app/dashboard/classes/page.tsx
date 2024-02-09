@@ -1,7 +1,7 @@
 import Pagination from '@/app/ui/classes/pagination';
 import Search from '@/app/ui/search';
 import Table from '@/app/ui/classes/table';
-import { CreateClass } from '@/app/ui/classes/buttons';
+import { CreateClass, BulkImportClasses } from '@/app/ui/classes/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { ClassesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
@@ -31,6 +31,7 @@ export default async function Page({
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
         <Search placeholder="Search classes..." />
         <CreateClass />
+        <BulkImportClasses />
       </div>
       <Suspense key={query + currentPage} fallback={<ClassesTableSkeleton />}>
         <Table query={query} currentPage={currentPage} />
