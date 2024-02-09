@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { UpdateStudent, DeleteStudent } from '@/app/ui/students/buttons';
 import { fetchFilteredStudents } from '@/app/lib/data';
 
@@ -53,7 +54,11 @@ export default async function StudentsTable({
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    {student.studentid}
+                    <Link href={`/dashboard/students/${student._id}`}>
+                      <span className="text-blue-600 cursor-pointer underline">
+                        {student.studentid}
+                      </span>
+                    </Link>
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     {`${student.firstname} ${student.lastname}`}
