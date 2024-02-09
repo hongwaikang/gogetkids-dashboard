@@ -319,6 +319,44 @@ export async function updateParent(id: string, formData: FormData) {
     }
   }
 }
+
+export async function deleteParent(id: string) {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    client = await connect();
+    const db = client.db('GoGetKids');
+
+    // Delete the parent from the MongoDB collection
+    const result = await db.collection('users').deleteOne({ _id: objectId });
+
+    // Check if the deletion was successful
+    if (result.deletedCount === 1) {
+      // Data deleted successfully
+      console.log('Parent deleted successfully:', id);
+      revalidatePath('/dashboard/parents');
+      return { success: true }; // Return success message to client-side
+    } else {
+      // No document matched the query criteria, so nothing was deleted
+      console.error('Parent not found:', id);
+      return { success: false, errorMessage: 'Parent not found' }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle database deletion errors
+    console.error('Error deleting parent:', error.message);
+    toast.error('Failed to delete parent. Please try again.');
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed');
+    }
+  }
+}
+
 // ------------------------------------------------------------------------------------------------------
 
 // ---------------------------------------------- TEACHERS ----------------------------------------------
