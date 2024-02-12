@@ -15,11 +15,14 @@ export async function POST(request: NextRequest) {
         // Check if user already exists
         const user = await User.findOne({ email });
 
-        // Check if school already exists
-        const school = await User.findOne({ school_name });
-
         if (user) {
             return NextResponse.json({ error: "User already exists" }, { status: 400 });
+        }
+
+        // Check if school_name already exists
+        const existingSchool = await User.findOne({ school_name });
+        if (existingSchool) {
+            return NextResponse.json({ error: "School already exists" }, { status: 400 });
         }
 
         // Hash password
