@@ -1,7 +1,7 @@
 'use client';
 
 import { lusitana } from '@/app/ui/fonts';
-import { AtSymbolIcon, KeyIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
+import { AtSymbolIcon, KeyIcon, AcademicCapIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
@@ -10,12 +10,15 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/app/ui/button';
 
+// ... (existing imports)
 
 export default function SignUpForm() {
   const router = useRouter();
   const [user, setUser] = React.useState({
     email: '',
     password: '',
+    firstname: '',
+    lastname: '',
     school_name: '',
   });
 
@@ -85,15 +88,49 @@ export default function SignUpForm() {
             <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
           </div>
         </div>
+        {/* Input field for firstname */}
+        <div>
+          <label className="block text-xs font-medium text-gray-900" htmlFor="firstname">
+            First Name
+          </label>
+          <div className="relative">
+            <input
+              id="firstname"
+              type="text"
+              value={user.firstname}
+              onChange={(e) => setUser({ ...user, firstname: e.target.value })}
+              placeholder="Enter firstname"
+              className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+            />
+            <PencilSquareIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+          </div>
+        </div>
+        {/* Input field for lastname */}
+        <div>
+          <label className="block text-xs font-medium text-gray-900" htmlFor="lastname">
+            Last Name
+          </label>
+          <div className="relative">
+            <input
+              id="lastname"
+              type="text"
+              value={user.lastname}
+              onChange={(e) => setUser({ ...user, lastname: e.target.value })}
+              placeholder="Enter lastname"
+              className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+            />
+            <PencilSquareIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+          </div>
+        </div>
         {/* Input field for School Name */}
         <div>
-          <label className="block text-xs font-medium text-gray-900" htmlFor="password">
+          <label className="block text-xs font-medium text-gray-900" htmlFor="school_name">
             School Name
           </label>
           <div className="relative">
             <input
               id="school_name"
-              type="school_name"
+              type="text"
               value={user.school_name}
               onChange={(e) => setUser({ ...user, school_name: e.target.value })}
               placeholder="Enter School Name"
@@ -117,5 +154,4 @@ export default function SignUpForm() {
       </div>
     </div>
   );
-
 }

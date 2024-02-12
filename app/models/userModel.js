@@ -10,6 +10,14 @@ const userSchema = mongoose.Schema({
         type: String,
         required: [true, "Please provide a password"],
     },
+    firstname: {
+        type: String,
+        required: [true, "Please provide a firstname"],
+    },
+    lastname: {
+        type: String,
+        required: [true, "Please provide a lastname"],
+    },
     school_name: {
         type: String,
         required: true,

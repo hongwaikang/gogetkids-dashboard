@@ -29,7 +29,7 @@ export default function DashboardPage() {
       <div className="bg-white p-6 rounded-md shadow-md text-center">
         <p className="text-gray-700">Welcome to your dashboard!</p>
         <hr className="my-4 border-t border-gray-300" />
-        <div>
+        <div className="bg-blue-50 p-4 rounded-md">
           <h2 className="text-lg font-semibold mb-2 text-blue-600">
             {email === 'No email' ? "No Email" : "Your Email:"}
           </h2>
