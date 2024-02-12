@@ -1,33 +1,34 @@
 import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema({
-    username: {
-        type: String,
-        required: [true, "Please provide a username"],
-        unique: true,
-    },
     email: {
         type: String,
-        required: [true, "Please provide a email"],
+        required: [true, "Please provide an email"],
         unique: true,
     },
     password: {
         type: String,
         required: [true, "Please provide a password"],
     },
-    isVerfied: {
+    school_name: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    isVerified: {
         type: Boolean,
         default: false,
     },
-    isAdmin: {
-        type: Boolean,
-        default: false,
+    role: {
+        type: String,
+        enum: ['school admin', 'system admin'],
+        default: 'school admin',
     },
     forgotPasswordToken: String,
     forgotPasswordTokenExpiry: Date,
     verifyToken: String,
     verifyTokenExpiry: Date,
-})
+});
 
 const User = mongoose.models.customusers || mongoose.model("customusers", userSchema);
 
