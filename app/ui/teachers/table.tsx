@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { UpdateTeacher, DeleteTeacher } from '@/app/ui/teachers/buttons';
 import Link from 'next/link';
 import { fetchFilteredTeachers2 } from '@/app/lib/data';

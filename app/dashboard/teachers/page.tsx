@@ -5,7 +5,8 @@ import { CreateTeacher, BulkImportTeachers } from '@/app/ui/teachers/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { TeachersTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchTeachersPages2 } from '@/app/lib/data';
+import { fetchTeachersPages2, fetchSessionToken } from '@/app/lib/data';
+import jwt from 'jsonwebtoken'; // Import jwt
 
 export default async function Page({
   searchParams,
@@ -18,8 +19,27 @@ export default async function Page({
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
 
+  // Fetch session token
+  const sessionName = 'currentSession'; // Adjust session name according to your setup
+  const token = await fetchSessionToken(sessionName);
+  console.log('Session token:', token);
 
-  const totalPages = await fetchTeachersPages2(query, 'Test School 1');
+  // Verify and decode the token
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, process.env.TOKEN_SECRET!);
+    console.log('Decoded token data:', decodedToken);
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    // Handle error if token verification fails
+    return null; // Or handle the error in some other way
+  }
+
+  // Extract school_name from decoded token
+  const schoolName = decodedToken?.school_name;
+
+  // Fetch teachers pages with the school name
+  const totalPages = await fetchTeachersPages2(query, schoolName);
 
   // Handle the case where totalPages is undefined
   const totalPagesOrDefault = totalPages ?? 1;
@@ -35,7 +55,7 @@ export default async function Page({
         <BulkImportTeachers />
       </div>
       <Suspense key={query + currentPage} fallback={<TeachersTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} />
+        <Table query={query} currentPage={currentPage} schoolName={schoolName} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPagesOrDefault} />

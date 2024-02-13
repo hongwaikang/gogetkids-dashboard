@@ -293,3 +293,13 @@ export async function fetchClassById(id: ObjectId) {
 }
 
 // ------------------------------------------------------------------------------------------------------
+export async function fetchSessionToken(sessionName: string): Promise<string | null> {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('test');
+    const session = await db.collection('sessions').findOne({ sessionName });
+
+    await client.close();
+    return session ? session.token : null;
+  });
+}
