@@ -9,17 +9,18 @@ import { fetchTeachersPages2 } from '@/app/lib/data';
 
 export default async function Page({
   searchParams,
+  schoolName,
 }: {
   searchParams?: {
     query?: string;
     page?: string;
   };
+  schoolName: string;
 }) {
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
 
-
-  const totalPages = await fetchTeachersPages2(query, 'Test School 1');
+  const totalPages = await fetchTeachersPages2(query, schoolName);
 
   // Handle the case where totalPages is undefined
   const totalPagesOrDefault = totalPages ?? 1;
@@ -35,7 +36,7 @@ export default async function Page({
         <BulkImportTeachers />
       </div>
       <Suspense key={query + currentPage} fallback={<TeachersTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} />
+        <Table query={query} currentPage={currentPage} schoolName={schoolName} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPagesOrDefault} />

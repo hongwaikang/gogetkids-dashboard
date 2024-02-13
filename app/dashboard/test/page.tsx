@@ -1,40 +1,38 @@
+// @/app/dashboard/test/page.tsx:
 "use client";
-// DashboardPage.tsx
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 
-export default function DashboardPage() {
+export default function TestPage() {
+  const [schoolName, setSchoolName] = useState("No school name");
 
-  const [email, setEmail] = useState("No email");
-
-  const getUserDetails = async () => {
+  const getSchoolName = async () => {
     try {
-      const res = await axios.get('/api/dashboard');
+      const res = await axios.get('/api/dashboard/test');
       console.log(res.data);
-      setEmail(res.data.data.email);
+      setSchoolName(res.data.data.schoolName);
     } catch (error: any) {
       console.error(error.message);
       // Handle errors if necessary
     }
   };
 
-  // Use useEffect to call getUserDetails when the component is mounted
   useEffect(() => {
-    getUserDetails();
-  }, []); // The empty dependency array ensures that it only runs once when the component is mounted
+    getSchoolName();
+  }, []);
 
-	return (
+  return (
     <div className="flex flex-col items-center justify-center min-h-screen py-6 bg-white">
-      <h1 className="text-4xl font-bold mb-4 text-blue-600">Dashboard</h1>
+      <h1 className="text-4xl font-bold mb-4 text-blue-600">Test Page</h1>
       <div className="bg-white p-6 rounded-md shadow-md text-center">
-        <p className="text-gray-700">Welcome to your dashboard!</p>
+        <p className="text-gray-700">Welcome to the test page!</p>
         <hr className="my-4 border-t border-gray-300" />
         <div className="bg-blue-50 p-4 rounded-md">
           <h2 className="text-lg font-semibold mb-2 text-blue-600">
-            {email === 'No email' ? "No Email" : "Your Email:"}
+            {schoolName === 'No school name' ? "No School Name" : "Your School:"}
           </h2>
           <p className="text-gray-800">
-            {email}
+            {schoolName}
           </p>
         </div>
       </div>

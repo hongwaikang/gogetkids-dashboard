@@ -1,0 +1,47 @@
+[
+  {
+    "email": "emily.wilson@testschoolone.edu.sg",
+    "firstName": "Emily",
+    "lastName": "Wilson",
+    "password": "CommonPassword123",
+    "phoneNum": "91234567",
+    "role": "teacher",
+    "school_name": "Test School 1"
+  },
+  {
+    "email": "john.smith@testschoolone.edu.sg",
+    "firstName": "John",
+    "lastName": "Smith",
+    "password": "CommonPassword123",
+    "phoneNum": "92345678",
+    "role": "teacher",
+    "school_name": "Test School 1"
+  },
+  {
+    "email": "alice.smith@testschoolone.edu.sg",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "password": "CommonPassword123",
+    "phoneNum": "83456789",
+    "role": "teacher",
+    "school_name": "Test School 1"
+  },
+  {
+    "email": "lebron.james@testschoolone.edu.sg",
+    "firstName": "Lebron",
+    "lastName": "James",
+    "password": "CommonPassword123",
+    "phoneNum": "84567890",
+    "role": "teacher",
+    "school_name": "Test School 1"
+  },
+  {
+    "email": "jane.davis@testschoolone.edu.sg",
+    "firstName": "Jane",
+    "lastName": "Davis",
+    "password": "CommonPassword123",
+    "phoneNum": "85678901",
+    "role": "teacher",
+    "school_name": "Test School 1"
+  }
+]

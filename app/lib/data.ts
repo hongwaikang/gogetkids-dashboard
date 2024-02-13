@@ -169,6 +169,40 @@ export async function fetchTeachersPages(query: string) {
   });
 }
 
+export async function fetchFilteredTeachers2(query: string, currentPage: number, schoolName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const teachersCollection = db.collection('users');
+
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+    const teachers = await teachersCollection
+      .find({ role: 'teacher', school_name: schoolName })
+      .sort({ name: 1 })
+      .skip(offset)
+      .limit(ITEMS_PER_PAGE)
+      .toArray();
+
+    await client.close();
+    return teachers;
+  });
+}
+
+export async function fetchTeachersPages2(query: string, schoolName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const teachersCollection = db.collection('users');
+
+    const count = await teachersCollection.countDocuments({ role: 'teacher', school_name: schoolName });
+    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+
+    await client.close();
+    return totalPages;
+  });
+}
+
+
 export async function fetchAllTeachersEmail() {
   return executeWithRetry(async () => {
     const client = await connect();

@@ -1,5 +1,0 @@
-email,firstName,lastName,password,phoneNum,role,school_name
-john.doe@example.com,John,Doe,Password123,1234567890,teacher,Springfield High School
-jane.smith@example.com,Jane,Smith,Password456,9876543210,teacher,Springfield High School
-michael.johnson@example.com,Michael,Johnson,Password789,5555555555,teacher,Springfield High School
-emily.wilson@example.com,Emily,Wilson,Passwordabc,8888888888,teacher,Springfield High School
