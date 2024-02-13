@@ -2,17 +2,21 @@ import { UpdateParent, DeleteParent } from '@/app/ui/parents/buttons';
 import { fetchFilteredParents } from '@/app/lib/data';
 import Link from 'next/link';
 
+interface ParentsTableProps {
+  query: string;
+  currentPage: number;
+  schoolName: string; // Add schoolName prop to the interface
+}
+
 export default async function ParentsTable({
   query,
   currentPage,
-}: {
-  query: string;
-  currentPage: number;
-}) {
+  schoolName, // Destructure schoolName from props
+}: ParentsTableProps) {
   let parents: any[] = [];
 
   try {
-    parents = await fetchFilteredParents(query, currentPage);
+    parents = await fetchFilteredParents(query, currentPage, schoolName); // Pass schoolName to fetch function
   } catch (error) {
     console.error('Error fetching parents:', error);
   }

@@ -58,7 +58,6 @@ export async function fetchStudentsPages(query: string, schoolName: string) {
   });
 }
 
-
 export async function fetchStudentById(id: ObjectId) {
   return executeWithRetry(async () => {
     const client = await connect();
@@ -73,6 +72,7 @@ export async function fetchStudentById(id: ObjectId) {
 // ------------------------------------------------------------------------------------------------------
 
 // ---------------------------------------------- PARENTS -----------------------------------------------
+/*
 export async function fetchFilteredParents(query: string, currentPage: number) {
   return executeWithRetry(async () => {
     const client = await connect();
@@ -91,7 +91,39 @@ export async function fetchFilteredParents(query: string, currentPage: number) {
     return parents;
   });
 }
+*/
 
+export async function fetchFilteredParents(query: string, currentPage: number, schoolName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const studentsCollection = db.collection('students');
+    const parentsCollection = db.collection('users');
+
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+    // Fetch students from the specified school
+    const students = await studentsCollection
+      .find({ school_name: schoolName })
+      .toArray();
+
+    // Extract parent IDs (emails) from the students
+    const parentIds = students.map(student => student.parent_id);
+
+    // Fetch parents from the users collection based on parent IDs (emails)
+    const parents = await parentsCollection
+      .find({ role: 'parent', email: { $in: parentIds } })
+      .sort({ email: 1 }) // Sort by email in ascending order
+      .skip(offset)
+      .limit(ITEMS_PER_PAGE)
+      .toArray();
+
+    await client.close();
+    return parents;
+  });
+}
+
+/*
 export async function fetchParentsPages(query: string) {
   return executeWithRetry(async () => {
     const client = await connect();
@@ -99,6 +131,32 @@ export async function fetchParentsPages(query: string) {
     const parentsCollection = db.collection('users');
 
     const count = await parentsCollection.countDocuments({ role: 'parent' });
+    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+
+    await client.close();
+    return totalPages;
+  });
+}
+*/
+
+export async function fetchParentsPages(query: string, schoolName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const studentsCollection = db.collection('students');
+    const parentsCollection = db.collection('users');
+
+    // Fetch students from the specified school
+    const students = await studentsCollection
+      .find({ school_name: schoolName })
+      .toArray();
+
+    // Extract parent IDs (emails) from the students
+    const parentIds = students.map(student => student.parent_id);
+
+    // Count parents from the users collection based on parent IDs (emails)
+    const count = await parentsCollection.countDocuments({ role: 'parent', email: { $in: parentIds } });
+
     const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
 
     await client.close();

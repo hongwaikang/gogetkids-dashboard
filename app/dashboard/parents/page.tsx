@@ -5,7 +5,8 @@ import { CreateParent } from '@/app/ui/parents/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { ParentsTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchParentsPages } from '@/app/lib/data';
+import { fetchParentsPages, fetchSessionToken } from '@/app/lib/data';
+import jwt from 'jsonwebtoken';
 
 export default async function Page({
   searchParams,
@@ -18,7 +19,22 @@ export default async function Page({
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
 
-  const totalPages = await fetchParentsPages(query);
+  // Fetch session token
+  const sessionName = 'currentSession'; // Adjust session name according to your setup
+  const token = await fetchSessionToken(sessionName);
+
+  // Decode the token to get school_name
+  let schoolName;
+  try {
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+    schoolName = decodedToken.school_name;
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    // Handle error if token decoding fails
+    return null; // Or handle the error in some other way
+  }
+
+  const totalPages = await fetchParentsPages(query, schoolName);
 
   // Handle the case where totalPages is undefined
   const totalPagesOrDefault = totalPages ?? 1;
@@ -33,7 +49,7 @@ export default async function Page({
         <CreateParent />
       </div>
       <Suspense key={query + currentPage} fallback={<ParentsTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} />
+        <Table query={query} currentPage={currentPage} schoolName={schoolName} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPagesOrDefault} />
