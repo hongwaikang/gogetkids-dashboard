@@ -84,13 +84,13 @@ export default function EditClassForm({ classroom, teachers }: { classroom: any;
         </div>
         <div className="mt-6 flex justify-end gap-4">
           <Link
-            href="/dashboard/students"
+            href="/dashboard/classes"
             className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
           >
             Return
           </Link>
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Updating...' : 'Update Student'}
+            {isLoading ? 'Updating...' : 'Update Class'}
           </Button>
         </div>
     </form>

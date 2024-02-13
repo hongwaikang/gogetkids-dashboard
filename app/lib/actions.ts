@@ -5,10 +5,14 @@ import { connect } from './dbConfig';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import toast from 'react-hot-toast';
+import jwt from 'jsonwebtoken';
+import { fetchSessionToken } from "@/app/lib/data";
 
 // For password hashing
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+// For token grabbing
+const sessionName = 'currentSession';
 
 // ---------------------------------------------- STUDENTS ----------------------------------------------
 // Define the schema for form data validation using Zod
@@ -38,9 +42,19 @@ async function isStudentIdUnique(db: Db, studentid: number) {
   return !existingStudent;
 }
 
-export async function createStudent(formData: FormData) {
+export async function createStudent(formData: FormData, sessionName: string): Promise<{ success: boolean, errorMessage?: string }> {
   let client;
   try {
+    // Fetch session token
+    const token = await fetchSessionToken('currentSession');
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get school_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+    const school_name = decodedToken.school_name;
+
     // Generate a unique student ID
     let studentid;
     client = await connect();
@@ -63,7 +77,7 @@ export async function createStudent(formData: FormData) {
       class_name: formData.get('class_name') || '',
       parent_id: formData.get('parent_id') || '',
       status: '',
-      school_name: ''
+      school_name: school_name, // Pass school_name extracted from token
     };
 
     // Manually add studentid to the data object
@@ -97,6 +111,7 @@ export async function createStudent(formData: FormData) {
     }
   }
 }
+
 
 export async function updateStudent(id: string, formData: FormData) {
   let client;
@@ -371,10 +386,19 @@ const teacherSchema = z.object({
   school_name: z.string(),
 });
 
-export async function createTeacher(formData: FormData) {
+export async function createTeacher(formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
   let client;
-  let db: Db; // Declare db variable here
   try {
+    // Fetch session token
+    const token = await fetchSessionToken(sessionName);
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get school_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+    const school_name = decodedToken.school_name;
+
     // Validate form data using Zod schema
     const validatedData = teacherSchema.parse({
       email: formData.get('email'),
@@ -383,12 +407,12 @@ export async function createTeacher(formData: FormData) {
       password: formData.get('password'),
       phoneNum: formData.get('phoneNum'),
       role: 'teacher', // Hardcoded role as "teacher"
-      school_name: '',
+      school_name: school_name, // Pass school_name extracted from token
     });
 
     // Check if the email is unique
     client = await connect();
-    db = client.db('GoGetKids'); // Specify the database name here
+    const db = client.db('GoGetKids'); // Specify the database name here
     const existingTeacher = await db.collection('users').findOne({ email: validatedData.email });
     if (existingTeacher) {
       throw new Error('Email is already in use.');
@@ -407,6 +431,7 @@ export async function createTeacher(formData: FormData) {
     if (result.insertedId) {
       // Data inserted successfully
       console.log('Teacher created successfully:', result.insertedId);
+      revalidatePath('/teachers');
       return { success: true }; // Return success message to client-side
     } else {
       // Error occurred during insertion
@@ -425,9 +450,19 @@ export async function createTeacher(formData: FormData) {
   }
 }
 
-export async function updateTeacher(id: string, formData: FormData) {
+export async function updateTeacher(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
   let client;
   try {
+    // Fetch session token
+    const token = await fetchSessionToken(sessionName);
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get school_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+    const school_name = decodedToken.school_name;
+
     // Convert id to ObjectId
     const objectId = new ObjectId(id);
 
@@ -439,14 +474,10 @@ export async function updateTeacher(id: string, formData: FormData) {
       password: formData.get('password'),
       phoneNum: formData.get('phoneNum'),
       role: 'teacher', // Change role to "teacher"
-      school_name: '',
+      school_name: school_name, // Pass school_name extracted from token
     });
 
-    console.log('Validated Data:', validatedData); // Log validated data
-
     client = await connect();
-    console.log('Connected to MongoDB');
-
     const db = client.db('GoGetKids');
 
     // Update teacher data in the MongoDB collection
@@ -455,24 +486,23 @@ export async function updateTeacher(id: string, formData: FormData) {
       { $set: validatedData }
     );
 
-    console.log('Update Result:', result);
-
     // Check if the update was successful
     if (result.modifiedCount === 1) {
       console.log('Teacher updated successfully:', id);
-      revalidatePath('/dashboard/teachers');
+      revalidatePath('/teachers');
       return { success: true };
     } else {
       console.error('Failed to update teacher.');
       return { success: false };
     }
   } catch (error: any) {
+    // Handle validation or database update errors
     console.error('Error updating teacher:', error.message);
     return { success: false, errorMessage: error.message };
   } finally {
+    // Close the connection
     if (client) {
       await client.close();
-      console.log('MongoDB connection closed');
     }
   }
 }
@@ -524,23 +554,31 @@ const classSchema = z.object({
   school_name: z.string(), // School name is required
 });
 
-export async function createClass(formData: FormData) {
+export async function createClass(formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
   let client;
-  let db: Db; // Declare db variable here
   try {
+    // Fetch session token
+    const sessionName = 'currentSession'; // Adjust session name according to your setup
+    const token = await fetchSessionToken(sessionName);
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get school_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+    const school_name = decodedToken.school_name;
+
     // Validate form data using Zod schema
     const validatedData = classSchema.parse({
       class_name: formData.get('class_name'),
       class_level: formData.get('class_level'),
       teacherid: formData.get('teacher_email') || '',
-      school_name: '',
+      school_name: school_name, // Pass school_name extracted from token
     });
-
-    // Additional validation steps if necessary
 
     // Connect to the MongoDB database
     client = await connect();
-    db = client.db('GoGetKids'); // Specify the database name here
+    const db = client.db('GoGetKids'); // Specify the database name here
 
     // Insert class data into the MongoDB collection
     const result = await db.collection('classes').insertOne(validatedData);
@@ -549,6 +587,7 @@ export async function createClass(formData: FormData) {
     if (result.insertedId) {
       // Data inserted successfully
       console.log('Class created successfully:', result.insertedId);
+      revalidatePath('/classes');
       return { success: true }; // Return success message to client-side
     } else {
       // Error occurred during insertion
@@ -567,18 +606,29 @@ export async function createClass(formData: FormData) {
   }
 }
 
-const updateClassSchema = classSchema.omit({ school_name: true });
-
-export async function updateClass(id: string, formData: FormData) {
+export async function updateClass(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
   let client;
   try {
+    const sessionName = 'currentSession'; // Adjust session name according to your setup
+
+    // Fetch session token
+    const token = await fetchSessionToken(sessionName);
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get school_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+    const schoolName = decodedToken.school_name;
+
     const objectId = new ObjectId(id); // Convert id to ObjectId
 
-    // Validate form data
-    const validatedData = updateClassSchema.parse({
+    // Validate form data using Zod schema
+    const validatedData = classSchema.parse({
       class_name: formData.get('class_name'),
       class_level: formData.get('class_level'),
       teacherid: formData.get('teacherid'),
+      school_name: schoolName, // Include schoolName
     });
 
     console.log('Validated Data:', validatedData);
@@ -586,7 +636,7 @@ export async function updateClass(id: string, formData: FormData) {
     client = await connect();
     console.log('Connected to MongoDB');
 
-    const db: Db = client.db('GoGetKids'); // Specify the database name
+    const db = client.db('GoGetKids'); // Specify the database name
 
     // Update class data in the MongoDB collection
     const result = await db.collection('classes').updateOne(
@@ -599,6 +649,7 @@ export async function updateClass(id: string, formData: FormData) {
     // Check if the update was successful
     if (result.modifiedCount === 1) {
       console.log('Class updated successfully:', id);
+      revalidatePath('/classes');
       return { success: true };
     } else {
       console.error('Failed to update class.');

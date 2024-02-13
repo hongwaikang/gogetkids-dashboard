@@ -4,14 +4,16 @@ import { fetchFilteredClasses } from '@/app/lib/data';
 export default async function ClassesTable({
   query,
   currentPage,
+  schoolName, // Add schoolName parameter
 }: {
   query: string;
   currentPage: number;
+  schoolName: string; // Add schoolName parameter
 }) {
   let classes: any[] = [];
 
   try {
-    classes = await fetchFilteredClasses(query, currentPage);
+    classes = await fetchFilteredClasses(query, currentPage, schoolName); // Pass schoolName to fetchFilteredClasses
   } catch (error) {
     console.error('Error fetching classes:', error);
   }

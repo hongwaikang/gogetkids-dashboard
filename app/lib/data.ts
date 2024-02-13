@@ -25,7 +25,7 @@ async function executeWithRetry<T>(fn: () => Promise<T>): Promise<T> {
   throw new Error('Function execution failed.'); // Add a default return statement
 }
 
-export async function fetchFilteredStudents(query: string, currentPage: number) {
+export async function fetchFilteredStudents(query: string, currentPage: number, schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
     const db = client.db('GoGetKids');
@@ -33,7 +33,7 @@ export async function fetchFilteredStudents(query: string, currentPage: number) 
 
     const offset = (currentPage - 1) * ITEMS_PER_PAGE;
     const students = await studentsCollection
-      .find()
+      .find({ school_name: schoolName }) // Filter by school name
       .sort({ name: 1 })
       .skip(offset)
       .limit(ITEMS_PER_PAGE)
@@ -44,19 +44,20 @@ export async function fetchFilteredStudents(query: string, currentPage: number) 
   });
 }
 
-export async function fetchStudentsPages(query: string) {
+export async function fetchStudentsPages(query: string, schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
     const db = client.db('GoGetKids');
     const studentsCollection = db.collection('students');
 
-    const count = await studentsCollection.countDocuments();
+    const count = await studentsCollection.countDocuments({ school_name: schoolName }); // Count documents based on school name
     const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
 
     await client.close();
     return totalPages;
   });
 }
+
 
 export async function fetchStudentById(id: ObjectId) {
   return executeWithRetry(async () => {
@@ -136,40 +137,7 @@ export async function fetchParentById(id: ObjectId) {
 // ---------------------------------------------- TEACHERS ----------------------------------------------
 
 // ------------------------------------------------------------------------------------------------------
-export async function fetchFilteredTeachers(query: string, currentPage: number) {
-  return executeWithRetry(async () => {
-    const client = await connect();
-    const db = client.db('GoGetKids');
-    const teachersCollection = db.collection('users');
-
-    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-    const teachers = await teachersCollection
-      .find({ role: 'teacher' })
-      .sort({ name: 1 })
-      .skip(offset)
-      .limit(ITEMS_PER_PAGE)
-      .toArray();
-
-    await client.close();
-    return teachers;
-  });
-}
-
-export async function fetchTeachersPages(query: string) {
-  return executeWithRetry(async () => {
-    const client = await connect();
-    const db = client.db('GoGetKids');
-    const teachersCollection = db.collection('users');
-
-    const count = await teachersCollection.countDocuments({ role: 'teacher' });
-    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
-
-    await client.close();
-    return totalPages;
-  });
-}
-
-export async function fetchFilteredTeachers2(query: string, currentPage: number, schoolName: string) {
+export async function fetchFilteredTeachers(query: string, currentPage: number, schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
     const db = client.db('GoGetKids');
@@ -188,7 +156,7 @@ export async function fetchFilteredTeachers2(query: string, currentPage: number,
   });
 }
 
-export async function fetchTeachersPages2(query: string, schoolName: string) {
+export async function fetchTeachersPages(query: string, schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
     const db = client.db('GoGetKids');
@@ -201,7 +169,6 @@ export async function fetchTeachersPages2(query: string, schoolName: string) {
     return totalPages;
   });
 }
-
 
 export async function fetchAllTeachersEmail() {
   return executeWithRetry(async () => {
@@ -231,7 +198,7 @@ export async function fetchTeacherById(id: ObjectId) {
   });
 }
 // ---------------------------------------------- CLASSES -----------------------------------------------
-export async function fetchFilteredClasses(query: string, currentPage: number) {
+export async function fetchFilteredClasses(query: string, currentPage: number, schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
     const db = client.db('GoGetKids');
@@ -239,7 +206,7 @@ export async function fetchFilteredClasses(query: string, currentPage: number) {
 
     const offset = (currentPage - 1) * ITEMS_PER_PAGE;
     const students = await classesCollection
-      .find()
+      .find({ school_name: schoolName }) // Filter by school_name
       .sort({ name: 1 })
       .skip(offset)
       .limit(ITEMS_PER_PAGE)
@@ -250,13 +217,13 @@ export async function fetchFilteredClasses(query: string, currentPage: number) {
   });
 }
 
-export async function fetchClassesPages(query: string) {
+export async function fetchClassesPages(query: string, schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
     const db = client.db('GoGetKids');
     const classesCollection = db.collection('classes');
 
-    const count = await classesCollection.countDocuments();
+    const count = await classesCollection.countDocuments({ school_name: schoolName }); // Count documents with specified school_name
 
     const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
     await client.close();

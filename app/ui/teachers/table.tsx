@@ -1,6 +1,6 @@
 import { UpdateTeacher, DeleteTeacher } from '@/app/ui/teachers/buttons';
 import Link from 'next/link';
-import { fetchFilteredTeachers2 } from '@/app/lib/data';
+import { fetchFilteredTeachers } from '@/app/lib/data';
 
 export default async function TeachersTable({
   query,
@@ -15,7 +15,7 @@ export default async function TeachersTable({
 
   try {
     // Call fetchFilteredTeachers2 with the retrieved school name
-    teachers = await fetchFilteredTeachers2(query, currentPage, schoolName);
+    teachers = await fetchFilteredTeachers(query, currentPage, schoolName);
   } catch (error) {
     console.error('Error fetching teachers:', error);
     // Handle errors if necessary

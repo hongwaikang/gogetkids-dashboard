@@ -5,14 +5,16 @@ import { fetchFilteredStudents } from '@/app/lib/data';
 export default async function StudentsTable({
   query,
   currentPage,
+  schoolName,
 }: {
   query: string;
   currentPage: number;
+  schoolName: string;
 }) {
   let students: any[] = [];
 
   try {
-    students = await fetchFilteredStudents(query, currentPage);
+    students = await fetchFilteredStudents(query, currentPage, schoolName);
   } catch (error) {
     console.error('Error fetching students:', error);
   }

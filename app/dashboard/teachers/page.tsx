@@ -5,7 +5,7 @@ import { CreateTeacher, BulkImportTeachers } from '@/app/ui/teachers/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { TeachersTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchTeachersPages2, fetchSessionToken } from '@/app/lib/data';
+import { fetchTeachersPages, fetchSessionToken } from '@/app/lib/data';
 import jwt from 'jsonwebtoken'; // Import jwt
 
 export default async function Page({
@@ -39,7 +39,7 @@ export default async function Page({
   const schoolName = decodedToken?.school_name;
 
   // Fetch teachers pages with the school name
-  const totalPages = await fetchTeachersPages2(query, schoolName);
+  const totalPages = await fetchTeachersPages(query, schoolName);
 
   // Handle the case where totalPages is undefined
   const totalPagesOrDefault = totalPages ?? 1;

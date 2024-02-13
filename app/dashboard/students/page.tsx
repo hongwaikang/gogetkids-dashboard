@@ -5,7 +5,8 @@ import { CreateStudent, BulkImportStudents } from '@/app/ui/students/buttons';
 import { lusitana } from '@/app/ui/fonts';
 import { StudentsTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
-import { fetchStudentsPages } from '@/app/lib/data';
+import { fetchStudentsPages, fetchSessionToken } from '@/app/lib/data';
+import jwt from 'jsonwebtoken'; // Import jwt
 
 export default async function Page({
   searchParams,
@@ -18,7 +19,27 @@ export default async function Page({
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
 
-  const totalPages = await fetchStudentsPages(query);
+  // Fetch session token
+  const sessionName = 'currentSession'; // Adjust session name according to your setup
+  const token = await fetchSessionToken(sessionName);
+  console.log('Session token:', token);
+
+  // Verify and decode the token
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, process.env.TOKEN_SECRET!);
+    console.log('Decoded token data:', decodedToken);
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    // Handle error if token verification fails
+    return null; // Or handle the error in some other way
+  }
+
+  // Extract school_name from decoded token
+  const schoolName = decodedToken?.school_name;
+
+  // Fetch students pages with the school name
+  const totalPages = await fetchStudentsPages(query, schoolName);
 
   // Handle the case where totalPages is undefined
   const totalPagesOrDefault = totalPages ?? 1;
@@ -34,7 +55,7 @@ export default async function Page({
         <BulkImportStudents />
       </div>
       <Suspense key={query + currentPage} fallback={<StudentsTableSkeleton />}>
-        <Table query={query} currentPage={currentPage} />
+        <Table query={query} currentPage={currentPage} schoolName={schoolName} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
         <Pagination totalPages={totalPagesOrDefault} />
