@@ -54,6 +54,10 @@ const ViewProfile = ({ student }: { student: any }) => {
           <label className="block text-sm font-medium">Parent Email:</label>
           <p className="mt-1 text-sm text-gray-900">{student.parent_id}</p>
         </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium">School:</label>
+          <p className="mt-1 text-sm text-gray-900">{student.school_name}</p>
+        </div>
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link href={`/dashboard/students/${student._id}/edit`} className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200">

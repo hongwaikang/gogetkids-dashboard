@@ -9,6 +9,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/app/ui/button';
+import GoGetKidsLogo from '@/app/ui/gogetkids-logo'; // Import the GoGetKidsLogo component
 
 export default function LoginForm() {
   const router = useRouter();
@@ -44,9 +45,15 @@ export default function LoginForm() {
   }, [user]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className={`${lusitana.className} text-2xl font-bold mb-4`}>{loading ? 'Processing' : 'Enter credentials to login.'}</h1>
-      <div className="rounded-lg bg-gray-50 px-6 pb-4 pt-8 w-96 space-y-3">
+    <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
+      {/* Include the GoGetKidsLogo component here with darkFont prop */}
+      <div className="mb-8"> {/* Adding margin bottom to create space between logo and form */}
+        <GoGetKidsLogo darkFont={true} /> {/* Use darker font color for the logo */}
+      </div>
+      <div className="max-w-md w-full bg-white shadow-md rounded-lg p-6 space-y-4">
+        <h1 className={`${lusitana.className} text-2xl font-bold mb-4 text-center`}>
+          {loading ? 'Processing' : 'Enter credentials to login.'}
+        </h1>
         <div>
           <label className="block text-xs font-medium text-gray-900" htmlFor="email">
             Email
@@ -58,9 +65,9 @@ export default function LoginForm() {
               value={user.email}
               onChange={(e) => setUser({ ...user, email: e.target.value })}
               placeholder="Enter email"
-              className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+              className="peer block w-full rounded-md border border-gray-200 py-2 px-10 text-sm outline-none placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
-            <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
           </div>
         </div>
         <div>
@@ -74,22 +81,25 @@ export default function LoginForm() {
               value={user.password}
               onChange={(e) => setUser({ ...user, password: e.target.value })}
               placeholder="Enter password"
-              className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+              className="peer block w-full rounded-md border border-gray-200 py-2 px-10 text-sm outline-none placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
             />
-            <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
           </div>
         </div>
-        <Button
-          onClick={onLogin}
-          disabled={buttonDisabled}
-          className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out ${buttonDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300'}`}
-        >
-          {buttonDisabled ? 'Please enter login details' : 'Login'} <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
-        </Button>
-        <Link href="/signup" className="text-blue-500 hover:underline">
+        <div className="flex justify-center"> {/* Center the login button */}
+          <Button
+            onClick={onLogin}
+            disabled={buttonDisabled}
+            className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out ${buttonDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300'}`}
+          >
+            {buttonDisabled ? 'Please enter login details' : 'Login'} <ArrowRightIcon className="ml-1 h-5 w-5 text-gray-50" />
+          </Button>
+        </div>
+        <Link href="/signup" className="block text-center text-blue-500 hover:underline">
           Visit Sign Up Page
         </Link>
       </div>
     </div>
   );
+
 }

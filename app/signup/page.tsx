@@ -1,16 +1,14 @@
 'use client';
 
 import { lusitana } from '@/app/ui/fonts';
-import { AtSymbolIcon, KeyIcon, AcademicCapIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
+import { ArrowRightIcon, AtSymbolIcon, KeyIcon, AcademicCapIcon, PencilIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/app/ui/button';
-
-// ... (existing imports)
+import GoGetKidsLogo from '@/app/ui/gogetkids-logo'; // Import the GoGetKidsLogo component
 
 export default function SignUpForm() {
   const router = useRouter();
@@ -49,12 +47,15 @@ export default function SignUpForm() {
   }, [user]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className={`${lusitana.className} text-2xl font-bold mb-4`}>
-        {loading ? 'Processing' : 'Create an account to get started.'}
-      </h1>
-      <div className="rounded-lg bg-gray-50 px-6 pb-4 pt-8 w-96 space-y-3">
-        {/* Input field for email */}
+    <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
+      {/* Include the GoGetKidsLogo component here with darkFont prop */}
+      <div className="mb-8"> {/* Adding margin bottom to create space between logo and form */}
+        <GoGetKidsLogo darkFont={true} /> {/* Use darker font color for the logo */}
+      </div>
+      <div className="max-w-md w-full bg-white shadow-md rounded-lg p-6 space-y-4">
+        <h1 className={`${lusitana.className} text-2xl font-bold mb-4 text-center`}>
+          {loading ? 'Processing' : 'Create an account to get started.'}
+        </h1>
         <div>
           <label className="block text-xs font-medium text-gray-900" htmlFor="email">
             Email
@@ -71,7 +72,6 @@ export default function SignUpForm() {
             <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
           </div>
         </div>
-        {/* Input field for password */}
         <div>
           <label className="block text-xs font-medium text-gray-900" htmlFor="password">
             Password
@@ -88,7 +88,6 @@ export default function SignUpForm() {
             <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
           </div>
         </div>
-        {/* Input field for firstname */}
         <div>
           <label className="block text-xs font-medium text-gray-900" htmlFor="firstname">
             First Name
@@ -102,10 +101,9 @@ export default function SignUpForm() {
               placeholder="Enter firstname"
               className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
             />
-            <PencilSquareIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            <PencilIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
           </div>
         </div>
-        {/* Input field for lastname */}
         <div>
           <label className="block text-xs font-medium text-gray-900" htmlFor="lastname">
             Last Name
@@ -119,10 +117,9 @@ export default function SignUpForm() {
               placeholder="Enter lastname"
               className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
             />
-            <PencilSquareIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+            <PencilIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
           </div>
         </div>
-        {/* Input field for School Name */}
         <div>
           <label className="block text-xs font-medium text-gray-900" htmlFor="school_name">
             School Name
@@ -139,16 +136,16 @@ export default function SignUpForm() {
             <AcademicCapIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
           </div>
         </div>
-        {/* Sign up button */}
-        <Button
-          onClick={onSignUp}
-          disabled={buttonDisabled}
-          className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out ${buttonDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300'}`}
-        >
-          {buttonDisabled ? 'Please enter sign up details' : 'Sign Up'} <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
-        </Button>
-        {/* Link to login page */}
-        <Link href="/login" className="text-blue-500 hover:underline">
+        <div className="flex justify-center"> {/* Center the sign-up button */}
+          <Button
+            onClick={onSignUp}
+            disabled={buttonDisabled}
+            className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out ${buttonDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300'}`}
+          >
+            {buttonDisabled ? 'Please enter sign up details' : 'Sign Up'} <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+          </Button>
+        </div>
+        <Link href="/login" className="block text-center text-blue-500 hover:underline">
           Visit Login Page
         </Link>
       </div>

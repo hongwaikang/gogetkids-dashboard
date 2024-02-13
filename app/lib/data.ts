@@ -69,30 +69,26 @@ export async function fetchStudentById(id: ObjectId) {
   });
 }
 
+export async function fetchStudentsWithNoParent(schoolName: string) {
+  try {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const studentsCollection = db.collection('students');
+
+    // Fetch students from the specified school with blank parent_id
+    const students = await studentsCollection.find({ school_name: schoolName, parent_id: "" }).toArray();
+
+    await client.close();
+    return students;
+  } catch (error) {
+    console.error('Error fetching students with no parent:', error);
+    throw new Error('Failed to fetch students with no parent.');
+  }
+}
+
 // ------------------------------------------------------------------------------------------------------
 
 // ---------------------------------------------- PARENTS -----------------------------------------------
-/*
-export async function fetchFilteredParents(query: string, currentPage: number) {
-  return executeWithRetry(async () => {
-    const client = await connect();
-    const db = client.db('GoGetKids');
-    const parentsCollection = db.collection('users');
-
-    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-    const parents = await parentsCollection
-      .find({ role: 'parent' })
-      .sort({ name: 1 })
-      .skip(offset)
-      .limit(ITEMS_PER_PAGE)
-      .toArray();
-
-    await client.close();
-    return parents;
-  });
-}
-*/
-
 export async function fetchFilteredParents(query: string, currentPage: number, schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
@@ -122,22 +118,6 @@ export async function fetchFilteredParents(query: string, currentPage: number, s
     return parents;
   });
 }
-
-/*
-export async function fetchParentsPages(query: string) {
-  return executeWithRetry(async () => {
-    const client = await connect();
-    const db = client.db('GoGetKids');
-    const parentsCollection = db.collection('users');
-
-    const count = await parentsCollection.countDocuments({ role: 'parent' });
-    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
-
-    await client.close();
-    return totalPages;
-  });
-}
-*/
 
 export async function fetchParentsPages(query: string, schoolName: string) {
   return executeWithRetry(async () => {
