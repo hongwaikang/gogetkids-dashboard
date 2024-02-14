@@ -88,7 +88,7 @@ export async function createVehicle(formData: FormData): Promise<{ success: bool
       nextServicing: formData.get('nextServicing'),
       company_name: companyName,
     });
-    
+
     // Connect to MongoDB
     client = await connect();
     const db = client.db('GoGetKids');
