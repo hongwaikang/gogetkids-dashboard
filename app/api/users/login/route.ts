@@ -1,10 +1,9 @@
 import { connect } from "@/app/lib/dbConfig2";
 import User from "@/app/models/userModel";
-import Session from "@/app/models/sessionModel"; // Import the Session model
+import Session from "@/app/models/sessionModel";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { getAuthToken, setAuthToken, setSchoolName, getSchoolName } from "@/app/lib/global";
 
 connect();
 
@@ -40,12 +39,6 @@ export async function POST(request: NextRequest) {
 
     // Store the session in the 'sessions' collection using the Session model
     await Session.create({ sessionName: 'currentSession', token });
-
-    setAuthToken(token); // Set the authToken
-    setSchoolName(user.school_name); // Set the school name
-
-    console.log("AuthToken after setting:", getAuthToken()); // Log the authToken
-    console.log("School name after setting:", getSchoolName()); // Log the school name
 
     const response = NextResponse.json({
       message: "Login successful",

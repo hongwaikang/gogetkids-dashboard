@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value || ''
 
   // List of protected routes
-  const protectedRoutes = ['/system-admin-dashboard'];
+  const protectedRoutes = [];
 
   if (!isPublicPath && !token) {
     return NextResponse.redirect(new URL('/login', request.nextUrl))
@@ -35,7 +35,6 @@ export const config = {
     '/login',
     '/signup',
     '/dashboard',
-    '/system-admin-dashboard', // Add '/system-admin-dashboard' to the list of protected routes
-    // add in all routes later
+    // Add other routes here
   ]
 }
