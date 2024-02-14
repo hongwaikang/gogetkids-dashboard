@@ -1,6 +1,6 @@
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-//import { deleteSchoolAdmin } from '@/app/lib/actions'; // Assuming deleteSchoolAdmin function exists
+import { deleteSchoolAdmin } from '@/app/lib/actions2'; // Assuming deleteSchoolAdmin function exists
 
 export function CreateSchoolAdmin() {
   return (
@@ -26,8 +26,10 @@ export function UpdateSchoolAdmin({ id }: { id: string }) {
 }
 
 export function DeleteSchoolAdmin({ id }: { id: string }) {
+  const deleteSchoolAdminWithId = deleteSchoolAdmin.bind(null, id);
+
   return (
-    <form>
+    <form action={deleteSchoolAdminWithId}>
       <button type="button" className="rounded-md border p-2 hover:bg-gray-100">
         <span className="sr-only">Delete</span>
         <TrashIcon className="w-4" />
@@ -35,7 +37,6 @@ export function DeleteSchoolAdmin({ id }: { id: string }) {
     </form>
   );
 }
-
 
 // Bulk Import
 export function BulkImportSchoolAdmins() {

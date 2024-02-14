@@ -5,6 +5,8 @@ import { Db, ObjectId } from 'mongodb';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import { revalidatePath } from 'next/cache';
+import toast from 'react-hot-toast';
+import { redirect } from 'next/navigation';
 
 // Define the schema for school admin data validation using Zod
 const schoolAdminSchema = z.object({
@@ -13,7 +15,7 @@ const schoolAdminSchema = z.object({
   lastname: z.string(),
   password: z.string(), // Password is required
   school_name: z.string(),
-  role: z.enum(["school_admin"]), // Role must be "school_admin"
+  role: z.enum(["school admin"]), // Role must be "school_admin"
 });
 
 export async function createSchoolAdmin(formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
@@ -70,6 +72,8 @@ export async function createSchoolAdmin(formData: FormData): Promise<{ success: 
   }
 }
 
+const updateSchoolAdminSchema = schoolAdminSchema.omit({password: true})
+
 export async function updateSchoolAdmin(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
   let client;
   try {
@@ -77,13 +81,12 @@ export async function updateSchoolAdmin(id: string, formData: FormData): Promise
     const objectId = new ObjectId(id);
 
     // Validate form data using Zod schema
-    const validatedData = schoolAdminSchema.parse({
+    const validatedData = updateSchoolAdminSchema.parse({
       email: formData.get('email'),
       firstname: formData.get('firstname'),
       lastname: formData.get('lastname'),
-      password: formData.get('password'),
-      school_name: formData.get('school_name'), // Assuming school_name is present in formData
-      role: 'school admin', // Change role to "school admin"
+      school_name: formData.get('school_name'),
+      role: 'school admin',
     });
 
     client = await connect();
@@ -98,6 +101,7 @@ export async function updateSchoolAdmin(id: string, formData: FormData): Promise
     // Check if the update was successful
     if (result.modifiedCount === 1) {
       console.log('School admin updated successfully:', id);
+      revalidatePath('/system-admin-dashboard/school-admins')
       return { success: true };
     } else {
       console.error('Failed to update school admin.');
@@ -115,4 +119,43 @@ export async function updateSchoolAdmin(id: string, formData: FormData): Promise
   }
 }
 
+export async function deleteSchoolAdmin(id: string) {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    client = await connect();
+    console.log('Connected to MongoDB');
+
+    const db = client.db('test'); // Connect to the 'test' database
+    console.log('Connected to database: test');
+
+    // Delete the admin user from the MongoDB collection
+    const result = await db.collection('adminusers').deleteOne({ _id: objectId });
+
+    // Check if the deletion was successful
+    if (result.deletedCount === 1) {
+      // Data deleted successfully
+      console.log('Admin user deleted successfully:', id);
+      revalidatePath('/system-admin-dashboard/school-admins');
+      return { success: true }; // Return success message to client-side
+    } else {
+      // No document matched the query criteria, so nothing was deleted
+      console.error('Admin user not found:', id);
+      return { success: false, errorMessage: 'Admin user not found' }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle database deletion errors
+    console.error('Error deleting admin user:', error.message);
+    // You can add additional error handling here if needed
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed');
+    }
+  }
+}
 

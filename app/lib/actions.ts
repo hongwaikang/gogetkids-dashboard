@@ -112,7 +112,6 @@ export async function createStudent(formData: FormData): Promise<{ success: bool
   }
 }
 
-
 export async function updateStudent(id: string, formData: FormData) {
   let client;
   try {
