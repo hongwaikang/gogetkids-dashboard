@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 import toast from 'react-hot-toast';
 import jwt from 'jsonwebtoken';
 import { fetchSessionToken } from "@/app/lib/data";
+import { fetchCompanyName } from './data3';
 
 // For password hashing
 const bcrypt = require('bcrypt');
@@ -48,6 +49,73 @@ export async function deleteVehicle(id: string) {
     if (client) {
       await client.close();
       console.log('MongoDB connection closed');
+    }
+  }
+}
+
+// Define the schema for vehicle data validation using Zod
+const vehicleSchema = z.object({
+  vehicleId: z.string(),
+  status: z.string(),
+  nextServicing: z.string(), // Updated to accept string values
+  company_name: z.string(),
+});
+
+export async function createVehicle(formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
+  let client;
+  try {
+
+    // Fetch session token
+    const token = await fetchSessionToken(sessionName);
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get school_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+
+    const sessionUserid = decodedToken?.id;
+    console.log(sessionUserid);
+
+    // Extract company_name from decoded token
+    const companyName = await fetchCompanyName(sessionUserid);
+    console.log(companyName);
+
+    // Validate form data using Zod schema
+    const validatedData = vehicleSchema.parse({
+      vehicleId: formData.get('vehicleId'),
+      status: formData.get('status'),
+      nextServicing: formData.get('nextServicing'),
+      company_name: companyName,
+    });
+
+    // Connect to MongoDB
+    client = await connect();
+    const db = client.db('GoGetKids');
+
+    // Insert vehicle data into the MongoDB collection
+    const result = await db.collection('vehicles').insertOne(validatedData);
+
+    // Check if the insertion was successful
+    if (result.insertedId) {
+      // Data inserted successfully
+      console.log('Vehicle created successfully:', result.insertedId);
+      toast.success('Vehicle created successfully');
+      revalidatePath('/transport-admin-dashboard/vehicles')
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during insertion
+      console.error('Failed to create vehicle.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database insertion errors
+    console.error('Error creating vehicle:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
     }
   }
 }

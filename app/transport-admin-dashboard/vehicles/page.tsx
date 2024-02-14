@@ -28,7 +28,7 @@ export default async function Page({
   // Verify and decode the token
   let decodedToken;
   try {
-    decodedToken = jwt.verify(token, process.env.TOKEN_SECRET!);
+    decodedToken = jwt.verify(token!, process.env.TOKEN_SECRET!);
     console.log('Decoded token data:', decodedToken);
   } catch (error) {
     console.error('Error verifying token:', error);
