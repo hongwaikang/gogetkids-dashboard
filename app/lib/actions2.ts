@@ -1,7 +1,7 @@
 'use server'
 
 import { connect, disconnect } from './dbConfig'; // Import the connect and disconnect functions from dbConfig.ts
-import { Db } from 'mongodb';
+import { Db, ObjectId } from 'mongodb';
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
 import { revalidatePath } from 'next/cache';
@@ -26,7 +26,7 @@ export async function createSchoolAdmin(formData: FormData): Promise<{ success: 
       lastname: formData.get('lastname'),
       password: formData.get('password'),
       school_name: formData.get('school_name'),
-      role: 'school_admin',
+      role: 'school admin',
     });
 
     // Check if the email is unique
@@ -62,6 +62,51 @@ export async function createSchoolAdmin(formData: FormData): Promise<{ success: 
     // Handle validation or database insertion errors
     console.error('Error creating school admin:', error.message);
     return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await disconnect(); // Disconnect from MongoDB using the disconnect function from dbConfig.ts
+    }
+  }
+}
+
+export async function updateSchoolAdmin(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    // Validate form data using Zod schema
+    const validatedData = schoolAdminSchema.parse({
+      email: formData.get('email'),
+      firstname: formData.get('firstname'),
+      lastname: formData.get('lastname'),
+      password: formData.get('password'),
+      school_name: formData.get('school_name'), // Assuming school_name is present in formData
+      role: 'school admin', // Change role to "school admin"
+    });
+
+    client = await connect();
+    const db = client.db('test'); // Specify the database name here
+
+    // Update school admin data in the MongoDB collection
+    const result = await db.collection('adminusers').updateOne(
+      { _id: objectId },
+      { $set: validatedData }
+    );
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      console.log('School admin updated successfully:', id);
+      return { success: true };
+    } else {
+      console.error('Failed to update school admin.');
+      return { success: false };
+    }
+  } catch (error: any) {
+    // Handle validation or database update errors
+    console.error('Error updating school admin:', error.message);
+    return { success: false, errorMessage: error.message };
   } finally {
     // Close the connection
     if (client) {

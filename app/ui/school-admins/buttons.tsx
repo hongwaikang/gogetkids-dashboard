@@ -17,7 +17,7 @@ export function CreateSchoolAdmin() {
 export function UpdateSchoolAdmin({ id }: { id: string }) {
   return (
     <Link
-      href={`/system-admin-system-admin-dashboard/school-admins/${id}/edit`}
+      href={`/system-admin-dashboard/school-admins/${id}/edit`}
       className="rounded-md border p-2 hover:bg-gray-100"
     >
       <PencilIcon className="w-5" />

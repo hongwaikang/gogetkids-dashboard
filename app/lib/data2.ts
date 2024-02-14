@@ -61,3 +61,15 @@ export async function fetchFilteredSchoolAdmins(query: string, currentPage: numb
     return schoolAdmins;
   });
 }
+
+export async function fetchSchoolAdminById(id: ObjectId) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('test');
+
+    const schoolAdmin = await db.collection('adminusers').findOne({ _id: id, role: 'school admin' });
+
+    await client.close();
+    return schoolAdmin;
+  });
+}
