@@ -28,7 +28,7 @@ async function executeWithRetry<T>(fn: () => Promise<T>): Promise<T> {
 export async function fetchSchoolAdminsPages(query: string) {
   return executeWithRetry(async () => {
     const client = await connect();
-    const db = client.db('test');
+    const db = client.db('GoGetKids');
     const schoolAdminsCollection = db.collection('adminusers');
 
     // Count all school admins from the users collection based on role
@@ -44,7 +44,7 @@ export async function fetchSchoolAdminsPages(query: string) {
 export async function fetchFilteredSchoolAdmins(query: string, currentPage: number) {
   return executeWithRetry(async () => {
     const client = await connect();
-    const db = client.db('test');
+    const db = client.db('GoGetKids');
     const schoolAdminsCollection = db.collection('adminusers');
 
     const offset = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -65,7 +65,7 @@ export async function fetchFilteredSchoolAdmins(query: string, currentPage: numb
 export async function fetchSchoolAdminById(id: ObjectId) {
   return executeWithRetry(async () => {
     const client = await connect();
-    const db = client.db('test');
+    const db = client.db('GoGetKids');
 
     const schoolAdmin = await db.collection('adminusers').findOne({ _id: id, role: 'school admin' });
 

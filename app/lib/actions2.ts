@@ -33,7 +33,7 @@ export async function createSchoolAdmin(formData: FormData): Promise<{ success: 
 
     // Check if the email is unique
     client = await connect(); // Connect to MongoDB using the connect function from dbConfig.ts
-    const db: Db = client.db('test'); // Specify the database name here
+    const db: Db = client.db('GoGetKids'); // Specify the database name here
     const existingAdmin = await db.collection('adminusers').findOne({ email: validatedData.email });
     if (existingAdmin) {
       throw new Error('Email is already in use.');
@@ -90,7 +90,7 @@ export async function updateSchoolAdmin(id: string, formData: FormData): Promise
     });
 
     client = await connect();
-    const db = client.db('test'); // Specify the database name here
+    const db = client.db('GoGetKids'); // Specify the database name here
 
     // Update school admin data in the MongoDB collection
     const result = await db.collection('adminusers').updateOne(
@@ -128,7 +128,7 @@ export async function deleteSchoolAdmin(id: string) {
     client = await connect();
     console.log('Connected to MongoDB');
 
-    const db = client.db('test'); // Connect to the 'test' database
+    const db = client.db('GoGetKids'); // Connect to the 'GoGetKids' database
     console.log('Connected to database: test');
 
     // Delete the admin user from the MongoDB collection

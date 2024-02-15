@@ -73,7 +73,7 @@ export async function fetchVehicleById(id: ObjectId) {
 export async function fetchCompanyName(id: string) {
   return executeWithRetry(async () => {
     const client = await connect();
-    const db = client.db('test');
+    const db = client.db('GoGetKids');
 
     const objectId = new ObjectId(id);
 
