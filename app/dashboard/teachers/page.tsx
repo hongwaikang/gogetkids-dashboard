@@ -6,7 +6,8 @@ import { lusitana } from '@/app/ui/fonts';
 import { TeachersTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchTeachersPages, fetchSessionToken } from '@/app/lib/data';
-import jwt from 'jsonwebtoken'; // Import jwt
+import jwt from 'jsonwebtoken';
+import { getTokenFromCookies } from '@/app/lib/cookieUtils';
 
 export default async function Page({
   searchParams,
@@ -18,6 +19,9 @@ export default async function Page({
 }) {
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
+
+  const tokenFromCookies = await getTokenFromCookies();
+  console.log('Token from cookies:', tokenFromCookies);
 
   // Fetch session token
   const sessionName = 'currentSession'; // Adjust session name according to your setup

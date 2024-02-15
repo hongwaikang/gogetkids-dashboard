@@ -46,9 +46,8 @@ export default function LoginForm() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2 bg-gray-100">
-      {/* Include the GoGetKidsLogo component here with darkFont prop */}
-      <div className="mb-8"> {/* Adding margin bottom to create space between logo and form */}
-        <GoGetKidsLogo darkFont={true} /> {/* Use darker font color for the logo */}
+      <div className="mb-8">
+        <GoGetKidsLogo darkFont={true} />
       </div>
       <div className="max-w-md w-full bg-white shadow-md rounded-lg p-6 space-y-4">
         <h1 className={`${lusitana.className} text-2xl font-bold mb-4 text-center`}>
@@ -86,7 +85,7 @@ export default function LoginForm() {
             <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
           </div>
         </div>
-        <div className="flex justify-center"> {/* Center the login button */}
+        <div className="flex justify-center">
           <Button
             onClick={onLogin}
             disabled={buttonDisabled}
