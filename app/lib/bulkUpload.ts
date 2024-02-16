@@ -378,3 +378,49 @@ export async function insertVehiclesFromJSON(parsedVehicles: Vehicle[]): Promise
     await disconnect();
   }
 }
+
+
+
+interface Trip {
+  vehicle_number: string;
+  driver_email: string;
+  company_name: string;
+  school_name: string;
+  zone: string;
+  start_time: Date;
+  end_time: Date;
+}
+
+export async function parseTripsJSON(jsonData: any): Promise<Trip[]> {
+  console.log('Parsing JSON data for trips...');
+  const parsedTrips: Trip[] = JSON.parse(jsonData);
+  console.log('JSON parsing complete');
+  return parsedTrips;
+}
+
+export async function parseTripsCSVToJSON(csvData: string): Promise<Trip[]> {
+  console.log('Parsing CSV data to JSON for trips...');
+  const parsedTrips: Trip[] = [];
+  // Your CSV parsing logic here
+  return parsedTrips;
+}
+
+export async function insertTripsFromJSON(parsedTrips: Trip[]): Promise<void> {
+  console.log('Inserting trips into the database...');
+  try {
+    const client = await connect();
+    const database = client.db('GoGetKids');
+    const tripsCollection = database.collection('trips');
+    await tripsCollection.insertMany(parsedTrips.map(trip => ({
+      ...trip,
+      start_time: new Date(trip.start_time), // Convert to Date object if needed
+      end_time: new Date(trip.end_time) // Convert to Date object if needed
+    })));
+    console.log('Trips inserted successfully');
+  } catch (error) {
+    console.error('Error inserting trips:', error);
+    throw error;
+  } finally {
+    await disconnect();
+  }
+}

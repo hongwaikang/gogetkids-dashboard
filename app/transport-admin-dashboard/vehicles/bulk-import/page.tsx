@@ -6,10 +6,10 @@ export default function Page() {
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: 'Vehicles', href: '/dashboard/vehicles' },
+          { label: 'Vehicles', href: '/transport-admin-dashboard/vehicles' },
           {
             label: 'Bulk Import',
-            href: '/dashboard/vehicles/bulk-import',
+            href: '/transport-admin-dashboard/vehicles/bulk-import',
             active: true,
           },
         ]}

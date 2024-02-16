@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/app/ui/button';
 import React, { useRef } from 'react';
-import { parseVehiclesJSON, parseVehiclesCSVToJSON, insertVehiclesFromJSON } from '@/app/lib/bulkUpload'; // Import parseVehiclesCSVToJSON function
+import { parseTripsJSON, parseTripsCSVToJSON, insertTripsFromJSON } from '@/app/lib/bulkUpload'; // Import parseTripsCSVToJSON function
 import toast from 'react-hot-toast';
 
 const BulkImportForm = () => {
@@ -24,16 +24,16 @@ const BulkImportForm = () => {
 
           try {
             // Parse the JSON data
-            const parsedVehicles = await parseVehiclesJSON(jsonData);
-            console.log('Parsed vehicles:', parsedVehicles);
+            const parsedTrips = await parseTripsJSON(jsonData);
+            console.log('Parsed trips:', parsedTrips);
 
-            // Insert vehicles into the database
-            await insertVehiclesFromJSON(parsedVehicles);
-            console.log('Vehicles inserted successfully');
-            toast.success('Vehicles inserted successfully!');
+            // Insert trips into the database
+            await insertTripsFromJSON(parsedTrips);
+            console.log('Trips inserted successfully');
+            toast.success('Trips inserted successfully!');
           } catch (error) {
-            console.error('Error importing vehicles:', error);
-            toast.error('Failed to import vehicles. Please try again.');
+            console.error('Error importing trips:', error);
+            toast.error('Failed to import trips. Please try again.');
           }
         }
       };
@@ -57,16 +57,16 @@ const BulkImportForm = () => {
 
           try {
             // Parse the CSV data to JSON
-            const parsedVehicles = await parseVehiclesCSVToJSON(csvData);
-            console.log('Parsed vehicles from CSV:', parsedVehicles);
+            const parsedTrips = await parseTripsCSVToJSON(csvData);
+            console.log('Parsed trips from CSV:', parsedTrips);
 
-            // Insert vehicles into the database
-            await insertVehiclesFromJSON(parsedVehicles);
-            console.log('Vehicles inserted successfully');
-            toast.success('Vehicles inserted successfully!');
+            // Insert trips into the database
+            await insertTripsFromJSON(parsedTrips);
+            console.log('Trips inserted successfully');
+            toast.success('Trips inserted successfully!');
           } catch (error) {
-            console.error('Error importing vehicles from CSV:', error);
-            toast.error('Failed to import vehicles from CSV. Please try again.');
+            console.error('Error importing trips from CSV:', error);
+            toast.error('Failed to import trips from CSV. Please try again.');
           }
         }
       };
@@ -97,11 +97,11 @@ const BulkImportForm = () => {
           </div>
           <p className="mt-2 text-sm text-gray-600">Please ensure that the uploaded JSON file follows the specified format:</p>
           <pre className="mt-2 bg-gray-100 p-2 rounded-md overflow-auto">{`{
-  "vehicleId": "K123X",
+  "tripId": "K123X",
   "status": "Available",
   "nextServicing": "2024-08-15",
   "company_name": "Transport Company 1",
-  "role": "vehicle"
+  "role": "trip"
 }`}</pre>
           {/* Bulk Create JSON Button */}
           <Button type="button" onClick={handleJSONFileUpload} className="mt-4">
@@ -126,8 +126,8 @@ const BulkImportForm = () => {
             />
           </div>
           <p className="mt-2 text-sm text-gray-600">Please ensure that the uploaded CSV file follows the specified format:</p>
-          <pre className="mt-2 bg-gray-100 p-2 rounded-md overflow-auto">{`vehicleId,status,nextServicing,company_name,role
-K123X,Available,2024-08-15,Transport Company A,vehicle`}</pre>
+          <pre className="mt-2 bg-gray-100 p-2 rounded-md overflow-auto">{`tripId,status,nextServicing,company_name,role
+K123X,Available,2024-08-15,Transport Company A,trip`}</pre>
           {/* Bulk Create CSV Button */}
           <Button type="button" onClick={handleCSVFileUpload} className="mt-4">
             Bulk Create CSV
@@ -138,7 +138,7 @@ K123X,Available,2024-08-15,Transport Company A,vehicle`}</pre>
       {/* Return Button */}
       <div className="mt-6 flex justify-end">
         <Link
-          href="/transport-admin-dashboard/vehicles"
+          href="/transport-admin-dashboard/trips"
           className="h-10 flex items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Return
