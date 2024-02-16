@@ -7,6 +7,7 @@ import {
   Home as HomeIcon,
   ClassOutlined as ClassOutlinedIcon,
 } from '@mui/icons-material';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -35,6 +36,11 @@ const links = [
     name: 'Parents',
     href: '/dashboard/parents',
     icon: Groups2Icon,
+  },
+  {
+    name: 'Schedules',
+    href: '/dashboard/schedules',
+    icon: CalendarMonthIcon,
   },
 ];
 
