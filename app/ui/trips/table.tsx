@@ -39,6 +39,9 @@ export default async function TripsTable({
                   Zone
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
+                  Date
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
                   Start Time
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
@@ -59,7 +62,11 @@ export default async function TripsTable({
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    {trip.tripId}
+                    <Link href={`/transport-admin-dashboard/trips/${trip._id}`}>
+                      <span className="text-blue-600 cursor-pointer underline">
+                        {trip.tripId}
+                      </span>
+                    </Link>
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {trip.vehicle_number}
@@ -69,6 +76,9 @@ export default async function TripsTable({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {trip.zone}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {trip.date}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {trip.start_time}
