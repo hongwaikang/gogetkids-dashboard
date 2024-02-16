@@ -69,6 +69,21 @@ export async function fetchStudentById(id: ObjectId) {
   });
 }
 
+export async function fetchStudentNameById(id: ObjectId) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const student = await db.collection('students').findOne(
+      { _id: id },
+      { projection: { _id: 0, name: { $concat: ["$firstname", " ", "$lastname"] } } } // Project the combined name field
+    );
+
+    await client.close();
+    return student;
+  });
+}
+
+
 export async function fetchStudentsWithNoParent(schoolName: string) {
   try {
     const client = await connect();
@@ -85,10 +100,10 @@ export async function fetchStudentsWithNoParent(schoolName: string) {
     throw new Error('Failed to fetch students with no parent.');
   }
 }
-
 // ------------------------------------------------------------------------------------------------------
 
 // ---------------------------------------------- PARENTS -----------------------------------------------
+
 export async function fetchFilteredParents(query: string, currentPage: number, schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
@@ -168,6 +183,29 @@ export async function fetchParentById(id: ObjectId) {
 
     await client.close();
     return parent;
+  });
+}
+
+export async function fetchStudentsByParentsEmail(emails: string[]) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+
+    // Array to store student IDs for each parent email
+    const studentIdsByParentEmail: any[] = [];
+
+    // Loop through each parent email
+    for (const email of emails) {
+      // Search for students associated with the current parent email
+      const students = await db.collection('students').find({ parent_id: email }).toArray();
+
+      // Extract student IDs and store them for the current parent email
+      const studentIds = students.map(student => student._id);
+      studentIdsByParentEmail.push({ email, studentIds });
+    }
+
+    await client.close();
+    return studentIdsByParentEmail;
   });
 }
 // ------------------------------------------------------------------------------------------------------
