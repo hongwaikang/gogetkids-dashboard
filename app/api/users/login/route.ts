@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
       firstname: user.firstname,
       lastname: user.lastname,
       school_name: user.school_name,
+      company_name: user.company_name,
     };
 
     const token = await jwt.sign(

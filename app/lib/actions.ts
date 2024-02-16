@@ -431,7 +431,7 @@ export async function createTeacher(formData: FormData): Promise<{ success: bool
     if (result.insertedId) {
       // Data inserted successfully
       console.log('Teacher created successfully:', result.insertedId);
-      revalidatePath('/teachers');
+      revalidatePath('/dashboard/teachers');
       return { success: true }; // Return success message to client-side
     } else {
       // Error occurred during insertion
@@ -489,7 +489,7 @@ export async function updateTeacher(id: string, formData: FormData): Promise<{ s
     // Check if the update was successful
     if (result.modifiedCount === 1) {
       console.log('Teacher updated successfully:', id);
-      revalidatePath('/teachers');
+      revalidatePath('/dashboard/teachers');
       return { success: true };
     } else {
       console.error('Failed to update teacher.');

@@ -120,3 +120,14 @@ export async function fetchDriversPages(query: string, companyName: string) {
     return totalPages;
   });
 }
+
+export async function fetchDriverById(id: ObjectId) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const vehicle = await db.collection('users').findOne({ _id: id });
+
+    await client.close();
+    return vehicle;
+  });
+}
