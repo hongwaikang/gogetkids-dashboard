@@ -704,9 +704,6 @@ export async function deleteClass(id: string) {
   }
 }
 
-
-
-
 const scheduleSchema = z.object({
   studentid: z.string(),
   date: z.string(), // Assuming date is in string format, adjust as necessary
@@ -779,6 +776,62 @@ export async function createSchedule(formData: FormData): Promise<{ success: boo
 }
 
 
+export async function updateSchedule(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    // Fetch session token
+    const sessionName = 'currentSession'; // Adjust session name according to your setup
+    const token = await fetchSessionToken(sessionName);
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get school_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+    const schoolName = decodedToken.school_name;
+
+    // Validate form data using Zod schema
+    const validatedData = scheduleSchema.parse({
+      studentid: formData.get('studentid'),
+      date: formData.get('date'),
+      transport_type: formData.get('transport_type'),
+      pickup_time: formData.get('pickup_time'),
+      dismissal_time: formData.get('dismissal_time'),
+      school_name: schoolName,
+    });
+
+    client = await connect();
+    const db = client.db('GoGetKids');
+
+    // Update schedule data in the MongoDB collection
+    const result = await db.collection('schedules').updateOne(
+      { _id: objectId }, // Use the ObjectId here
+      { $set: validatedData }
+    );
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      console.log('Schedule updated successfully:', id);
+      revalidatePath('/dashboard/schedules');
+      return { success: true };
+    } else {
+      console.error('Failed to update schedule.');
+      return { success: false };
+    }
+  } catch (error: any) {
+    console.error('Error updating schedule:', error.message);
+    return { success: false, errorMessage: error.message };
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed');
+    }
+  }
+}
 
 
 export async function deleteSchedule(id: string) {

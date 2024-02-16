@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb';
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = new ObjectId(params.id);
-  const teacher = await fetchTeacherById(id); // Fetch teacher data instead of parent data
+  const teacher = await fetchTeacherById(id);
 
   return (
     <main>

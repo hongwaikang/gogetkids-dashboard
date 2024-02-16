@@ -406,3 +406,16 @@ export async function fetchSchedulesPages(query: string, schoolName: string) {
     return totalPages;
   });
 }
+
+
+export async function fetchScheduleById(id: ObjectId) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+
+    const schedule = await db.collection('schedules').findOne({ _id: id });
+
+    await client.close();
+    return schedule;
+  });
+}
