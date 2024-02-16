@@ -1,6 +1,7 @@
 import { object } from 'zod';
 import { connect, disconnect } from './dbConfig';
 import { Db, ObjectId } from 'mongodb';
+import { fetchSessionToken } from './data';
 
 const ITEMS_PER_PAGE = 6;
 const MAX_RETRIES = 3;
@@ -132,26 +133,6 @@ export async function fetchDriverById(id: ObjectId) {
   });
 }
 
-/*
-export async function fetchFilteredTrips(query: string, currentPage: number, companyName: string) {
-  return executeWithRetry(async () => {
-    const client = await connect();
-    const db = client.db('GoGetKids');
-    const tripsCollection = db.collection('trips');
-
-    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-    const trips = await tripsCollection
-      .find({ company_name: companyName }) // Filter by company name
-      .sort({ date: 1 }) // Sort by date
-      .skip(offset)
-      .limit(ITEMS_PER_PAGE)
-      .toArray();
-
-    await client.close();
-    return trips;
-  });
-} */
-
 export async function fetchFilteredTrips(query: string, currentPage: number, companyName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
@@ -192,5 +173,39 @@ export async function fetchTripsPages(query: string, companyName: string) {
 
     await client.close();
     return totalPages;
+  });
+}
+
+
+export async function fetchAllDriversEmails(companyName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const driversCollection = db.collection('users');
+
+    const driversEmails = await driversCollection
+      .find({ role: 'driver', company_name: companyName }) // Include company_name in the query
+      .project({ _id: 0, email: 1 })
+      .toArray();
+
+    await client.close();
+    return driversEmails.map(driver => driver.email);
+  });
+}
+
+
+export async function fetchAllVehicleIds(companyName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const vehiclesCollection = db.collection('vehicles');
+
+    const vehicleIds = await vehiclesCollection
+      .find({ company_name: companyName })
+      .project({ _id: 0, vehicleId: 1 })
+      .toArray();
+
+    await client.close();
+    return vehicleIds.map(vehicle => vehicle.vehicleId); // Adjust according to the actual field name in your documents
   });
 }

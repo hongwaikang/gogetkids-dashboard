@@ -407,3 +407,76 @@ export async function deleteTrip(id: string) {
 }
 
 
+const tripSchema = z.object({
+  vehicle_number: z.string(),
+  driver_email: z.string().email(),
+  school_name: z.string(),
+  company_name: z.string(),
+  start_time: z.string(),
+  end_time: z.string(),
+});
+
+
+export async function createTrip(formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
+  let client;
+  try {
+    // Fetch session token
+    const token = await fetchSessionToken(sessionName);
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get company_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+
+    const sessionUserId = decodedToken?.id;
+    console.log(sessionUserId);
+
+    // Extract company_name from decoded token
+    const companyName = await fetchCompanyName(sessionUserId);
+    console.log(companyName);
+
+    // Validate form data using Zod schema
+    const validatedData = tripSchema.parse({
+      vehicle_number: formData.get('vehicle_number'),
+      driver_email: formData.get('driver_email'),
+      school_name: formData.get('school_name'),
+      zone: formData.get('zone'),
+      start_time: formData.get('start_time'),
+      end_time: formData.get('end_time'),
+      company_name: companyName
+    });
+
+    // Connect to MongoDB
+    client = await connect();
+    const db = client.db('GoGetKids');
+
+    // Insert trip data into the MongoDB collection
+    const result = await db.collection('trips').insertOne({
+      ...validatedData,
+      company_name: companyName,
+    });
+
+    // Check if the insertion was successful
+    if (result.insertedId) {
+      // Data inserted successfully
+      console.log('Trip created successfully:', result.insertedId);
+      toast.success('Trip created successfully');
+      revalidatePath('/transport-admin-dashboard/trips');
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during insertion
+      console.error('Failed to create trip.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database insertion errors
+    console.error('Error creating trip:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+    }
+  }
+}
