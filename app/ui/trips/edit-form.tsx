@@ -44,6 +44,26 @@ export default function Form({ trip, drivers, vehicles }: Props) {
   return (
     <form onSubmit={handleSubmit}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
+
+        {/* Trip Number */}
+        <div className="mb-4" style={{ opacity: 0.5 }}>
+          <label htmlFor="tripId" className="mb-2 block text-sm font-medium">
+            Trip Number
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <input
+              id="tripId"
+              name="tripId"
+              type="text"
+              defaultValue={trip.tripId}
+              readOnly
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500 bg-gray-300"
+              required
+
+            />
+          </div>
+        </div>
+
         {/* Driver Email Dropdown */}
         <div className="mb-4">
           <label htmlFor="driver_email" className="mb-2 block text-sm font-medium">
@@ -120,6 +140,23 @@ export default function Form({ trip, drivers, vehicles }: Props) {
               name="zone"
               type="text"
               defaultValue={trip.zone}
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Date */}
+        <div className="mb-4">
+          <label htmlFor="date" className="mb-2 block text-sm font-medium">
+            Date
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <input
+              id="date"
+              name="date"
+              type="date"
+              defaultValue={trip.date}
               className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
               required
             />

@@ -124,7 +124,7 @@ export default function Form({ drivers, vehicles }: Props) {
             />
           </div>
         </div>
-  
+
         {/* Date */}
         <div className="mb-4">
           <label htmlFor="date" className="mb-2 block text-sm font-medium">
@@ -140,7 +140,7 @@ export default function Form({ drivers, vehicles }: Props) {
             />
           </div>
         </div>
-  
+
         {/* Start Time */}
         <div className="mb-4">
           <label htmlFor="start_time" className="mb-2 block text-sm font-medium">

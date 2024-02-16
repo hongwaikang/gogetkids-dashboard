@@ -35,7 +35,7 @@ export default function EditStudentForm({
     <form onSubmit={handleSubmit}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         {/* Student ID */}
-        <div className="mb-4">
+        <div className="mb-4" style={{ opacity: 0.5 }}>
           <label htmlFor="studentid" className="mb-2 block text-sm font-medium">
             Student ID
           </label>

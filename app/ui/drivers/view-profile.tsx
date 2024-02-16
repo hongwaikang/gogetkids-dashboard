@@ -5,10 +5,6 @@ const ViewProfile = ({ driver }: { driver: any }) => {
     <div>
       <h1>Driver Profile</h1>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Driver ID:</label>
-          <p className="mt-1 text-sm text-gray-900">{driver._id}</p>
-        </div>
 
         <div className="mb-4">
           <label className="block text-sm font-medium">First Name:</label>

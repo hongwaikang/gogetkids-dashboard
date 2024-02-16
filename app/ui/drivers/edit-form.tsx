@@ -30,6 +30,22 @@ export default function EditDriverForm({
   return (
     <form onSubmit={handleSubmit}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
+
+        {/* Email */}
+        <div className="mb-4">
+          <label htmlFor="email" className="mb-2 block text-sm font-medium">
+            Email
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            defaultValue={driver.email} // Use driver's attribute for email
+            className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            required
+          />
+        </div>
+
         {/* First Name */}
         <div className="mb-4">
           <label htmlFor="firstName" className="mb-2 block text-sm font-medium">
@@ -60,16 +76,16 @@ export default function EditDriverForm({
           />
         </div>
 
-        {/* Email */}
+        {/* License */}
         <div className="mb-4">
-          <label htmlFor="email" className="mb-2 block text-sm font-medium">
-            Email
+          <label htmlFor="license" className="mb-2 block text-sm font-medium">
+            License
           </label>
           <input
-            id="email"
-            name="email"
-            type="email"
-            defaultValue={driver.email} // Use driver's attribute for email
+            id="license"
+            name="license"
+            type="text"
+            defaultValue={driver.license} // Use driver's attribute for last name
             className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
             required
           />
@@ -90,20 +106,8 @@ export default function EditDriverForm({
           />
         </div>
 
-        {/* Password */}
-        <div className="mb-4">
-          <label htmlFor="password" className="mb-2 block text-sm font-medium">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            defaultValue={driver.password} // Use driver's attribute for password
-            className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-            required
-          />
-        </div>
+
+
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link

@@ -267,7 +267,7 @@ export async function updateVehicle(id: string, formData: FormData): Promise<{ s
 }
 
 
-
+const updateDriverSchema = driverSchema.omit({password: true});
 
 export async function updateDriver(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
   let client;
@@ -292,11 +292,11 @@ export async function updateDriver(id: string, formData: FormData): Promise<{ su
     const objectId = new ObjectId(id);
 
     // Validate form data using Zod schema
-    const validatedData = driverSchema.parse({
+    const validatedData = updateDriverSchema.parse({
       email: formData.get('email'),
       firstName: formData.get('firstName'),
       lastName: formData.get('lastName'),
-      password: formData.get('password'),
+      license: formData.get('license'),
       phoneNum: formData.get('phoneNum'),
       role: 'driver', // Change role to "driver"
       company_name: companyName, // Pass company_name extracted from token
@@ -541,10 +541,12 @@ export async function updateTrip(id: string, formData: FormData): Promise<{ succ
 
     // Validate form data
     const validatedData = {
+      tripId: formData.get('tripId'),
       driver_email: formData.get('driver_email'),
       vehicle_number: formData.get('vehicle_number'),
       school_name: formData.get('school_name'),
       zone: formData.get('zone'),
+      date: formData.get('date'),
       start_time: formData.get('start_time'),
       end_time: formData.get('end_time'),
       company_name: companyName
