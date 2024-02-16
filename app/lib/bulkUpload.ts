@@ -252,3 +252,69 @@ export async function insertClassesFromJSON(parsedClasses: Class[]): Promise<voi
     await disconnect();
   }
 }
+
+
+
+
+// Interface for schedules
+interface Schedule {
+  studentid: number;
+  date: string;
+  transport_type: string;
+  pickup_time: string;
+  dismissal_time: string;
+}
+
+// Function to parse JSON data for schedules
+export async function parseSchedulesJSON(jsonData: any): Promise<Schedule[]> {
+  console.log('Parsing JSON data for schedules...');
+  const parsedSchedules: Schedule[] = JSON.parse(jsonData);
+  console.log('JSON parsing complete');
+  return parsedSchedules;
+}
+
+// Function to parse CSV data to JSON for schedules
+export async function parseSchedulesCSVToJSON(csvData: string): Promise<Schedule[]> {
+  console.log('Parsing CSV data to JSON for schedules...');
+
+  const parsedSchedules: Schedule[] = [];
+
+  const results = Papa.parse(csvData, { header: true });
+
+  if (results && results.data && results.data.length > 0) {
+    for (const data of results.data) {
+      // Assuming CSV file headers match the Schedule interface properties
+      const { studentid, date, transport_type, pickup_time, dismissal_time } = data as any;
+      const schedule: Schedule = {
+        studentid: parseInt(studentid),
+        date: date || '',
+        transport_type: transport_type || '',
+        pickup_time: pickup_time || '',
+        dismissal_time: dismissal_time || ''
+      };
+      parsedSchedules.push(schedule);
+    }
+    console.log('CSV parsing complete');
+    return parsedSchedules;
+  } else {
+    throw new Error('CSV data is empty or invalid.');
+  }
+}
+
+// Function to insert schedules into the database
+export async function insertSchedulesFromJSON(parsedSchedules: Schedule[]): Promise<void> {
+  console.log('Inserting schedules into the database...');
+  try {
+    const client = await connect();
+    const database = client.db('GoGetKids');
+    const schedulesCollection = database.collection('schedules');
+    await schedulesCollection.insertMany(parsedSchedules);
+    console.log('Schedules inserted successfully');
+  } catch (error) {
+    console.error('Error inserting schedules:', error);
+    throw error;
+  } finally {
+    await disconnect();
+  }
+}
+

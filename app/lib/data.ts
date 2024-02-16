@@ -393,7 +393,6 @@ export async function fetchFilteredSchedules(query: string, currentPage: number,
   });
 }
 
-
 export async function fetchSchedulesPages(query: string, schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
