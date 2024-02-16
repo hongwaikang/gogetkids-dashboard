@@ -53,7 +53,7 @@ export default async function DriversTable({
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    <Link href={`/dashboard/drivers/${driver._id}`}>
+                    <Link href={`/transport-admin-dashboard/drivers/${driver._id}`}>
                       <span className="text-blue-600 cursor-pointer underline">
                         {driver.email}
                       </span>

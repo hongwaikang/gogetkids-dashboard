@@ -23,6 +23,7 @@ const driverSchema = z.object({
   lastName: z.string(),
   password: z.string(), // Password is required
   phoneNum: z.string(),
+  license: z.string(),
   role: z.enum(["driver"]), // Role must be "driver"
   company_name: z.string(),
 });
@@ -53,6 +54,7 @@ export async function createDriver(formData: FormData): Promise<{ success: boole
       lastName: formData.get('lastName'),
       password: formData.get('password'),
       phoneNum: formData.get('phoneNum'),
+      license: formData.get('license'),
       role: 'driver', // Hardcoded role as "driver"
       company_name: companyName, // Pass company_name extracted from token
     });
