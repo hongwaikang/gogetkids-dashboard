@@ -66,7 +66,7 @@ export default function Form({ drivers, vehicles }: Props) {
             </select>
           </div>
         </div>
-
+  
         {/* Vehicle Number Dropdown */}
         <div className="mb-4">
           <label htmlFor="vehicle_number" className="mb-2 block text-sm font-medium">
@@ -90,7 +90,7 @@ export default function Form({ drivers, vehicles }: Props) {
             </select>
           </div>
         </div>
-
+  
         {/* School Name */}
         <div className="mb-4">
           <label htmlFor="school_name" className="mb-2 block text-sm font-medium">
@@ -107,7 +107,7 @@ export default function Form({ drivers, vehicles }: Props) {
             />
           </div>
         </div>
-
+  
         {/* Zone */}
         <div className="mb-4">
           <label htmlFor="zone" className="mb-2 block text-sm font-medium">
@@ -124,7 +124,23 @@ export default function Form({ drivers, vehicles }: Props) {
             />
           </div>
         </div>
-
+  
+        {/* Date */}
+        <div className="mb-4">
+          <label htmlFor="date" className="mb-2 block text-sm font-medium">
+            Date
+          </label>
+          <div className="relative mt-2 rounded-md">
+            <input
+              id="date"
+              name="date"
+              type="date"
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+              required
+            />
+          </div>
+        </div>
+  
         {/* Start Time */}
         <div className="mb-4">
           <label htmlFor="start_time" className="mb-2 block text-sm font-medium">
@@ -140,7 +156,7 @@ export default function Form({ drivers, vehicles }: Props) {
             />
           </div>
         </div>
-
+  
         {/* End Time */}
         <div className="mb-4">
           <label htmlFor="end_time" className="mb-2 block text-sm font-medium">

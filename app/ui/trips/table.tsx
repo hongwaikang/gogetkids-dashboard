@@ -27,10 +27,10 @@ export default async function TripsTable({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Vehicle Number
+                  Trip Number
                 </th>
-                <th scope="col" className="px-4 py-5 font-medium">
-                  Driver Email
+                <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
+                  Vehicle Plate
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   School Name
@@ -59,10 +59,10 @@ export default async function TripsTable({
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                    {trip.vehicle_number}
+                    {trip.tripId}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                    {trip.driver_email}
+                    {trip.vehicle_number}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {trip.school_name}
