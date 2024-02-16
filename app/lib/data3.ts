@@ -132,6 +132,7 @@ export async function fetchDriverById(id: ObjectId) {
   });
 }
 
+/*
 export async function fetchFilteredTrips(query: string, currentPage: number, companyName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
@@ -145,6 +146,35 @@ export async function fetchFilteredTrips(query: string, currentPage: number, com
       .skip(offset)
       .limit(ITEMS_PER_PAGE)
       .toArray();
+
+    await client.close();
+    return trips;
+  });
+} */
+
+export async function fetchFilteredTrips(query: string, currentPage: number, companyName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const tripsCollection = db.collection('trips');
+
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+    const trips = await tripsCollection
+      .find({ company_name: companyName }) // Filter by company name
+      .sort({ date: 1 }) // Sort by date
+      .skip(offset)
+      .limit(ITEMS_PER_PAGE)
+      .toArray();
+
+    // Convert start_time and end_time to strings if they are Date objects
+    trips.forEach((trip: any) => {
+      if (trip.start_time instanceof Date) {
+        trip.start_time = trip.start_time.toISOString().split('T')[0]; // Keep only the date part
+      }
+      if (trip.end_time instanceof Date) {
+        trip.end_time = trip.end_time.toISOString().split('T')[0]; // Keep only the date part
+      }
+    });
 
     await client.close();
     return trips;

@@ -33,13 +33,16 @@ export default async function TripsTable({
                   Driver Email
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Company Name
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
                   School Name
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Zone
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  Start Time
+                </th>
+                <th scope="col" className="px-3 py-5 font-medium">
+                  End Time
                 </th>
                 <th
                   scope="col"
@@ -56,19 +59,22 @@ export default async function TripsTable({
                   className="w-full border-b py-3 text-sm last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg"
                 >
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
-                      {trip.vehicle_number}
+                    {trip.vehicle_number}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {trip.driver_email}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-3">
-                    {trip.company_name}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {trip.school_name}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
                     {trip.zone}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {trip.start_time}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3">
+                    {trip.end_time}
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
