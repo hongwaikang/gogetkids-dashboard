@@ -480,3 +480,69 @@ export async function createTrip(formData: FormData): Promise<{ success: boolean
     }
   }
 }
+
+
+export async function updateTrip(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
+  let client;
+  try {
+    // Fetch session token
+    const token = await fetchSessionToken(sessionName);
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get company_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+
+    const sessionUserId = decodedToken?.id;
+    console.log(sessionUserId);
+
+    // Extract company_name from decoded token
+    const companyName = await fetchCompanyName(sessionUserId);
+    console.log(companyName);
+
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    // Validate form data
+    const validatedData = {
+      driver_email: formData.get('driver_email'),
+      vehicle_number: formData.get('vehicle_number'),
+      school_name: formData.get('school_name'),
+      zone: formData.get('zone'),
+      start_time: formData.get('start_time'),
+      end_time: formData.get('end_time'),
+      company_name: companyName
+    };
+
+    // Connect to MongoDB
+    client = await connect();
+    const db = client.db('GoGetKids');
+
+    // Update trip data in the MongoDB collection
+    const result = await db.collection('trips').updateOne(
+      { _id: objectId },
+      { $set: validatedData }
+    );
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      console.log('Trip updated successfully:', id);
+      toast.success('Trip updated successfully');
+      revalidatePath('/transport-admin-dashboard/trips');
+      return { success: true };
+    } else {
+      console.error('Failed to update trip.');
+      return { success: false };
+    }
+  } catch (error: any) {
+    // Handle validation or database update errors
+    console.error('Error updating trip:', error.message);
+    return { success: false, errorMessage: error.message };
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+    }
+  }
+}

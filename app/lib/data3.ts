@@ -209,3 +209,15 @@ export async function fetchAllVehicleIds(companyName: string) {
     return vehicleIds.map(vehicle => vehicle.vehicleId); // Adjust according to the actual field name in your documents
   });
 }
+
+
+export async function fetchTripById(id: ObjectId) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const vehicle = await db.collection('trips').findOne({ _id: id });
+
+    await client.close();
+    return vehicle;
+  });
+}
