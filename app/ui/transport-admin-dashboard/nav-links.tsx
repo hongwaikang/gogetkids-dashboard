@@ -2,13 +2,11 @@
 
 import {
   Groups as GroupsIcon,
-  Groups2 as Groups2Icon,
-  Groups3 as Groups3Icon,
   Home as HomeIcon,
-  ClassOutlined as ClassOutlinedIcon,
-  Groups,
+  ClassOutlined,
+  DirectionsBusFilled as DirectionsBusFilledIcon,
+  TripOrigin as TripOriginIcon
 } from '@mui/icons-material';
-import DirectionsBusFilledIcon from '@mui/icons-material/DirectionsBusFilled';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -27,6 +25,11 @@ const links = [
     name: 'Drivers',
     href: '/transport-admin-dashboard/drivers',
     icon: GroupsIcon,
+  },
+  {
+    name: 'Trips',
+    href: '/transport-admin-dashboard/trips',
+    icon: TripOriginIcon,
   },
 ];
 

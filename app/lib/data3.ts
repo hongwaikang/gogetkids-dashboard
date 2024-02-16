@@ -131,3 +131,36 @@ export async function fetchDriverById(id: ObjectId) {
     return vehicle;
   });
 }
+
+export async function fetchFilteredTrips(query: string, currentPage: number, companyName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const tripsCollection = db.collection('trips');
+
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+    const trips = await tripsCollection
+      .find({ company_name: companyName }) // Filter by company name
+      .sort({ date: 1 }) // Sort by date
+      .skip(offset)
+      .limit(ITEMS_PER_PAGE)
+      .toArray();
+
+    await client.close();
+    return trips;
+  });
+}
+
+export async function fetchTripsPages(query: string, companyName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const tripsCollection = db.collection('trips');
+
+    const count = await tripsCollection.countDocuments({ company_name: companyName }); // Count documents based on company name
+    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+
+    await client.close();
+    return totalPages;
+  });
+}
