@@ -253,9 +253,9 @@ export async function insertClassesFromJSON(parsedClasses: Class[]): Promise<voi
   }
 }
 
+// -------------------------------------------------------------------------------------------------------
 
-
-
+// ---------------------------------------------- Schedules -----------------------------------------------
 // Interface for schedules
 interface Schedule {
   studentid: number;
@@ -318,3 +318,63 @@ export async function insertSchedulesFromJSON(parsedSchedules: Schedule[]): Prom
   }
 }
 
+
+
+
+interface Vehicle {
+  vehicleId: string;
+  status: string;
+  nextServicing: string;
+  company_name: string;
+  role: string;
+}
+
+export async function parseVehiclesJSON(jsonData: any): Promise<Vehicle[]> {
+  console.log('Parsing JSON data for vehicles...');
+  const parsedVehicles: Vehicle[] = JSON.parse(jsonData);
+  console.log('JSON parsing complete');
+  return parsedVehicles;
+}
+
+export async function parseVehiclesCSVToJSON(csvData: string): Promise<Vehicle[]> {
+  console.log('Parsing CSV data to JSON for vehicles...');
+
+  const parsedVehicles: Vehicle[] = [];
+
+  const results = Papa.parse(csvData, { header: true });
+
+  if (results && results.data && results.data.length > 0) {
+    for (const data of results.data) {
+      // Assuming CSV file headers match the Vehicle interface properties
+      const { vehicleId, status, nextServicing, company_name, role } = data as any;
+      const vehicle: Vehicle = {
+        vehicleId: vehicleId || '',
+        status: status || '',
+        nextServicing: nextServicing || '',
+        company_name: company_name || '',
+        role: role || ''
+      };
+      parsedVehicles.push(vehicle);
+    }
+    console.log('CSV parsing complete');
+    return parsedVehicles;
+  } else {
+    throw new Error('CSV data is empty or invalid.');
+  }
+}
+
+export async function insertVehiclesFromJSON(parsedVehicles: Vehicle[]): Promise<void> {
+  console.log('Inserting vehicles into the database...');
+  try {
+    const client = await connect();
+    const database = client.db('GoGetKids');
+    const vehiclesCollection = database.collection('vehicles');
+    await vehiclesCollection.insertMany(parsedVehicles);
+    console.log('Vehicles inserted successfully');
+  } catch (error) {
+    console.error('Error inserting vehicles:', error);
+    throw error;
+  } finally {
+    await disconnect();
+  }
+}

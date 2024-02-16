@@ -143,6 +143,7 @@ const vehicleSchema = z.object({
   status: z.string(),
   nextServicing: z.string(), // Updated to accept string values
   company_name: z.string(),
+  role: z.string(),
 });
 
 export async function createVehicle(formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
@@ -171,6 +172,7 @@ export async function createVehicle(formData: FormData): Promise<{ success: bool
       status: formData.get('status'),
       nextServicing: formData.get('nextServicing'),
       company_name: companyName,
+      role: 'vehicle',
     });
 
     // Connect to MongoDB
