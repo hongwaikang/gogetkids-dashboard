@@ -16,6 +16,88 @@ const saltRounds = 10;
 // For token grabbing
 const sessionName = 'currentSession';
 
+
+const driverSchema = z.object({
+  email: z.string().email(), // Email is required and must be a valid email format
+  firstName: z.string(),
+  lastName: z.string(),
+  password: z.string(), // Password is required
+  phoneNum: z.string(),
+  role: z.enum(["driver"]), // Role must be "driver"
+  company_name: z.string(),
+});
+
+export async function createDriver(formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
+  let client;
+  try {
+    // Fetch session token
+    const token = await fetchSessionToken(sessionName);
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get school_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+
+    const sessionUserid = decodedToken?.id;
+    console.log(sessionUserid);
+
+    // Extract company_name from decoded token
+    const companyName = await fetchCompanyName(sessionUserid);
+    console.log(companyName);
+
+    // Validate form data using Zod schema
+    const validatedData = driverSchema.parse({
+      email: formData.get('email'),
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
+      password: formData.get('password'),
+      phoneNum: formData.get('phoneNum'),
+      role: 'driver', // Hardcoded role as "driver"
+      company_name: companyName, // Pass company_name extracted from token
+    });
+
+    // Check if the email is unique
+    client = await connect();
+    const db = client.db('GoGetKids'); // Specify the database name here
+    const existingDriver = await db.collection('users').findOne({ email: validatedData.email });
+    if (existingDriver) {
+      throw new Error('Email is already in use.');
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(validatedData.password, saltRounds); // Use bcrypt to hash the password with 10 salt rounds
+
+    // Insert driver data into the MongoDB collection with hashed password
+    const result = await db.collection('users').insertOne({
+      ...validatedData,
+      password: hashedPassword, // Replace plain password with hashed password
+    });
+
+    // Check if the insertion was successful
+    if (result.insertedId) {
+      // Data inserted successfully
+      console.log('Driver created successfully:', result.insertedId);
+      revalidatePath('/transport-admin-dashboard/drivers');
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during insertion
+      console.error('Failed to create driver.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database insertion errors
+    console.error('Error creating driver:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+    }
+  }
+}
+
+
 export async function deleteVehicle(id: string) {
   let client;
   try {
@@ -120,19 +202,7 @@ export async function createVehicle(formData: FormData): Promise<{ success: bool
   }
 }
 
-
-
-const driverSchema = z.object({
-  email: z.string().email(), // Email is required and must be a valid email format
-  firstName: z.string(),
-  lastName: z.string(),
-  password: z.string(), // Password is required
-  phoneNum: z.string(),
-  role: z.enum(["driver"]), // Role must be "driver"
-  company_name: z.string(),
-});
-
-export async function createDriver(formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
+export async function updateVehicle(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
   let client;
   try {
     // Fetch session token
@@ -141,7 +211,7 @@ export async function createDriver(formData: FormData): Promise<{ success: boole
       throw new Error('Session token not found.');
     }
 
-    // Decode the token to get school_name
+    // Decode the token to get company_name
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
 
     const sessionUserid = decodedToken?.id;
@@ -151,49 +221,39 @@ export async function createDriver(formData: FormData): Promise<{ success: boole
     const companyName = await fetchCompanyName(sessionUserid);
     console.log(companyName);
 
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
     // Validate form data using Zod schema
-    const validatedData = driverSchema.parse({
-      email: formData.get('email'),
-      firstName: formData.get('firstName'),
-      lastName: formData.get('lastName'),
-      password: formData.get('password'),
-      phoneNum: formData.get('phoneNum'),
-      role: 'driver', // Hardcoded role as "driver"
-      company_name: companyName, // Pass company_name extracted from token
+    const validatedData = vehicleSchema.parse({
+      vehicleId: formData.get('vehicleId'),
+      status: formData.get('status'),
+      nextServicing: formData.get('nextServicing'),
+      company_name: companyName,
     });
 
-    // Check if the email is unique
     client = await connect();
-    const db = client.db('GoGetKids'); // Specify the database name here
-    const existingDriver = await db.collection('users').findOne({ email: validatedData.email });
-    if (existingDriver) {
-      throw new Error('Email is already in use.');
-    }
+    const db = client.db('GoGetKids');
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(validatedData.password, saltRounds); // Use bcrypt to hash the password with 10 salt rounds
+    // Update vehicle data in the MongoDB collection
+    const result = await db.collection('vehicles').updateOne(
+      { _id: objectId },
+      { $set: validatedData }
+    );
 
-    // Insert driver data into the MongoDB collection with hashed password
-    const result = await db.collection('users').insertOne({
-      ...validatedData,
-      password: hashedPassword, // Replace plain password with hashed password
-    });
-
-    // Check if the insertion was successful
-    if (result.insertedId) {
-      // Data inserted successfully
-      console.log('Driver created successfully:', result.insertedId);
-      revalidatePath('/transport-admin-dashboard/drivers');
-      return { success: true }; // Return success message to client-side
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      console.log('Vehicle updated successfully:', id);
+      revalidatePath('/transport-admin-dashboard/vehicles');
+      return { success: true };
     } else {
-      // Error occurred during insertion
-      console.error('Failed to create driver.');
-      return { success: false }; // Return error message to client-side
+      console.error('Failed to update vehicle.');
+      return { success: false };
     }
   } catch (error: any) {
-    // Handle validation or database insertion errors
-    console.error('Error creating driver:', error.message);
-    return { success: false, errorMessage: error.message }; // Return error message to client-side
+    // Handle validation or database update errors
+    console.error('Error updating vehicle:', error.message);
+    return { success: false, errorMessage: error.message };
   } finally {
     // Close the connection
     if (client) {
@@ -201,6 +261,7 @@ export async function createDriver(formData: FormData): Promise<{ success: boole
     }
   }
 }
+
 
 
 
