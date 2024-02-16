@@ -703,3 +703,41 @@ export async function deleteClass(id: string) {
     }
   }
 }
+
+
+export async function deleteSchedule(id: string) {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    client = await connect();
+    const db = client.db('GoGetKids');
+
+    // Delete the schedule from the MongoDB collection
+    const result = await db.collection('schedules').deleteOne({ _id: objectId });
+
+    // Check if the deletion was successful
+    if (result.deletedCount === 1) {
+      // Data deleted successfully
+      console.log('Schedule deleted successfully:', id);
+      revalidatePath('/dashboard/schedules');
+      return { success: true }; // Return success message to client-side
+    } else {
+      // No document matched the query criteria, so nothing was deleted
+      console.error('Schedule not found:', id);
+      return { success: false, errorMessage: 'Schedule not found' }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle database deletion errors
+    console.error('Error deleting schedule:', error.message);
+    toast.error('Failed to delete schedule. Please try again.');
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed');
+    }
+  }
+}

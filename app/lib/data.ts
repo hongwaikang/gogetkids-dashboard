@@ -346,3 +346,47 @@ export async function fetchSessionToken(sessionName: string): Promise<string | n
     return session ? session.token : null;
   });
 }
+
+export async function fetchFilteredSchedules(query: string, currentPage: number, schoolName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const schedulesCollection = db.collection('schedules');
+
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+    const schedules = await schedulesCollection
+      .find({ school_name: schoolName }) // Filter by school name
+      .sort({ name: 1 })
+      .skip(offset)
+      .limit(ITEMS_PER_PAGE)
+      .toArray();
+
+    // Convert date objects to strings
+    const schedulesWithDateString = schedules.map(schedule => {
+      // Convert date to string
+      schedule.date = new Date(schedule.date).toLocaleDateString();
+      // Convert pickup_time to string
+      schedule.pickup_time = new Date(schedule.pickup_time).toLocaleTimeString();
+      // Convert dismissal_time to string
+      schedule.dismissal_time = new Date(schedule.dismissal_time).toLocaleTimeString();
+      return schedule;
+    });
+
+    await client.close();
+    return schedulesWithDateString;
+  });
+}
+
+export async function fetchSchedulesPages(query: string, schoolName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const schedulesCollection = db.collection('schedules');
+
+    const count = await schedulesCollection.countDocuments({ school_name: schoolName }); // Count documents based on school name
+    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+
+    await client.close();
+    return totalPages;
+  });
+}
