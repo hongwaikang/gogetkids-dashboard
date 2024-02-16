@@ -86,3 +86,37 @@ export async function fetchCompanyName(id: string) {
     return adminUser?.company_name; // Return company_name field
   });
 }
+
+
+export async function fetchFilteredDrivers(query: string, currentPage: number, companyName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const driversCollection = db.collection('users');
+
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+    const drivers = await driversCollection
+      .find({ role: 'driver', company_name: companyName })
+      .sort({ name: 1 })
+      .skip(offset)
+      .limit(ITEMS_PER_PAGE)
+      .toArray();
+
+    await client.close();
+    return drivers;
+  });
+}
+
+export async function fetchDriversPages(query: string, companyName: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const driversCollection = db.collection('users');
+
+    const count = await driversCollection.countDocuments({ role: 'driver', company_name: companyName });
+    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+
+    await client.close();
+    return totalPages;
+  });
+}
