@@ -83,7 +83,6 @@ export async function fetchStudentNameById(id: ObjectId) {
   });
 }
 
-
 export async function fetchStudentsWithNoParent(schoolName: string) {
   try {
     const client = await connect();
@@ -100,6 +99,22 @@ export async function fetchStudentsWithNoParent(schoolName: string) {
     throw new Error('Failed to fetch students with no parent.');
   }
 }
+
+export async function fetchAllStudentIds() {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const studentsCollection = db.collection('students');
+
+    const studentIds = await studentsCollection
+      .find({}, { projection: { _id: 0, studentid: 1 } })
+      .toArray();
+
+    await client.close();
+    return studentIds.map(student => student.studentid);
+  });
+}
+
 // ------------------------------------------------------------------------------------------------------
 
 // ---------------------------------------------- PARENTS -----------------------------------------------
@@ -347,6 +362,7 @@ export async function fetchSessionToken(sessionName: string): Promise<string | n
   });
 }
 
+
 export async function fetchFilteredSchedules(query: string, currentPage: number, schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
@@ -363,12 +379,12 @@ export async function fetchFilteredSchedules(query: string, currentPage: number,
 
     // Convert date objects to strings
     const schedulesWithDateString = schedules.map(schedule => {
-      // Convert date to string
-      schedule.date = new Date(schedule.date).toLocaleDateString();
-      // Convert pickup_time to string
-      schedule.pickup_time = new Date(schedule.pickup_time).toLocaleTimeString();
-      // Convert dismissal_time to string
-      schedule.dismissal_time = new Date(schedule.dismissal_time).toLocaleTimeString();
+      // Check if date field is a string or a Date object
+      schedule.date = typeof schedule.date === 'string' ? schedule.date : new Date(schedule.date).toLocaleDateString();
+      // Check if pickup_time field is a string or a Date object
+      schedule.pickup_time = typeof schedule.pickup_time === 'string' ? schedule.pickup_time : new Date(schedule.pickup_time).toLocaleTimeString();
+      // Check if dismissal_time field is a string or a Date object
+      schedule.dismissal_time = typeof schedule.dismissal_time === 'string' ? schedule.dismissal_time : new Date(schedule.dismissal_time).toLocaleTimeString();
       return schedule;
     });
 
@@ -376,6 +392,7 @@ export async function fetchFilteredSchedules(query: string, currentPage: number,
     return schedulesWithDateString;
   });
 }
+
 
 export async function fetchSchedulesPages(query: string, schoolName: string) {
   return executeWithRetry(async () => {

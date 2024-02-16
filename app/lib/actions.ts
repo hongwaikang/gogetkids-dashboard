@@ -705,6 +705,82 @@ export async function deleteClass(id: string) {
 }
 
 
+
+
+const scheduleSchema = z.object({
+  studentid: z.string(),
+  date: z.string(), // Assuming date is in string format, adjust as necessary
+  transport_type: z.string(),
+  pickup_time: z.string(),
+  dismissal_time: z.string(),
+  school_name: z.string(),
+});
+
+// Function to create a schedule
+export async function createSchedule(formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
+  let client;
+  try {
+
+    // Fetch session token
+    const token = await fetchSessionToken(sessionName);
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get school_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+    const schoolName = decodedToken.school_name;
+
+
+    // Validate form data using Zod schema
+    const validatedData = scheduleSchema.parse({
+      studentid: formData.get('studentid'),
+      date: formData.get('date'),
+      transport_type: formData.get('transport_type'),
+      pickup_time: formData.get('pickup_time'),
+      dismissal_time: formData.get('dismissal_time'),
+      school_name: schoolName,
+    });
+
+    // Check if the combination of studentid and date already exists
+    client = await connect();
+    const db: Db = client.db('GoGetKids');
+    const existingSchedule = await db.collection('schedules').findOne({
+      studentid: validatedData.studentid,
+      date: validatedData.date,
+    });
+    if (existingSchedule) {
+      throw new Error('A schedule with the same student ID and date already exists.');
+    }
+
+    // Insert schedule data into the MongoDB collection
+    const result = await db.collection('schedules').insertOne(validatedData);
+
+    // Check if the insertion was successful
+    if (result.insertedId) {
+      // Data inserted successfully
+      console.log('Schedule created successfully:', result.insertedId);
+      return { success: true }; // Return success message to client-side
+    } else {
+      // Error occurred during insertion
+      console.error('Failed to create schedule.');
+      return { success: false }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle validation or database insertion errors
+    console.error('Error creating schedule:', error.message);
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+    }
+  }
+}
+
+
+
+
 export async function deleteSchedule(id: string) {
   let client;
   try {
