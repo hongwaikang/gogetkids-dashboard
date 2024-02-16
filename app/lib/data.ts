@@ -25,6 +25,23 @@ async function executeWithRetry<T>(fn: () => Promise<T>): Promise<T> {
   throw new Error('Function execution failed.'); // Add a default return statement
 }
 
+export async function fetchSchoolName(id: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+
+    const objectId = new ObjectId(id);
+
+    const adminUser = await db.collection('adminusers').findOne(
+      { _id: objectId }, // Query
+      { projection: { school_name: 1 } } // Projection to only include the 'school_name' field
+    );
+
+    await client.close();
+    return adminUser?.school_name; // Return school_name field
+  });
+}
+
 export async function fetchFilteredStudents(query: string, currentPage: number, schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
@@ -156,7 +173,7 @@ export async function fetchParentsPages(query: string, schoolName: string) {
     const studentsCollection = db.collection('students');
     const parentsCollection = db.collection('users');
 
-    // Fetch students from the specified school
+    // Fetch students from the specified schoolf
     const students = await studentsCollection
       .find({ school_name: schoolName })
       .toArray();
@@ -261,14 +278,14 @@ export async function fetchTeachersPages(query: string, schoolName: string) {
   });
 }
 
-export async function fetchAllTeachersEmail() {
+export async function fetchAllTeachersEmail(schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
     const db = client.db('GoGetKids');
     const teachersCollection = db.collection('users');
 
     const teachersEmails = await teachersCollection
-      .find({ role: 'teacher' })
+      .find({ role: 'teacher', school_name: schoolName }) // Include school_name in the find condition
       .project({ _id: 0, email: 1 })
       .toArray();
 
@@ -276,6 +293,7 @@ export async function fetchAllTeachersEmail() {
     return teachersEmails.map(teacher => teacher.email);
   });
 }
+
 
 export async function fetchTeacherById(id: ObjectId) {
   return executeWithRetry(async () => {
