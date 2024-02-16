@@ -1,12 +1,37 @@
 import Form from '@/app/ui/schedules/edit-form';
 import Breadcrumbs from '@/app/ui/schedules/breadcrumbs';
-import { fetchScheduleById, fetchAllStudentIds } from '@/app/lib/data';
+import { fetchAllStudentIds, fetchSessionToken, fetchSchoolName,fetchScheduleById } from '@/app/lib/data';
+import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = new ObjectId(params.id);
+
+  // Fetch session token
+  const sessionName = 'currentSession'; // Adjust session name according to your setup
+  const token = await fetchSessionToken(sessionName);
+  console.log('Session token:', token);
+
+  // Verify and decode the token
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, process.env.TOKEN_SECRET!);
+    console.log('Decoded token data:', decodedToken);
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    // Handle error if token verification fails
+    return null; // Or handle the error in some other way
+  }
+
+  // Extract user ID from decoded token
+  const sessionUserId = decodedToken?.id;
+
+  // Fetch the company name using the user ID
+  const schoolName = await fetchSchoolName(sessionUserId);
+  console.log('Company Name:', schoolName);
+
+  const students = await fetchAllStudentIds(schoolName);
   const schedule = await fetchScheduleById(id); // Fetch schedule data
-  const students = await fetchAllStudentIds(); // Fetch students data
 
   return (
     <main>

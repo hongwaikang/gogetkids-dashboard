@@ -28,7 +28,6 @@ export default async function Page() {
   const schoolName = await fetchSchoolName(sessionUserId);
   console.log('Company Name:', schoolName);
 
-
   const teachers = await fetchAllTeachersEmail(schoolName);
 
   return (

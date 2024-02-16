@@ -1,12 +1,38 @@
 import Form from '@/app/ui/classes/edit-form';
 import Breadcrumbs from '@/app/ui/classes/breadcrumbs';
-import { fetchClassById, fetchAllTeachersEmail } from '@/app/lib/data';
+import { fetchClassById, fetchAllTeachersEmail, fetchSessionToken, fetchSchoolName } from '@/app/lib/data';
 import { ObjectId } from 'mongodb';
+import jwt from 'jsonwebtoken';
 
 export default async function Page({ params }: { params: { id: string } }) {
   const id = new ObjectId(params.id);
+
   const classObject = await fetchClassById(id);
-  const teachers = await fetchAllTeachersEmail();
+
+  // Fetch session token
+  const sessionName = 'currentSession'; // Adjust session name according to your setup
+  const token = await fetchSessionToken(sessionName);
+  console.log('Session token:', token);
+
+  // Verify and decode the token
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(token, process.env.TOKEN_SECRET!);
+    console.log('Decoded token data:', decodedToken);
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    // Handle error if token verification fails
+    return null; // Or handle the error in some other way
+  }
+
+  // Extract user ID from decoded token
+  const sessionUserId = decodedToken?.id;
+
+  // Fetch the company name using the user ID
+  const schoolName = await fetchSchoolName(sessionUserId);
+  console.log('Company Name:', schoolName);
+
+  const teachers = await fetchAllTeachersEmail(schoolName);
 
   return (
     <main>

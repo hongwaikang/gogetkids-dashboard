@@ -117,14 +117,15 @@ export async function fetchStudentsWithNoParent(schoolName: string) {
   }
 }
 
-export async function fetchAllStudentIds() {
+export async function fetchAllStudentIds(schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
     const db = client.db('GoGetKids');
     const studentsCollection = db.collection('students');
 
     const studentIds = await studentsCollection
-      .find({}, { projection: { _id: 0, studentid: 1 } })
+      .find({ school_name: schoolName }) // Include school_name in the find condition
+      .project({ _id: 0, studentid: 1 })
       .toArray();
 
     await client.close();
@@ -191,14 +192,14 @@ export async function fetchParentsPages(query: string, schoolName: string) {
   });
 }
 
-export async function fetchAllParentsEmail() {
+export async function fetchAllParentsEmail(schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
     const db = client.db('GoGetKids');
     const parentsCollection = db.collection('users');
 
     const parentsEmails = await parentsCollection
-      .find({ role: 'parent' })
+      .find({ role: 'parent', school_name: schoolName }) // Include school_name in the find condition
       .project({ _id: 0, email: 1 })
       .toArray();
 
@@ -206,6 +207,7 @@ export async function fetchAllParentsEmail() {
     return parentsEmails.map(parent => parent.email);
   });
 }
+
 
 export async function fetchParentById(id: ObjectId) {
   return executeWithRetry(async () => {
@@ -340,14 +342,14 @@ export async function fetchClassesPages(query: string, schoolName: string) {
   });
 }
 
-export async function fetchAllClassNames() {
+export async function fetchAllClassNames(schoolName: string) {
   return executeWithRetry(async () => {
     const client = await connect();
     const db = client.db('GoGetKids');
     const classesCollection = db.collection('classes');
 
     const classNames = await classesCollection
-      .find({})
+      .find({ school_name: schoolName }) // Include school_name in the find condition
       .project({ _id: 0, class_name: 1 })
       .toArray();
 
@@ -355,6 +357,7 @@ export async function fetchAllClassNames() {
     return classNames.map(clazz => clazz.class_name);
   });
 }
+
 
 export async function fetchClassById(id: ObjectId) {
   return executeWithRetry(async () => {

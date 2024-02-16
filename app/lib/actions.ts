@@ -20,14 +20,14 @@ const studentSchema = z.object({
   studentid: z.number(),
   firstname: z.string(),
   lastname: z.string(),
-  gender: z.string(), // Gender is required
+  gender: z.string(),
   dob: z.string(),
   address: z.string(),
   postcode: z.string(),
-  zone: z.string().optional(), // Optional field
-  class_name: z.string().optional(), // Optional field
-  parent_id: z.string().optional(), // Optional field
-  status: z.enum(["At Home", "In School", "In Bus", ""]), // Enum for status
+  zone: z.string().optional(),
+  class_name: z.string().optional(),
+  parent_id: z.string().optional(),
+  status: z.enum(["At Home", "In School", "In Bus", "New", ""]),
   school_name: z.string()
 });
 
