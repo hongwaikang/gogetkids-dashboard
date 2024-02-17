@@ -192,14 +192,14 @@ export async function fetchParentsPages(query: string, schoolName: string) {
   });
 }
 
-export async function fetchAllParentsEmail(schoolName: string) {
+export async function fetchAllParentsEmail() {
   return executeWithRetry(async () => {
     const client = await connect();
     const db = client.db('GoGetKids');
     const parentsCollection = db.collection('users');
 
     const parentsEmails = await parentsCollection
-      .find({ role: 'parent', school_name: schoolName }) // Include school_name in the find condition
+      .find({ role: 'parent' }) // Include school_name in the find condition
       .project({ _id: 0, email: 1 })
       .toArray();
 

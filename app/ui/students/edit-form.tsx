@@ -173,6 +173,26 @@ export default function EditStudentForm({
           </div>
         </div>
 
+        {/* Status */}
+        <div className="mb-4">
+          <label htmlFor="status" className="mb-2 block text-sm font-medium">
+            Status
+          </label>
+          <select
+            id="status"
+            name="status"
+            defaultValue={student.status}
+            className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2"
+            required
+          >
+            <option value="At Home">At Home</option>
+            <option value="In School">In School</option>
+            <option value="New">New</option>
+            <option value="Transit out of school">Transit out of school</option>
+            <option value="Transit to school">Transit to school</option>
+          </select>
+        </div>
+
         {/* Class Name */}
         <div className="mb-4">
           <label htmlFor="class_name" className="mb-2 block text-sm font-medium">

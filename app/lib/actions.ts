@@ -53,7 +53,7 @@ export async function createStudent(formData: FormData): Promise<{ success: bool
 
     // Decode the token to get school_name
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
-    const school_name = decodedToken.school_name;
+    const schoolName = decodedToken.school_name;
 
     // Generate a unique student ID
     let studentid;
@@ -76,8 +76,8 @@ export async function createStudent(formData: FormData): Promise<{ success: bool
       zone: formData.get('zone') || '',
       class_name: formData.get('class_name') || '',
       parent_id: formData.get('parent_id') || '',
-      status: '',
-      school_name: school_name, // Pass school_name extracted from token
+      status: 'New',
+      school_name: schoolName, // Pass school_name extracted from token
     };
 
     // Manually add studentid to the data object
@@ -115,6 +115,15 @@ export async function createStudent(formData: FormData): Promise<{ success: bool
 export async function updateStudent(id: string, formData: FormData) {
   let client;
   try {
+    // Fetch session token
+    const token = await fetchSessionToken(sessionName);
+    if (!token) {
+      throw new Error('Session token not found.');
+    }
+
+    // Decode the token to get school_name
+    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+    const schoolName = decodedToken.school_name;
     // Convert id to ObjectId
     const objectId = new ObjectId(id);
 
@@ -133,8 +142,8 @@ export async function updateStudent(id: string, formData: FormData) {
       zone: formData.get('zone') || '',
       class_name: formData.get('class_name') || '',
       parent_id: formData.get('parent_id') || '',
-      status: '',
-      school_name: ''
+      status: formData.get('status'),
+      school_name: schoolName
     });
 
     console.log('Validated Data:', validatedData); // Log validated data

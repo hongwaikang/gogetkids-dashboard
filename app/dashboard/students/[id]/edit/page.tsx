@@ -31,7 +31,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   const schoolName = await fetchSchoolName(sessionUserId);
   console.log('Company Name:', schoolName);
 
-  const parents = await fetchAllParentsEmail(schoolName);
+  const parents = await fetchAllParentsEmail();
   const classes = await fetchAllClassNames(schoolName);
 
   return (
