@@ -75,6 +75,18 @@ export async function fetchSchoolAdminById(id: ObjectId) {
 }
 
 
+export async function fetchTransportAdminById(id: ObjectId) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+
+    const transportAdmin = await db.collection('adminusers').findOne({ _id: id, role: 'transport admin' });
+
+    await client.close();
+    return transportAdmin;
+  });
+}
+
 export async function fetchTransportAdminsPages(query: string) {
   return executeWithRetry(async () => {
     const client = await connect();
