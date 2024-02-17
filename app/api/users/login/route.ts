@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       lastname: user.lastname,
       school_name: user.school_name,
       company_name: user.company_name,
+      role: user.role // Include the role in the token data
     };
 
     const token = await jwt.sign(
@@ -41,6 +42,21 @@ export async function POST(request: NextRequest) {
     // Store the session in the 'sessions' collection using the Session model
     await Session.create({ sessionName: 'currentSession', token });
 
+    let redirectPath = '/dashboard'; // Default redirect path
+
+    // Determine the redirect path based on the user's role
+    switch (user.role) {
+      case 'transport admin':
+        redirectPath = '/transport-admin-dashboard';
+        break;
+      case 'system admin':
+        redirectPath = '/system-admin-dashboard';
+        break;
+      // For 'school admin', use the default redirect path
+      default:
+        break;
+    }
+
     const response = NextResponse.json({
       message: "Login successful",
       success: true,
@@ -49,6 +65,9 @@ export async function POST(request: NextRequest) {
     response.cookies.set("token", token, {
       httpOnly: true,
     });
+
+    // Include the redirect path in the response
+    response.headers.set("X-Redirect", redirectPath);
 
     return response;
 

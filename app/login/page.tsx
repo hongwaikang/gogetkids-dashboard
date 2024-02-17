@@ -27,7 +27,14 @@ export default function LoginForm() {
       const response = await axios.post("/api/users/login", user);
       console.log("Login success", response.data);
       toast.success("Login successful");
-      router.push("/dashboard");
+
+      // Check if there's a redirect path in the response headers
+      const redirectPath = response.headers['x-redirect'];
+      if (redirectPath) {
+        router.push(redirectPath); // Redirect to the specified path
+      } else {
+        router.push("/dashboard"); // Default redirect path
+      }
     } catch (error: any) {
       console.log("Login failed", error.message);
       toast.error("Failed to login");
