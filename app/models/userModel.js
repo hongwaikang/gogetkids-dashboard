@@ -22,6 +22,13 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         unique: true,
+        default: '',
+    },
+    company_name: {
+        type: String,
+        required: true,
+        unique: true,
+        default: ''
     },
     isVerified: {
         type: Boolean,
@@ -29,7 +36,7 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['school admin', 'system admin'],
+        enum: ['school admin', 'system admin', 'transport admin'],
         default: 'school admin',
     },
     forgotPasswordToken: String,

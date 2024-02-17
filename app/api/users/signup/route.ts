@@ -1,5 +1,6 @@
 import { connect } from "@/app/lib/dbConfig2";
 import User from "@/app/models/userModel";
+import School from "@/app/models/schoolModel";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 
@@ -8,19 +9,13 @@ connect();
 export async function POST(request: NextRequest) {
     try {
         const reqBody = await request.json();
-        const { email, password, school_name, firstname, lastname } = reqBody;
+        const { email, password, school_name, firstname, lastname, role, company_name } = reqBody;
 
         // Check if user already exists
         const user = await User.findOne({ email });
 
         if (user) {
             return NextResponse.json({ error: "User already exists" }, { status: 400 });
-        }
-
-        // Check if school_name already exists
-        const existingSchool = await User.findOne({ school_name });
-        if (existingSchool) {
-            return NextResponse.json({ error: "School already exists" }, { status: 400 });
         }
 
         // Hash password
@@ -30,13 +25,16 @@ export async function POST(request: NextRequest) {
         const newUser = new User({
             email,
             password: hashedPassword,
-            school_name,
             firstname,
             lastname,
+            school_name,
+            role,
+            company_name,
         });
 
         const savedUser = await newUser.save();
         console.log(savedUser);
+
         return NextResponse.json({ message: "User signed up successfully", user: savedUser });
 
     } catch (error: any) {
