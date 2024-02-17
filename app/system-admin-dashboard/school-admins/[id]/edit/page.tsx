@@ -13,7 +13,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         breadcrumbs={[
           { label: 'School Admins', href: '/system-admin-dashboard/school-admins' },
           {
-            label: 'Edit Teacher',
+            label: 'Edit School Admin',
             href: `/system-admin-dashboard/school-admins/${params.id}/edit`,
             active: true,
           },

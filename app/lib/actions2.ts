@@ -269,3 +269,53 @@ export async function createTransportAdmin(formData: FormData): Promise<{ succes
     }
   }
 }
+
+
+
+const updateTransportAdminSchema = transportAdminSchema.omit({password: true})
+
+export async function updateTransportAdmin(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    // Validate form data using Zod schema
+    const validatedData = updateTransportAdminSchema.parse({
+      email: formData.get('email'),
+      firstname: formData.get('firstname'),
+      lastname: formData.get('lastname'),
+      company_name: formData.get('company_name'),
+      school_name: 'NA',
+      role: 'transport admin',
+    });
+
+    client = await connect();
+    const db = client.db('GoGetKids'); // Specify the database name here
+
+    // Update transport admin data in the MongoDB collection
+    const result = await db.collection('adminusers').updateOne(
+      { _id: objectId },
+      { $set: validatedData }
+    );
+
+    // Check if the update was successful
+    if (result.modifiedCount === 1) {
+      console.log('Transport admin updated successfully:', id);
+      revalidatePath('/system-admin-dashboard/transport-admins')
+      return { success: true };
+    } else {
+      console.error('Failed to update transport admin.');
+      return { success: false };
+    }
+  } catch (error: any) {
+    // Handle validation or database update errors
+    console.error('Error updating transport admin:', error.message);
+    return { success: false, errorMessage: error.message };
+  } finally {
+    // Close the connection
+    if (client) {
+      await disconnect(); // Disconnect from MongoDB using the disconnect function from dbConfig.ts
+    }
+  }
+}
