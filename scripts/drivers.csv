@@ -1,0 +1,3 @@
+email,firstName,lastName,password,phoneNum,role,company_name,license
+alan.smith@transportcompany1.com,Alan,Smith,pass123,12345678,driver,Transport Company 1,S1234567A
+dan.doe@transportcompany2.com,Dane,Doe,pass456,98765432,driver,Transport Company 1,S9876543M

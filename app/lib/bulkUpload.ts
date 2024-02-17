@@ -424,3 +424,75 @@ export async function insertTripsFromJSON(parsedTrips: Trip[]): Promise<void> {
     await disconnect();
   }
 }
+
+
+// Interface for drivers
+interface Driver {
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  phoneNum: string;
+  role: string;
+  company_name: string;
+  license: string;
+}
+
+// Function to parse JSON data for drivers
+export async function parseDriversJSON(jsonData: any): Promise<Driver[]> {
+  console.log('Parsing JSON data for drivers...');
+  const parsedDrivers: Driver[] = JSON.parse(jsonData);
+  console.log('JSON parsing complete');
+  return parsedDrivers;
+}
+
+// Function to parse CSV data to JSON for drivers
+export async function parseDriversCSVToJSON(csvData: string): Promise<Driver[]> {
+  console.log('Parsing CSV data to JSON for drivers...');
+
+  const parsedDrivers: Driver[] = [];
+
+  const results = Papa.parse(csvData, { header: true });
+
+  if (results && results.data && results.data.length > 0) {
+    for (const data of results.data) {
+      // Assuming CSV file headers match the Driver interface properties
+      const { email, firstName, lastName, password, phoneNum, role, company_name, license } = data as any;
+      const driver: Driver = {
+        email: email || '',
+        firstName: firstName || '',
+        lastName: lastName || '',
+        password: password || '',
+        phoneNum: phoneNum || '',
+        role: role || '',
+        company_name: company_name || '',
+        license: license || ''
+      };
+      parsedDrivers.push(driver);
+    }
+    console.log('CSV parsing complete');
+    return parsedDrivers;
+  } else {
+    throw new Error('CSV data is empty or invalid.');
+  }
+}
+
+// Function to insert drivers into the database
+export async function insertDriversFromJSON(parsedDrivers: Driver[]): Promise<void> {
+  console.log('Inserting drivers into the database...');
+  try {
+    const client = await connect();
+    const database = client.db('GoGetKids');
+    const driversCollection = database.collection('users');
+    await driversCollection.insertMany(parsedDrivers.map(driver => ({
+      ...driver,
+      role: 'driver' // Ensure role is set to 'driver'
+    })));
+    console.log('Drivers inserted successfully');
+  } catch (error) {
+    console.error('Error inserting drivers:', error);
+    throw error;
+  } finally {
+    await disconnect();
+  }
+}
