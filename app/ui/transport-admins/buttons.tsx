@@ -5,7 +5,7 @@ import { deleteTransportAdmin } from '@/app/lib/actions2';
 export function CreateTransportAdmin() {
   return (
     <Link
-      href="/system-admin-dashboard/school-admins/create"
+      href="/system-admin-dashboard/transport-admins/create"
       className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
     >
       <span className="hidden md:block">Create Transport Admin</span>{' '}
@@ -17,7 +17,7 @@ export function CreateTransportAdmin() {
 export function UpdateTransportAdmin({ id }: { id: string }) {
   return (
     <Link
-      href={`/system-admin-dashboard/school-admins/${id}/edit`}
+      href={`/system-admin-dashboard/transport-admins/${id}/edit`}
       className="rounded-md border p-2 hover:bg-gray-100"
     >
       <PencilIcon className="w-5" />
@@ -42,7 +42,7 @@ export function DeleteTransportAdmin({ id }: { id: string }) {
 export function BulkImportTransportAdmins() {
   return (
     <Link
-      href="/system-admin-dashboard/school-admins/bulk-import"
+      href="/system-admin-dashboard/transport-admins/bulk-import"
       className="flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
     >
       <span className="hidden md:block">Bulk Import Transport Admins</span>{' '}
