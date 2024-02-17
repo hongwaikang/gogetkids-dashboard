@@ -159,3 +159,47 @@ export async function deleteSchoolAdmin(id: string) {
   }
 }
 
+
+
+
+export async function deleteTransportAdmin(id: string) {
+  let client;
+  try {
+    // Convert id to ObjectId
+    const objectId = new ObjectId(id);
+
+    client = await connect();
+    console.log('Connected to MongoDB');
+
+    const db = client.db('GoGetKids'); // Connect to the 'GoGetKids' database
+    console.log('Connected to database: test');
+
+    // Delete the admin user from the MongoDB collection
+    const result = await db.collection('adminusers').deleteOne({ _id: objectId });
+
+    // Check if the deletion was successful
+    if (result.deletedCount === 1) {
+      // Data deleted successfully
+      console.log('Admin user deleted successfully:', id);
+      revalidatePath('/system-admin-dashboard/transport-admins');
+      return { success: true }; // Return success message to client-side
+    } else {
+      // No document matched the query criteria, so nothing was deleted
+      console.error('Admin user not found:', id);
+      return { success: false, errorMessage: 'Admin user not found' }; // Return error message to client-side
+    }
+  } catch (error: any) {
+    // Handle database deletion errors
+    console.error('Error deleting admin user:', error.message);
+    // You can add additional error handling here if needed
+    return { success: false, errorMessage: error.message }; // Return error message to client-side
+  } finally {
+    // Close the connection
+    if (client) {
+      await client.close();
+      console.log('MongoDB connection closed');
+    }
+  }
+}
+
+

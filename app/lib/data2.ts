@@ -73,3 +73,41 @@ export async function fetchSchoolAdminById(id: ObjectId) {
     return schoolAdmin;
   });
 }
+
+
+export async function fetchTransportAdminsPages(query: string) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const transportAdminsCollection = db.collection('adminusers');
+
+    // Count all transport admins from the users collection based on role
+    const count = await transportAdminsCollection.countDocuments({ role: 'transport admin' });
+
+    const totalPages = Math.ceil(count / ITEMS_PER_PAGE);
+
+    await client.close();
+    return totalPages;
+  });
+}
+
+export async function fetchFilteredTransportAdmins(query: string, currentPage: number) {
+  return executeWithRetry(async () => {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const transportAdminsCollection = db.collection('adminusers');
+
+    const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+    // Fetch transport admins from the users collection based on role
+    const transportAdmins = await transportAdminsCollection
+      .find({ role: 'transport admin' })
+      .sort({ email: 1 }) // Sort by email in ascending order
+      .skip(offset)
+      .limit(ITEMS_PER_PAGE)
+      .toArray();
+
+    await client.close();
+    return transportAdmins;
+  });
+}

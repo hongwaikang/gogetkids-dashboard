@@ -8,6 +8,7 @@ import {
   ClassOutlined as ClassOutlinedIcon,
 } from '@mui/icons-material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -21,6 +22,11 @@ const links = [
     name: 'School Admins',
     href: '/system-admin-dashboard/school-admins',
     icon: AccountCircleIcon,
+  },
+  {
+    name: 'Transport Admins',
+    href: '/system-admin-dashboard/transport-admins',
+    icon: AccountCircleOutlinedIcon,
   },
 ];
 
