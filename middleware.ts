@@ -4,30 +4,25 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
 
-  const isPublicPath = path === '/login' || path === '/signup' || path === '/'
+  const isPublicPath = path === '/' || path === '/login' || path === '/signup'
 
   const token = request.cookies.get('token')?.value || ''
 
-  // List of protected routes
-  const protectedRoutes = [];
+  const protectedRoutes = ['/dashboard', '/system-admin-dashboard', '/transport-admin-dashboard'];
 
   if (!isPublicPath && !token) {
     return NextResponse.redirect(new URL('/login', request.nextUrl))
   }
 
-  // Check if the requested path is a protected route and token is not present
   if (protectedRoutes.includes(path) && !token) {
     return NextResponse.redirect(new URL('/login', request.nextUrl))
   }
 
-  // Check if the requested path is a public path and token is present
   if (isPublicPath && token) {
     return NextResponse.redirect(new URL('/dashboard', request.nextUrl))
   }
-
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
   matcher: [
     '/',
@@ -35,6 +30,8 @@ export const config = {
     '/login',
     '/signup',
     '/dashboard',
+    '/system-admin-dashboard',
+    '/transport-admin-dashboard'
     // Add other routes here
   ]
 }
