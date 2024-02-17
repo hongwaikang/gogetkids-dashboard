@@ -63,6 +63,7 @@ export default async function SchoolAdminsTable({
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
                       <UpdateSchoolAdmin id={admin._id} />
+                      <DeleteSchoolAdmin id={admin._id} />
                     </div>
                   </td>
                 </tr>

@@ -1,15 +1,8 @@
 'use client'
 
 import Link from 'next/link';
-import { deleteSchoolAdmin } from '@/app/lib/actions2'; // Import the deleteSchoolAdmin function
 
 const ViewProfile = ({ schoolAdmin }: { schoolAdmin: any }) => {
-  const handleDelete = async () => {
-    // Call the deleteSchoolAdmin function with the school admin ID
-    const result = await deleteSchoolAdmin(schoolAdmin._id);
-    // Handle the deletion result if needed
-    console.log(result);
-  };
 
   return (
     <div>
@@ -35,11 +28,6 @@ const ViewProfile = ({ schoolAdmin }: { schoolAdmin: any }) => {
           <label className="block text-sm font-medium">Role:</label>
           <p className="mt-1 text-sm text-gray-900">{schoolAdmin.role}</p>
         </div>
-
-        {/* Delete button */}
-        <button onClick={handleDelete} className="flex h-10 items-center rounded-lg bg-red-500 px-4 text-sm font-medium text-white transition-colors hover:bg-red-600">
-          Delete Profile
-        </button>
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link href={`/system-admin-dashboard/school-admins/${schoolAdmin._id}/edit`} className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200">
