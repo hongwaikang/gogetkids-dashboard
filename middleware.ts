@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
 
   const token = request.cookies.get('token')?.value || ''
 
-  const protectedRoutes = ['/dashboard', '/system-admin-dashboard', '/transport-admin-dashboard'];
+  const protectedRoutes = ['/dashboard', '/system-admin-dashboard', '/transport-admin-dashboard', '/dashboard/teachers'];
 
   if (!isPublicPath && !token) {
     return NextResponse.redirect(new URL('/login', request.nextUrl))
