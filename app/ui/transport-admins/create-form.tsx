@@ -97,7 +97,7 @@ export default function TransportAdminForm() {
 
         <div className="mb-4">
           <label htmlFor="company_name" className="mb-2 block text-sm font-medium">
-            Transport Name
+            Company Name
           </label>
           <div className="relative">
             <input
