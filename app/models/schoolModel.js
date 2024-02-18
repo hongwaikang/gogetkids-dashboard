@@ -17,6 +17,6 @@ const userSchoolSchema = mongoose.Schema({
     },
 });
 
-const UserSchool = mongoose.models.schoolUsers || mongoose.model("testSchools", userSchoolSchema);
+const UserSchool = mongoose.models.schoolUsers || mongoose.model("schools", userSchoolSchema);
 
 export default UserSchool;
