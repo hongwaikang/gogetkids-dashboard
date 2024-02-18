@@ -40,7 +40,7 @@ export default async function Page({
   console.log(sessionUserId);
 
   // Extract company_name from decoded token
-  const companyName = await fetchCompanyName(sessionUserid);
+  const companyName = await fetchCompanyName(sessionUserId);
   console.log(companyName);
 
   // Fetch trips pages with the school name

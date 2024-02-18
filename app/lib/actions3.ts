@@ -44,7 +44,7 @@ export async function createDriver(formData: FormData): Promise<{ success: boole
     console.log(sessionUserId);
 
     // Extract company_name from decoded token
-    const companyName = await fetchCompanyName(sessionUserid);
+    const companyName = await fetchCompanyName(sessionUserId);
     console.log(companyName);
 
     // Validate form data using Zod schema
@@ -163,7 +163,7 @@ export async function createVehicle(formData: FormData): Promise<{ success: bool
     console.log(sessionUserId);
 
     // Extract company_name from decoded token
-    const companyName = await fetchCompanyName(sessionUserid);
+    const companyName = await fetchCompanyName(sessionUserId);
     console.log(companyName);
 
     // Validate form data using Zod schema
@@ -222,7 +222,7 @@ export async function updateVehicle(id: string, formData: FormData): Promise<{ s
     console.log(sessionUserId);
 
     // Extract company_name from decoded token
-    const companyName = await fetchCompanyName(sessionUserid);
+    const companyName = await fetchCompanyName(sessionUserId);
     console.log(companyName);
 
     // Convert id to ObjectId
@@ -285,7 +285,7 @@ export async function updateDriver(id: string, formData: FormData): Promise<{ su
     console.log(sessionUserId);
 
     // Extract company_name from decoded token
-    const companyName = await fetchCompanyName(sessionUserid);
+    const companyName = await fetchCompanyName(sessionUserId);
     console.log(companyName);
 
     // Convert id to ObjectId
