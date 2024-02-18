@@ -40,7 +40,18 @@ export async function POST(request: NextRequest) {
     );
 
     // Store the session in the 'sessions' collection using the Session model
-    await Session.create({ sessionName: 'currentSession', token });
+    const existingSession = await Session.findOne({ sessionName: 'currentSession' });
+
+    if (existingSession) {
+      // If 'currentSession' already exists, update the token
+      await Session.updateOne(
+        { sessionName: 'currentSession' },
+        { $set: { token } }
+      );
+    } else {
+      // If 'currentSession' does not exist, create a new document
+      await Session.create({ sessionName: 'currentSession', token });
+    }
 
     let redirectPath = '/dashboard'; // Default redirect path
 
