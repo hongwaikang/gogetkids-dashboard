@@ -37,7 +37,7 @@ export default async function Page({
   }
 
   const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
-  console.log(sessionUserid);
+  console.log(sessionUserId);
 
   // Extract company_name from decoded token
   const companyName = await fetchCompanyName(sessionUserid);

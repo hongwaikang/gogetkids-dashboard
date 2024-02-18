@@ -41,7 +41,7 @@ export async function createDriver(formData: FormData): Promise<{ success: boole
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
 
     const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
-    console.log(sessionUserid);
+    console.log(sessionUserId);
 
     // Extract company_name from decoded token
     const companyName = await fetchCompanyName(sessionUserid);
@@ -160,7 +160,7 @@ export async function createVehicle(formData: FormData): Promise<{ success: bool
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
 
     const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
-    console.log(sessionUserid);
+    console.log(sessionUserId);
 
     // Extract company_name from decoded token
     const companyName = await fetchCompanyName(sessionUserid);
@@ -219,7 +219,7 @@ export async function updateVehicle(id: string, formData: FormData): Promise<{ s
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
 
     const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
-    console.log(sessionUserid);
+    console.log(sessionUserId);
 
     // Extract company_name from decoded token
     const companyName = await fetchCompanyName(sessionUserid);
@@ -282,7 +282,7 @@ export async function updateDriver(id: string, formData: FormData): Promise<{ su
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
 
     const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
-    console.log(sessionUserid);
+    console.log(sessionUserId);
 
     // Extract company_name from decoded token
     const companyName = await fetchCompanyName(sessionUserid);
