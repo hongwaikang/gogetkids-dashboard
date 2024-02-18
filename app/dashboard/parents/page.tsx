@@ -6,7 +6,7 @@ import { lusitana } from '@/app/ui/fonts';
 import { ParentsTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchParentsPages, fetchSessionToken } from '@/app/lib/data';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export default async function Page({
   searchParams,

@@ -3,7 +3,7 @@ import User from "@/app/models/userModel";
 import Session from "@/app/models/sessionModel";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 connect();
 

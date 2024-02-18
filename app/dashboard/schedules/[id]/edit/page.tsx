@@ -1,7 +1,7 @@
 import Form from '@/app/ui/schedules/edit-form';
 import Breadcrumbs from '@/app/ui/schedules/breadcrumbs';
 import { fetchAllStudentIds, fetchSessionToken, fetchSchoolName,fetchScheduleById } from '@/app/lib/data';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 
 export default async function Page({ params }: { params: { id: string } }) {
@@ -13,10 +13,10 @@ export default async function Page({ params }: { params: { id: string } }) {
   console.log('Session token:', token);
 
   // Verify and decode the token
-  let decodedToken;
+  let decodedToken: JwtPayload | string; // Explicitly type decodedToken
   try {
     // Type assertion to assert that token is a non-null string
-    decodedToken = jwt.verify(token!, process.env.TOKEN_SECRET!);
+    decodedToken = jwt.verify(token!, process.env.TOKEN_SECRET!) as JwtPayload;
     console.log('Decoded token data:', decodedToken);
   } catch (error) {
     console.error('Error verifying token:', error);

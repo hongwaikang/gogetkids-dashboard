@@ -7,7 +7,7 @@ import { DefaultSkeletonTable } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchSessionToken } from '@/app/lib/data';
 import { fetchCompanyName, fetchTripsPages } from '@/app/lib/data3';
-import jwt from 'jsonwebtoken'; // Import jwt
+import jwt, { JwtPayload } from 'jsonwebtoken'; // Import jwt
 
 export default async function Page({
   searchParams,
@@ -26,7 +26,7 @@ export default async function Page({
   console.log('Session token:', token);
 
   // Verify and decode the token
-  let decodedToken;
+  let decodedToken: JwtPayload | string; // Explicitly type decodedToken
   try {
     decodedToken = jwt.verify(token!, process.env.TOKEN_SECRET!);
     console.log('Decoded token data:', decodedToken);

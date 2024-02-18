@@ -5,7 +5,7 @@ import { connect } from './dbConfig';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import toast from 'react-hot-toast';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { fetchSessionToken } from "@/app/lib/data";
 
 // For password hashing

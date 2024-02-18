@@ -6,7 +6,7 @@ import { lusitana } from '@/app/ui/fonts';
 import { ClassesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchClassesPages, fetchSessionToken } from '@/app/lib/data';
-import jwt from 'jsonwebtoken'; // Import jwt
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export default async function Page({
   searchParams,
@@ -25,10 +25,10 @@ export default async function Page({
   console.log('Session token:', token);
 
   // Verify and decode the token
-  let decodedToken;
+  let decodedToken: JwtPayload | string; // Explicitly type decodedToken
   try {
     // Type assertion to assert that token is a non-null string
-    decodedToken = jwt.verify(token!, process.env.TOKEN_SECRET!);
+    decodedToken = jwt.verify(token!, process.env.TOKEN_SECRET!) as JwtPayload;
     console.log('Decoded token data:', decodedToken);
   } catch (error) {
     console.error('Error verifying token:', error);

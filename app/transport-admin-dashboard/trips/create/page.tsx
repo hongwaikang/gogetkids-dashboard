@@ -2,7 +2,7 @@ import Form from '@/app/ui/trips/create-form';
 import Breadcrumbs from '@/app/ui/trips/breadcrumbs';
 import { fetchAllDriversEmails, fetchAllVehicleIds, fetchCompanyName } from '@/app/lib/data3';
 import { fetchSessionToken } from '@/app/lib/data';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export default async function Page() {
   // Fetch session token
@@ -11,10 +11,10 @@ export default async function Page() {
   console.log('Session token:', token);
 
   // Verify and decode the token
-  let decodedToken;
+  let decodedToken: JwtPayload | string; // Explicitly type decodedToken
   try {
     // Type assertion to assert that token is a non-null string
-    decodedToken = jwt.verify(token!, process.env.TOKEN_SECRET!);
+    decodedToken = jwt.verify(token!, process.env.TOKEN_SECRET!) as JwtPayload;
     console.log('Decoded token data:', decodedToken);
   } catch (error) {
     console.error('Error verifying token:', error);
