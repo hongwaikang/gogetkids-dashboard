@@ -34,6 +34,14 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    address: {
+        type: String,
+        required: [true, "Please provide an address"],
+    },
+    postalcode: {
+        type: Number,
+        required: [true, "Please provide a postal code"],
+    },
     role: {
         type: String,
         enum: ['school admin', 'system admin', 'transport admin'],

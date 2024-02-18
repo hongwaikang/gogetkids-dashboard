@@ -9,7 +9,18 @@ connect();
 export async function POST(request: NextRequest) {
     try {
         const reqBody = await request.json();
-        const { email, password, school_name, firstname, lastname, role, company_name } = reqBody;
+        const { email, password, school_name, firstname, lastname, role, company_name, address, postalcode } = reqBody;
+
+        // Create a separate constant for address and postalcode
+        const userSchoolName = school_name;
+        const userCompanyName = company_name;
+        const userAddress = address;
+        const userPostalCode = postalcode;
+
+        console.log("User School Name:", school_name);
+        console.log("User Company Name:", company_name);
+        console.log("User Address:", userAddress);
+        console.log("User Postal Code:", userPostalCode);
 
         // Check if user already exists
         const user = await User.findOne({ email });
@@ -30,6 +41,8 @@ export async function POST(request: NextRequest) {
             school_name,
             role,
             company_name,
+            address,
+            postalcode
         });
 
         const savedUser = await newUser.save();

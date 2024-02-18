@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       lastname: user.lastname,
       school_name: user.school_name,
       company_name: user.company_name,
-      role: user.role // Include the role in the token data
+      role: user.role
     };
 
     const token = await jwt.sign(
