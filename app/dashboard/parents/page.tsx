@@ -26,7 +26,7 @@ export default async function Page({
   // Decode the token to get school_name
   let schoolName;
   try {
-    const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
+    const decodedToken: JwtPayload = jwt.verify(token, process.env.TOKEN_SECRET!) as JwtPayload;
     schoolName = decodedToken.school_name;
   } catch (error) {
     console.error('Error decoding token:', error);
