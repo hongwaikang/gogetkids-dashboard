@@ -16,11 +16,12 @@ export default async function Page({ params }: { params: { id: string } }) {
   // Verify and decode the token
   let decodedToken;
   try {
-    decodedToken = jwt.verify(token, process.env.TOKEN_SECRET!);
+    // Type assertion to assert that token is a non-null string
+    decodedToken = jwt.verify(token!, process.env.TOKEN_SECRET!);
     console.log('Decoded token data:', decodedToken);
   } catch (error) {
     console.error('Error verifying token:', error);
-    // Handle error if token verification fails
+    // Handle error if token verification fails or token is null
     return null; // Or handle the error in some other way
   }
 
