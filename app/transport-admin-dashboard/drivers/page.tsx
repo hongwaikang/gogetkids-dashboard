@@ -36,7 +36,7 @@ export default async function Page({
     return null; // Or handle the error in some other way
   }
 
-  const sessionUserid = decodedToken?.id;
+  const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
   console.log(sessionUserid);
 
   // Extract company_name from decoded token

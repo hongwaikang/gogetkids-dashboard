@@ -40,7 +40,7 @@ export async function createDriver(formData: FormData): Promise<{ success: boole
     // Decode the token to get school_name
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
 
-    const sessionUserid = decodedToken?.id;
+    const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
     console.log(sessionUserid);
 
     // Extract company_name from decoded token
@@ -159,7 +159,7 @@ export async function createVehicle(formData: FormData): Promise<{ success: bool
     // Decode the token to get school_name
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
 
-    const sessionUserid = decodedToken?.id;
+    const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
     console.log(sessionUserid);
 
     // Extract company_name from decoded token
@@ -218,7 +218,7 @@ export async function updateVehicle(id: string, formData: FormData): Promise<{ s
     // Decode the token to get company_name
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
 
-    const sessionUserid = decodedToken?.id;
+    const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
     console.log(sessionUserid);
 
     // Extract company_name from decoded token
@@ -281,7 +281,7 @@ export async function updateDriver(id: string, formData: FormData): Promise<{ su
     // Decode the token to get company_name
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
 
-    const sessionUserid = decodedToken?.id;
+    const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
     console.log(sessionUserid);
 
     // Extract company_name from decoded token
@@ -458,7 +458,7 @@ export async function createTrip(formData: FormData): Promise<{ success: boolean
     // Decode the token to get company_name
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
 
-    const sessionUserId = decodedToken?.id;
+    const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
     console.log(sessionUserId);
 
     // Extract company_name from decoded token
@@ -529,7 +529,7 @@ export async function updateTrip(id: string, formData: FormData): Promise<{ succ
     // Decode the token to get company_name
     const decodedToken: any = jwt.verify(token, process.env.TOKEN_SECRET!);
 
-    const sessionUserId = decodedToken?.id;
+    const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
     console.log(sessionUserId);
 
     // Extract company_name from decoded token

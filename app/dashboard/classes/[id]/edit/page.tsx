@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   }
 
   // Extract user ID from decoded token
-  const sessionUserId = decodedToken?.id;
+  const sessionUserId = typeof decodedToken === 'string' ? decodedToken : decodedToken?.id;
 
   // Fetch the company name using the user ID
   const schoolName = await fetchSchoolName(sessionUserId);
