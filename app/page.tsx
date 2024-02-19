@@ -14,7 +14,7 @@ export default function Page() {
           <p
             className={`${lusitana.className} text-xl text-gray-800 md:text-3xl md:leading-normal`}
           >
-            <strong>Welcome to GoGetKids.</strong> This is the dashboard for the system and school admin
+            <strong>Welcome to GoGetKids.</strong> This is the dashboard for the admin users
           </p>
           <Link
             href="/login"
