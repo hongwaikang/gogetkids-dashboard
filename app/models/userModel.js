@@ -21,26 +21,16 @@ const userSchema = mongoose.Schema({
     school_name: {
         type: String,
         required: true,
-        unique: true,
-        default: '',
+        default: 'NA',
     },
     company_name: {
         type: String,
         required: true,
-        unique: true,
-        default: ''
+        default: 'NA'
     },
     isVerified: {
         type: Boolean,
         default: false,
-    },
-    address: {
-        type: String,
-        required: [true, "Please provide an address"],
-    },
-    postalcode: {
-        type: Number,
-        required: [true, "Please provide a postal code"],
     },
     role: {
         type: String,

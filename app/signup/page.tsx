@@ -19,8 +19,6 @@ export default function SignUpForm() {
     lastname: '',
     school_name: 'NA',
     company_name: 'NA',
-    address: '',
-    postalcode: '',
     role: '',
   });
 
@@ -179,42 +177,6 @@ export default function SignUpForm() {
               disabled={user.role === 'school admin' || user.role === ''}
             />
             <AcademicCapIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-          </div>
-        </div>
-
-{/* Add Address field */}
-<div>
-          <label className="block text-xs font-medium text-gray-900" htmlFor="address">
-            Address
-          </label>
-          <div className="relative">
-            <input
-              id="address"
-              type="text"
-              value={user.address}
-              onChange={(e) => setUser({ ...user, address: e.target.value })}
-              placeholder="Enter address"
-              className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-            />
-            <PencilIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-          </div>
-        </div>
-
-        {/* Add Postal Code field */}
-        <div>
-          <label className="block text-xs font-medium text-gray-900" htmlFor="postalcode">
-            Postal Code
-          </label>
-          <div className="relative">
-            <input
-              id="postalcode"
-              type="number"
-              value={user.postalcode}
-              onChange={(e) => setUser({ ...user, postalcode: e.target.value })}
-              placeholder="Enter postal code"
-              className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-            />
-            <PencilIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
           </div>
         </div>
 
