@@ -90,20 +90,6 @@ export default function EditParentForm({
           />
         </div>
 
-        {/* Password */}
-        <div className="mb-4">
-          <label htmlFor="password" className="mb-2 block text-sm font-medium">
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            defaultValue={parent.password}
-            className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-            required
-          />
-        </div>
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link

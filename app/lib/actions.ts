@@ -289,6 +289,8 @@ export async function createParent(formData: FormData): Promise<{ success: boole
   }
 }
 
+const updateParentSchema = parentSchema.omit({password: true})
+
 export async function updateParent(id: string, formData: FormData) {
   let client;
   try {
@@ -296,13 +298,12 @@ export async function updateParent(id: string, formData: FormData) {
     const objectId = new ObjectId(id);
 
     // Validate form data using Zod schema
-    const validatedData = parentSchema.parse({
+    const validatedData = updateParentSchema.parse({
       email: formData.get('email'),
       firstName: formData.get('firstName'),
       lastName: formData.get('lastName'),
-      password: formData.get('password'),
       phoneNum: formData.get('phoneNum'),
-      role: 'parent', // Hardcoded role as "parent"
+      role: 'parent',
     });
 
     console.log('Validated Data:', validatedData); // Log validated data
@@ -459,6 +460,8 @@ export async function createTeacher(formData: FormData): Promise<{ success: bool
   }
 }
 
+const updateTeacherSchema = teacherSchema.omit({password: true})
+
 export async function updateTeacher(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
   let client;
   try {
@@ -476,11 +479,10 @@ export async function updateTeacher(id: string, formData: FormData): Promise<{ s
     const objectId = new ObjectId(id);
 
     // Validate form data using Zod schema
-    const validatedData = teacherSchema.parse({
+    const validatedData = updateTeacherSchema.parse({
       email: formData.get('email'),
       firstName: formData.get('firstName'),
       lastName: formData.get('lastName'),
-      password: formData.get('password'),
       phoneNum: formData.get('phoneNum'),
       role: 'teacher', // Change role to "teacher"
       school_name: school_name, // Pass school_name extracted from token
