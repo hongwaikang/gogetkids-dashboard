@@ -27,7 +27,7 @@ export default function LoginForm() {
       const response = await axios.post("/api/users/login", user);
       console.log("Login success", response.data);
       toast.success("Login successful");
-
+  
       // Check if there's a redirect path in the response headers
       const redirectPath = response.headers['x-redirect'];
       if (redirectPath) {
@@ -37,11 +37,28 @@ export default function LoginForm() {
       }
     } catch (error: any) {
       console.log("Login failed", error.message);
-      toast.error("Failed to login");
+  
+      if (error.response && error.response.data && error.response.data.error) {
+        const errorMessage = error.response.data.error;
+  
+        // Check for specific error messages
+        if (errorMessage.includes("User not found")) {
+          toast.error("User not found. Please check your email.");
+        } else if (errorMessage.includes("Invalid password")) {
+          toast.error("Invalid password. Please double-check your password.");
+        } else {
+          // Display a generic error message for other errors
+          toast.error(errorMessage);
+        }
+      } else {
+        // Display a generic error message for other errors
+        toast.error("Failed to login. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     if (user.email.length > 0 && user.password.length > 0) {

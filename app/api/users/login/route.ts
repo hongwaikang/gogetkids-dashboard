@@ -15,12 +15,12 @@ export async function POST(request: NextRequest) {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return NextResponse.json({ error: "User does not exist" }, { status: 400 });
+      return NextResponse.json({ error: "User not found. Please check your email." }, { status: 400 });
     }
 
     const validPassword = await bcryptjs.compare(password, user.password);
     if (!validPassword) {
-      return NextResponse.json({ error: "Invalid password" }, { status: 400 });
+      return NextResponse.json({ error: "Invalid password. Please double-check your password." }, { status: 400 });
     }
 
     const tokenData = {
@@ -83,6 +83,6 @@ export async function POST(request: NextRequest) {
     return response;
 
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error. Please try again later." }, { status: 500 });
   }
 }
