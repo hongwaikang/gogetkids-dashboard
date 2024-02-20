@@ -34,7 +34,21 @@ export default function SignUpForm() {
       router.push('/login');
     } catch (error: any) {
       console.log('Failed to sign up user', error.message);
-      toast.error(error.message);
+
+      if (error.response && error.response.data && error.response.data.error) {
+        const errorMessage = error.response.data.error;
+
+        // Check for specific error messages
+        if (errorMessage.includes("User already exists")) {
+          toast.error("User already exists. Please use a different email address.");
+        } else {
+          // Display a generic error message for other errors
+          toast.error(errorMessage);
+        }
+      } else {
+        // Display a generic error message for other errors
+        toast.error("Failed to sign up. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
