@@ -2,7 +2,7 @@ import { connect, disconnect } from './dbConfig';
 import { Db, ObjectId } from 'mongodb';
 
 const ITEMS_PER_PAGE = 6;
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 10;
 const RETRY_DELAY_MS = 1000;
 
 async function executeWithRetry<T>(fn: () => Promise<T>): Promise<T> {
