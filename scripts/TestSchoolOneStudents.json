@@ -9,7 +9,7 @@
     "zone": "",
     "parent_id": "potterfamily@example.com",
     "class_name": "Class 1A",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   },
   {
     "firstname": "Hermione",
@@ -21,7 +21,7 @@
     "zone": "",
     "parent_id": "grangerfamily@example.com",
     "class_name": "Class 1B",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   },
   {
     "firstname": "Ron",
@@ -33,7 +33,7 @@
     "zone": "",
     "parent_id": "weasleyfamily@example.com",
     "class_name": "Class 2A",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   },
   {
     "firstname": "Luna",
@@ -45,7 +45,7 @@
     "zone": "",
     "parent_id": "lovegoodfamily@example.com",
     "class_name": "Class 2B",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   },
   {
     "firstname": "Draco",
@@ -57,7 +57,7 @@
     "zone": "",
     "parent_id": "malfoyfamily@example.com",
     "class_name": "Class 3A",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   },
   {
     "firstname": "Ginny",
@@ -69,7 +69,7 @@
     "zone": "",
     "parent_id": "weasleyfamily@example.com",
     "class_name": "Class 3B",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   },
   {
     "firstname": "Neville",
@@ -81,7 +81,7 @@
     "zone": "",
     "parent_id": "longbottomfamily@example.com",
     "class_name": "Class 4A",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   },
   {
     "firstname": "Cho",
@@ -93,6 +93,6 @@
     "zone": "",
     "parent_id": "changfamily@example.com",
     "class_name": "Class 4B",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   }
 ]

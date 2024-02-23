@@ -434,7 +434,8 @@ async function getNextTripId(): Promise<number> {
 
     if (maxTrip && maxTrip.tripId) {
       // If there is a max tripId, increment it by 1
-      return maxTrip.tripId + 1;
+      const nextTripId = Number(maxTrip.tripId) + 1;
+      return nextTripId;
     } else {
       // If no documents are found or tripId is missing, start with 1
       return 1;
@@ -444,6 +445,7 @@ async function getNextTripId(): Promise<number> {
     throw error;
   }
 }
+
 
 // Function to create a trip
 export async function createTrip(formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {

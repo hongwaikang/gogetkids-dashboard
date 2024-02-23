@@ -1,47 +1,47 @@
 [
   {
-    "email": "emily.wilson@testschoolone.edu.sg",
+    "email": "emily.tan@testschoolone.edu.sg",
     "firstName": "Emily",
-    "lastName": "Wilson",
+    "lastName": "Tan",
     "password": "CommonPassword123",
     "phoneNum": "91234567",
     "role": "teacher",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   },
   {
-    "email": "john.smith@testschoolone.edu.sg",
+    "email": "john.wong@testschoolone.edu.sg",
     "firstName": "John",
-    "lastName": "Smith",
+    "lastName": "Wong",
     "password": "CommonPassword123",
     "phoneNum": "92345678",
     "role": "teacher",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   },
   {
-    "email": "alice.smith@testschoolone.edu.sg",
+    "email": "alice.ng@testschoolone.edu.sg",
     "firstName": "Alice",
-    "lastName": "Smith",
+    "lastName": "Ng",
     "password": "CommonPassword123",
     "phoneNum": "83456789",
     "role": "teacher",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   },
   {
-    "email": "lebron.james@testschoolone.edu.sg",
+    "email": "lebron.wong@testschoolone.edu.sg",
     "firstName": "Lebron",
-    "lastName": "James",
+    "lastName": "Wong",
     "password": "CommonPassword123",
     "phoneNum": "84567890",
     "role": "teacher",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   },
   {
-    "email": "jane.davis@testschoolone.edu.sg",
+    "email": "jane.poh@testschoolone.edu.sg",
     "firstName": "Jane",
-    "lastName": "Davis",
+    "lastName": "Poh",
     "password": "CommonPassword123",
     "phoneNum": "85678901",
     "role": "teacher",
-    "school_name": "Test School 1"
+    "school_name": "Demo School"
   }
 ]
