@@ -6,7 +6,7 @@ import { createClass } from '@/app/lib/actions';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 
-export default function Form( {teachers}: {teachers: string[] }) {
+export default function Form() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,21 +61,13 @@ export default function Form( {teachers}: {teachers: string[] }) {
           <label htmlFor="teacherid" className="mb-2 block text-sm font-medium">
             Teacher Email
           </label>
-          <div className="relative mt-2 rounded-md">
-            <select
-              id="teacherid"
-              name="teacherid"
-              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2"
-              required
-            >
-              <option value="">Select Teacher Email</option>
-              {teachers.map((teacher, index) => (
-                <option key={index} value={teacher}>
-                  {teacher}
-                </option>
-              ))}
-            </select>
-          </div>
+          <input
+            id="teacherid"
+            name="teacherid"
+            type="text"
+            className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            required
+          />
         </div>
 
         </div>

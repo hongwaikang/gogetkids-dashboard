@@ -43,7 +43,7 @@ export default async function Page() {
           },
         ]}
       />
-      <Form teachers={teachers} />
+      <Form />
     </main>
   );
 }
