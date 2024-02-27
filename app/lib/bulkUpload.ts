@@ -380,7 +380,6 @@ export async function insertVehiclesFromJSON(parsedVehicles: Vehicle[]): Promise
 }
 
 
-
 interface Trip {
   vehicle_number: string;
   driver_email: string;
@@ -389,11 +388,46 @@ interface Trip {
   zone: string;
   start_time: Date;
   end_time: Date;
+  tripId: number;
+}
+
+async function getNextTripId(): Promise<number> {
+  try {
+    const client = await connect();
+    const db = client.db('GoGetKids');
+    const tripsCollection = db.collection('trips');
+
+    // Find the document with the highest tripId
+    const maxTrip = await tripsCollection.find().sort({ tripId: -1 }).limit(1).next();
+
+    await client.close();
+
+    if (maxTrip && maxTrip.tripId) {
+      // If there is a max tripId, increment it by 1
+      const nextTripId = Number(maxTrip.tripId) + 1;
+      return nextTripId;
+    } else {
+      // If no documents are found or tripId is missing, start with 1
+      return 1;
+    }
+  } catch (error) {
+    console.error('Error getting next tripId:', error);
+    throw error;
+  }
 }
 
 export async function parseTripsJSON(jsonData: any): Promise<Trip[]> {
   console.log('Parsing JSON data for trips...');
   const parsedTrips: Trip[] = JSON.parse(jsonData);
+
+  let nextTripId = await getNextTripId();
+  let currentTripId = nextTripId;
+
+  for (let i = 0; i < parsedTrips.length; i++) {
+    currentTripId = currentTripId + 1;
+    parsedTrips[i].tripId = currentTripId;
+  }
+
   console.log('JSON parsing complete');
   return parsedTrips;
 }
@@ -402,6 +436,15 @@ export async function parseTripsCSVToJSON(csvData: string): Promise<Trip[]> {
   console.log('Parsing CSV data to JSON for trips...');
   const parsedTrips: Trip[] = [];
   // Your CSV parsing logic here
+
+  let nextTripId = await getNextTripId();
+  let currentTripId = nextTripId;
+
+  for (let i = 0; i < parsedTrips.length; i++) {
+    currentTripId = currentTripId + 1;
+    parsedTrips[i].tripId = currentTripId;
+  }
+
   return parsedTrips;
 }
 
