@@ -37,6 +37,7 @@ export default function Form() {
             id="class_name"
             name="class_name"
             type="text"
+            placeholder='Enter Class Name'
             className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
             required
           />
@@ -51,6 +52,7 @@ export default function Form() {
             id="class_level"
             name="class_level"
             type="text"
+            placeholder='Enter Level'
             className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
             required
           />
@@ -64,9 +66,9 @@ export default function Form() {
           <input
             id="teacherid"
             name="teacherid"
-            type="text"
+            type="email"
+            placeholder='Enter Teacher Email'
             className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-            required
           />
         </div>
 
@@ -79,7 +81,7 @@ export default function Form() {
             Return
           </Link>
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Updating...' : 'Update Class'}
+            {isLoading ? 'Creating...' : 'Create Class'}
           </Button>
         </div>
     </form>
