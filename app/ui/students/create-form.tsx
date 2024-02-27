@@ -6,12 +6,7 @@ import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { createStudent } from '@/app/lib/actions';
 
-interface Props {
-  parents: string[]; // Define the type of the parents prop
-  classes: string[]; // Define the type of the classes prop
-}
-
-export default function Form({ parents, classes }: Props) {
+export default function Form() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -166,18 +161,13 @@ export default function Form({ parents, classes }: Props) {
             Class Name
           </label>
           <div className="relative mt-2 rounded-md">
-            <select
+            <input
               id="class_name"
               name="class_name"
-              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2"
-            >
-              <option value="">Select Class</option>
-              {classes.map((className, index) => (
-                <option key={index} value={className}>
-                  {className}
-                </option>
-              ))}
-            </select>
+              type="text"
+              placeholder="Enter Class"
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            />
           </div>
         </div>
 
@@ -187,18 +177,13 @@ export default function Form({ parents, classes }: Props) {
             Parent Email
           </label>
           <div className="relative mt-2 rounded-md">
-            <select
+            <input
               id="parent_id"
               name="parent_id"
-              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2"
-            >
-              <option value="">Select Parent Email</option>
-              {parents.map((email, index) => (
-                <option key={index} value={email}>
-                  {email}
-                </option>
-              ))}
-            </select>
+              type="text"
+              placeholder="Enter Parent ID"
+              className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
+            />
           </div>
         </div>
 
