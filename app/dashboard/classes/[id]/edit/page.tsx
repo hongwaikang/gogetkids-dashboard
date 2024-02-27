@@ -31,7 +31,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   // Fetch the company name using the user ID
   const schoolName = await fetchSchoolName(sessionUserId);
-  console.log('Company Name:', schoolName);
+  console.log('School Name:', schoolName);
 
   const teachers = await fetchAllTeachersEmail(schoolName);
 

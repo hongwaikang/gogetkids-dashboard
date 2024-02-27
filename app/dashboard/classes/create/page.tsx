@@ -27,7 +27,7 @@ export default async function Page() {
 
   // Fetch the company name using the user ID
   const schoolName = await fetchSchoolName(sessionUserId);
-  console.log('Company Name:', schoolName);
+  console.log('School Name:', schoolName);
 
   const teachers = await fetchAllTeachersEmail(schoolName);
 
@@ -35,10 +35,10 @@ export default async function Page() {
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: 'Class', href: '/dashboard/classes' },
+          { label: 'Classes', href: '/dashboard/classes' },
           {
-            label: 'Create Class',
-            href: '/dashboard/classes/create',
+            label: 'Edit Class',
+            href: `/dashboard/classes/create/`,
             active: true,
           },
         ]}
