@@ -1,5 +1,5 @@
-import Form from '@/app/ui/teachers/create-form';
-import Breadcrumbs from '@/app/ui/teachers/breadcrumbs';
+import Form from '@/app/ui/classes/create-form';
+import Breadcrumbs from '@/app/ui/classes/breadcrumbs';
 
 export default async function Page() {
 
@@ -7,10 +7,10 @@ export default async function Page() {
     <main>
       <Breadcrumbs
         breadcrumbs={[
-          { label: 'Teachers', href: '/dashboard/teachers' },
+          { label: 'Classes', href: '/dashboard/classes' },
           {
-            label: 'Create Teacher',
-            href: '/dashboard/teachers/create',
+            label: 'Create Classes',
+            href: '/dashboard/classes/create',
             active: true,
           },
         ]}
