@@ -20,7 +20,7 @@ export default async function Page({
   const currentPage = Number(searchParams?.page) || 1;
 
   // Fetch session token
-  const sessionName = 'currentSession'; // Adjust session name according to your setup
+  const sessionName = 'currentSession2'; // Adjust session name according to your setup
   const token = await fetchSessionToken(sessionName);
 
   // Decode the token to get school_name

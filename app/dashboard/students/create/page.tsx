@@ -6,7 +6,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 export default async function Page() {
 
   // Fetch session token
-  const sessionName = 'currentSession'; // Adjust session name according to your setup
+  const sessionName = 'currentSession2'; // Adjust session name according to your setup
   const token = await fetchSessionToken(sessionName);
   console.log('Session token:', token);
 

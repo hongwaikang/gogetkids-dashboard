@@ -12,7 +12,7 @@ import { fetchSessionToken } from "@/app/lib/data";
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 // For token grabbing
-const sessionName = 'currentSession';
+const sessionName = 'currentSession2';
 
 // ---------------------------------------------- STUDENTS ----------------------------------------------
 // Define the schema for form data validation using Zod
@@ -569,7 +569,7 @@ export async function createClass(formData: FormData): Promise<{ success: boolea
   let client;
   try {
     // Fetch session token
-    const sessionName = 'currentSession'; // Adjust session name according to your setup
+    const sessionName = 'currentSession2'; // Adjust session name according to your setup
     const token = await fetchSessionToken(sessionName);
     if (!token) {
       throw new Error('Session token not found.');
@@ -620,7 +620,7 @@ export async function createClass(formData: FormData): Promise<{ success: boolea
 export async function updateClass(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
   let client;
   try {
-    const sessionName = 'currentSession'; // Adjust session name according to your setup
+    const sessionName = 'currentSession2'; // Adjust session name according to your setup
 
     // Fetch session token
     const token = await fetchSessionToken(sessionName);
@@ -794,7 +794,7 @@ export async function updateSchedule(id: string, formData: FormData): Promise<{ 
     const objectId = new ObjectId(id);
 
     // Fetch session token
-    const sessionName = 'currentSession'; // Adjust session name according to your setup
+    const sessionName = 'currentSession2'; // Adjust session name according to your setup
     const token = await fetchSessionToken(sessionName);
     if (!token) {
       throw new Error('Session token not found.');

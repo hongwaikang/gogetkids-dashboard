@@ -14,7 +14,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 // For token grabbing
-const sessionName = 'currentSession';
+const sessionName = 'currentSession2';
 
 
 const driverSchema = z.object({

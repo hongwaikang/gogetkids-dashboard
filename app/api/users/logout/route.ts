@@ -12,7 +12,7 @@ export async function GET() {
     response.cookies.set("token", "", { httpOnly: true, expires: new Date(0) });
 
     // Delete session document from 'sessions' collection
-    await Session.deleteOne({ sessionName: 'currentSession' });
+    await Session.deleteOne({ sessionName: 'currentSession2' });
 
     return response;
 
