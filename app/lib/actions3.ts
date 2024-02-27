@@ -468,7 +468,7 @@ export async function createTrip(formData: FormData): Promise<{ success: boolean
     console.log(companyName);
 
     // Fetch the next available tripId
-    const tripId = await getNextTripId();
+    let nextTripId = await getNextTripId();
 
     // Validate form data using Zod schema
     const validatedData = tripSchema.parse({
@@ -480,7 +480,7 @@ export async function createTrip(formData: FormData): Promise<{ success: boolean
       end_time: formData.get('end_time'),
       company_name: companyName,
       date: formData.get('date'),
-      tripId: tripId // Assign the fetched tripId
+      tripId: nextTripId // Assign the fetched tripId
     });
 
     // Connect to MongoDB
