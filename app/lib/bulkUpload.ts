@@ -386,8 +386,8 @@ interface Trip {
   company_name: string;
   school_name: string;
   zone: string;
-  start_time: Date;
-  end_time: Date;
+  start_time: string;
+  end_time: string;
   tripId: number;
 }
 
@@ -456,8 +456,6 @@ export async function insertTripsFromJSON(parsedTrips: Trip[]): Promise<void> {
     const tripsCollection = database.collection('trips');
     await tripsCollection.insertMany(parsedTrips.map(trip => ({
       ...trip,
-      start_time: new Date(trip.start_time), // Convert to Date object if needed
-      end_time: new Date(trip.end_time) // Convert to Date object if needed
     })));
     console.log('Trips inserted successfully');
   } catch (error) {
