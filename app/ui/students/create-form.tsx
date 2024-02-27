@@ -180,7 +180,7 @@ export default function Form() {
             <input
               id="parent_id"
               name="parent_id"
-              type="text"
+              type="email"
               placeholder="Enter Parent ID"
               className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
             />
