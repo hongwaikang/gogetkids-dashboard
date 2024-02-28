@@ -517,8 +517,6 @@ export async function createTrip(formData: FormData): Promise<{ success: boolean
   }
 }
 
-
-
 export async function updateTrip(id: string, formData: FormData): Promise<{ success: boolean, errorMessage?: string }> {
   let client;
   try {

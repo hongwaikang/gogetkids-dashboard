@@ -123,7 +123,6 @@ export default function Form() {
               name="start_time"
               type="time"
               className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-              required
             />
           </div>
         </div>
@@ -139,7 +138,6 @@ export default function Form() {
               name="end_time"
               type="time"
               className="peer block w-full rounded-md border border-gray-200 py-2 text-sm outline-2 placeholder:text-gray-500"
-              required
             />
           </div>
         </div>
