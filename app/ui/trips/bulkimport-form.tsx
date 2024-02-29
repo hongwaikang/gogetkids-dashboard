@@ -97,11 +97,14 @@ const BulkImportForm = () => {
           </div>
           <p className="mt-2 text-sm text-gray-600">Please ensure that the uploaded JSON file follows the specified format:</p>
           <pre className="mt-2 bg-gray-100 p-2 rounded-md overflow-auto">{`{
-  "tripId": "K123X",
-  "status": "Available",
-  "nextServicing": "2024-08-15",
-  "company_name": "Transport Company 1",
-  "role": "trip"
+  "vehicle_number": "K123X",
+  "driver_email": "driver_1@test456.com",
+  "school_name": "Test School 1",
+  "zone": "A",
+  "company_name": "Test456",
+  "date": "2024-03-15",
+  "start_time": "",
+  "end_time": ""
 }`}</pre>
           {/* Bulk Create JSON Button */}
           <Button type="button" onClick={handleJSONFileUpload} className="mt-4">
@@ -126,8 +129,9 @@ const BulkImportForm = () => {
             />
           </div>
           <p className="mt-2 text-sm text-gray-600">Please ensure that the uploaded CSV file follows the specified format:</p>
-          <pre className="mt-2 bg-gray-100 p-2 rounded-md overflow-auto">{`tripId,status,nextServicing,company_name,role
-K123X,Available,2024-08-15,Transport Company A,trip`}</pre>
+          <pre className="mt-2 bg-gray-100 p-2 rounded-md overflow-auto">{`vehicle_number,driver_email,school_name,zone,company_name,date,start_time,end_time
+K123X,driver_1@test456.com,Test School 1,A,Test456,2024-03-15,,
+`}</pre>
           {/* Bulk Create CSV Button */}
           <Button type="button" onClick={handleCSVFileUpload} className="mt-4">
             Bulk Create CSV
