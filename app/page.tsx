@@ -26,7 +26,6 @@ export default function Page() {
             <li>✔️ Personalized Schedules</li>
             <li>✔️ Clear Communication</li>
             <li>✔️ Secure Access for Parents and Teachers</li>
-            <li>✔️ Custom Alerts and Notifications</li>
             <li>✔️ And More...</li>
           </ul>
           <Link
