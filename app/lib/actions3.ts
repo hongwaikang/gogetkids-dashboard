@@ -469,6 +469,7 @@ export async function createTrip(formData: FormData): Promise<{ success: boolean
 
     // Fetch the next available tripId
     let nextTripId = await getNextTripId();
+    nextTripId = Number(nextTripId);
 
     // Validate form data using Zod schema
     const validatedData = tripSchema.parse({

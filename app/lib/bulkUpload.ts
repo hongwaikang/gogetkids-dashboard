@@ -391,7 +391,7 @@ interface Trip {
   tripId: number;
 }
 
-async function getNextTripId(): Promise<number> {
+async function getMaxTripId(): Promise<number> {
   try {
     const client = await connect();
     const db = client.db('GoGetKids');
@@ -404,7 +404,7 @@ async function getNextTripId(): Promise<number> {
 
     if (maxTrip && maxTrip.tripId) {
       // If there is a max tripId, increment it by 1
-      const nextTripId = Number(maxTrip.tripId) + 1;
+      const nextTripId = Number(maxTrip.tripId);
       return nextTripId;
     } else {
       // If no documents are found or tripId is missing, start with 1
@@ -420,7 +420,7 @@ export async function parseTripsJSON(jsonData: any): Promise<Trip[]> {
   console.log('Parsing JSON data for trips...');
   const parsedTrips: Trip[] = JSON.parse(jsonData);
 
-  let nextTripId = await getNextTripId();
+  let nextTripId = await getMaxTripId();
   let currentTripId = nextTripId;
 
   for (let i = 0; i < parsedTrips.length; i++) {
@@ -438,7 +438,7 @@ export async function parseTripsCSVToJSON(csvData: string): Promise<Trip[]> {
   // Your CSV parsing logic here
 
   let nextTripId = await getNextTripId();
-  let currentTripId = nextTripId;
+  nextTripId = Number(nextTripId);
 
   for (let i = 0; i < parsedTrips.length; i++) {
     currentTripId = currentTripId + 1;
