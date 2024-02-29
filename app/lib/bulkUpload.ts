@@ -437,8 +437,8 @@ export async function parseTripsCSVToJSON(csvData: string): Promise<Trip[]> {
   const parsedTrips: Trip[] = [];
   // Your CSV parsing logic here
 
-  let nextTripId = await getNextTripId();
-  nextTripId = Number(nextTripId);
+  let nextTripId = await getMaxTripId();
+  let currentTripId = nextTripId;
 
   for (let i = 0; i < parsedTrips.length; i++) {
     currentTripId = currentTripId + 1;
