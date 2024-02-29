@@ -18,7 +18,7 @@ export default function Page() {
             <strong>Welcome to GoGetKids.</strong> Simplify school pick-ups and enhance safety.
           </p>
           <p className="text-gray-600">
-            Transform your school's operations with GoGetKids. Our platform is designed to keep students safe, parents informed, and administrators in control.
+            Transform your school operations with GoGetKids. Our platform is designed to keep students safe, parents informed, and administrators in control.
           </p>
           <ul className="list-disc list-inside text-gray-600">
             <li>✔️ Faster Dismissals</li>
