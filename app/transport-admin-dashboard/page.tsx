@@ -9,6 +9,7 @@ export default function DashboardPage() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [role, setRole] = useState("");
+  const [company_name, setCompanyName] = useState("");
 
   const getUserDetails = async () => {
     try {
@@ -18,6 +19,7 @@ export default function DashboardPage() {
       setFirstname(res.data.data.firstname);
       setLastname(res.data.data.lastname);
       setRole(res.data.data.role);
+      setCompanyName(res.data.data.company_name);
     } catch (error: any) {
       console.error(error.message);
       // Handle errors if necessary
@@ -51,6 +53,9 @@ export default function DashboardPage() {
             </p>
             <p className="text-gray-800">
               <span className="font-semibold">Role:</span> {role}
+            </p>
+            <p className="text-gray-800">
+              <span className="font-semibold">Company:</span> {company_name}
             </p>
           </div>
         </div>
