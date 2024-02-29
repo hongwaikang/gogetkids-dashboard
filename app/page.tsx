@@ -2,6 +2,7 @@ import GoGetKidsLogo from '@/app/ui/gogetkids-logo';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { lusitana } from '@/app/ui/fonts';
+import Image from 'next/image';
 
 export default function Page() {
   return (
@@ -14,23 +15,37 @@ export default function Page() {
           <p
             className={`${lusitana.className} text-xl text-gray-800 md:text-3xl md:leading-normal`}
           >
-            <strong>Welcome to GoGetKids.</strong> This is the dashboard for the admin users
+            <strong>Welcome to GoGetKids.</strong> Simplify school pick-ups and enhance safety.
           </p>
-          <Link
-            href="/login"
-            className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
-          >
-            <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
-          </Link>
+          <p className="text-gray-600">
+            Transform your school's operations with GoGetKids. Our platform is designed to keep students safe, parents informed, and administrators in control.
+          </p>
+          <ul className="list-disc list-inside text-gray-600">
+            <li>✔️ Faster Dismissals</li>
+            <li>✔️ Real-time Student Tracking</li>
+            <li>✔️ Personalized Schedules</li>
+            <li>✔️ Clear Communication</li>
+            <li>✔️ Secure Access for Parents and Teachers</li>
+            <li>✔️ Custom Alerts and Notifications</li>
+            <li>✔️ And More...</li>
+          </ul>
           <Link
             href="/signup"
             className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
           >
-            <span>Sign Up</span> <ArrowRightIcon className="w-5 md:w-6" />
+            <span>Sign Up Here</span> <ArrowRightIcon className="w-5 md:w-6" />
           </Link>
         </div>
         <div className="flex items-center justify-center p-6 md:w-3/5 md:px-28 md:py-12">
           {/* Add Hero Images Here */}
+          <div className="w-full max-w-screen-lg mx-auto">
+            <Image
+              src="/desktop2.png"
+              width={1200}
+              height={900}
+              alt="Screenshots of the dashboard project showing desktop version"
+            />
+          </div>
         </div>
       </div>
     </main>
