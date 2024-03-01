@@ -30,9 +30,7 @@ const BulkImportForm = () => {
 
             // Insert schedules into the database
             await insertSchedulesFromJSON(parsedSchedules);
-            console.log('Schedules inserted successfully');
             toast.success('Schedules inserted successfully!');
-            revalidatePath('/dashboard/schedules');
           } catch (error) {
             console.error('Error importing schedules:', error);
             toast.error('Failed to import schedules. Please try again.');
