@@ -27,7 +27,7 @@ const studentSchema = z.object({
   zone: z.string().optional(),
   class_name: z.string().optional(),
   parent_id: z.string().optional(),
-  status: z.enum(["At Home", "In School", "In Bus", "New", ""]),
+  status: z.string(),
   school_name: z.string()
 });
 
